@@ -1,0 +1,177 @@
+// Baseado em rascunho-tabelas.txt. Mudanças em relação ao original, marcadas com "// NOVO" ou "// ALTERADO":
+// 1. DOCUMENTO perdeu DT_ASSINATURA e RESPONSAVEL_ID (não davam pra representar múltiplos assinantes) e ganhou
+//    versionamento de verdade via DOCUMENTO_VERSAO (nunca sobrescrever, sempre nova versão).
+// 2. Criada ASSINATURA — desacoplada do método (presencial reforçado / GOV.BR / físico digitalizado),
+//    então a decisão de QUAL método usar em cada caso fica configurável, não travada no schema.
+// 3. Criada METODO_ASSINATURA (lookup, mesmo padrão de TIPO_DEPENDENCIA/CARGO).
+// 4. TIPO_DOCUMENTO ganhou flags de quem precisa assinar + se exige o método mais forte (ICP-Brasil/GOV.BR) —
+//    relevante para documentos que se enquadram como prontuário médico assinado pelo psiquiatra (CFM).
+// 5. Corrigido o nome da tabela TIPO_DEPENCIA -> TIPO_DEPENDENCIA (era typo no original).
+
+PACIENTE
+
+ID
+NOME_COMPLETO
+APELIDO
+CPF
+RG
+DT_NASCIMENTO
+IDADE
+NACIONALIDADE
+ESTADO_ORIGEM
+MUNICIPIO_ORIGEM
+NOME_PAI
+NOME_MAE
+ESCOLARIDADE
+PROFISSAO
+COR_RACA
+ESTADO_CIVIL
+FILHOS
+ENDERECO_RUA
+ENDERECO_NR
+ENDERECO_BAIRRO
+ENDERECO_MUNICIPIO
+ENDERECO_ESTADO
+CONVENIO
+PRI_DEPENDENCIA_LICITA (FK - TIPO_DEPENDENCIA)
+DT_PRI_DEPENDENCIA_LICITA
+PRI_DEPENDENCIA_ILICITA (FK - TIPO_DEPENDENCIA)
+DT_DEPENDENCIA_ILICITA
+DT_ACOLHIMENTO
+DT_CRIACAO
+ATIVO
+DT_DESATIVADO
+
+
+TIPO_DEPENDENCIA          // ALTERADO (era TIPO_DEPENCIA)
+
+ID
+NOME
+
+
+RESPONSAVEL
+
+ID
+PACIENTE_ID
+NOME
+PARENTESCO
+CPF
+TELEFONE
+DT_CRIACAO
+
+
+PROFISSIONAL
+
+ID
+TIPO_PROFISSIONAL
+NOME
+TELEFONE
+CARGO_ID
+RG
+ENDERECO_RUA
+ENDERECO_NR
+ENDERECO_BAIRRO
+ENDERECO_MUNICIPIO
+ENDERECO_ESTADO
+DT_CRIACAO
+
+
+CARGO
+
+ID
+NOME
+
+
+TIPO_DOCUMENTO
+
+ID
+NOME
+VERSAO
+DESCRICAO
+REQUER_ASSINATURA_PACIENTE       BOOLEAN   // NOVO
+REQUER_ASSINATURA_RESPONSAVEL    BOOLEAN   // NOVO
+REQUER_ASSINATURA_PROFISSIONAL   BOOLEAN   // NOVO
+EXIGE_METODO_FORTE                BOOLEAN   // NOVO — true = exige GOV.BR/ICP-Brasil (ex: prontuário médico
+                                             //         assinado pelo psiquiatra, conforme regra CFM a confirmar);
+                                             //         false = presencial reforçado já é suficiente
+ATIVO
+DT_DESATIVADO
+
+
+CAMPO_TIPO_DOCUMENTO
+
+ID
+TIPO_DOCUMENTO_ID
+CAMPO
+TIPO_CAMPO
+ORDEM
+
+
+DOCUMENTO                         // ALTERADO — perdeu DT_ASSINATURA e RESPONSAVEL_ID (ver DOCUMENTO_VERSAO / ASSINATURA)
+
+ID
+TIPO_DOCUMENTO_ID
+PACIENTE_ID
+DT_CRIACAO
+VERSAO_ATUAL                      // número da versão vigente (aponta pra DOCUMENTO_VERSAO)
+STATUS                            // ALTERADO: PENDENTE_ASSINATURA | ASSINADO | DESATIVADO
+DT_DESATIVADO
+
+
+DOCUMENTO_VERSAO                  // NOVO — nunca sobrescreve, cada alteração/ação gera uma linha nova
+
+ID
+DOCUMENTO_ID (FK)
+NUMERO_VERSAO
+DADOS JSONB                       // snapshot dos campos preenchidos nessa versão
+ACAO                              // CRIACAO | ANEXO_PDF_ASSINADO | DESATIVACAO | REATIVACAO
+ARQUIVO_PDF_URL                   // nullable — PDF gerado ou anexado nessa versão
+USUARIO_ID (FK - USUARIO)         // quem executou a ação
+JUSTIFICATIVA                     // obrigatório em DESATIVACAO / REATIVACAO
+DT_CRIACAO
+
+
+METODO_ASSINATURA                 // NOVO — lookup, mesmo padrão de CARGO/TIPO_DEPENDENCIA
+
+ID
+NOME                              // Presencial (dispositivo) | GOV.BR | Físico digitalizado
+
+
+ASSINATURA                        // NOVO — vinculada à versão específica do documento, nunca ao documento "genérico"
+
+ID
+DOCUMENTO_VERSAO_ID (FK)
+TIPO_ASSINANTE                    // PACIENTE | RESPONSAVEL | PROFISSIONAL
+PACIENTE_ID                       // nullable — preenchido conforme TIPO_ASSINANTE
+RESPONSAVEL_ID                    // nullable
+PROFISSIONAL_ID                   // nullable
+METODO_ASSINATURA_ID (FK)
+TESTEMUNHA_USUARIO_ID (FK - USUARIO)  // profissional logado que acompanhou a assinatura presencial (nullable
+                                       // quando método é GOV.BR, já que aí não há necessariamente alguém "assistindo")
+IMAGEM_ASSINATURA                 // nullable — traço capturado, quando método é presencial
+METADADOS_CAPTURA JSONB           // nullable — pontos do traço com timestamp/pressão (reforça prova biométrica)
+HASH_DOCUMENTO                    // hash do conteúdo exibido no momento da assinatura (garante integridade)
+ARQUIVO_ASSINADO_URL              // nullable — quando método é GOV.BR ou físico digitalizado
+IP_DISPOSITIVO
+DT_ASSINATURA
+
+
+USUARIO
+
+EMAIL
+SENHA
+ATIVO
+DT_DESATIVADO
+PROFISSIONAL_ID
+
+
+USUARIO_PERMISSAO
+
+USUARIO_ID
+PERMISSAO_ID
+
+
+PERMISSAO
+
+ID
+NOME

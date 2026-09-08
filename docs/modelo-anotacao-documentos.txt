@@ -1,0 +1,71 @@
+MODELO DE ANOTAÇÃO — MAPEAMENTO DOS TIPOS DE DOCUMENTO (LUZ DO VALE)
+
+Como usar:
+- Copie o bloco "### DOCUMENTO" abaixo pra cada tipo de papel diferente que você encontrar.
+- Mantenha os marcadores ### DOCUMENTO e ### FIM — é o que deixa fácil separar cada entrada depois,
+  seja você mesmo relendo, outra pessoa da equipe, ou uma IA.
+- Preencha em texto corrido mesmo, não precisa formatar bonito. Se não souber algo, escreva "?" e segue.
+- Pode escrever tudo num único arquivo de notas (bloco de notas do celular, Keep, WhatsApp pra você mesmo,
+  papel mesmo) — depois é só colar o arquivo inteiro de volta pra continuar o trabalho.
+- Um bloco por tipo de documento (não por paciente — se você já viu o modelo de "Termo de Acolhimento"
+  uma vez, não precisa anotar de novo pra cada paciente).
+
+TIPOS DE CAMPO (use sempre uma dessas palavras, pra ficar padronizado):
+  texto_curto     -> nome, título, uma linha (ex: CPF, cargo)
+  texto_longo     -> parágrafo livre (ex: relato de evolução, observações)
+  data
+  numero
+  selecao_unica   -> escolhe uma opção (ex: estado civil)
+  selecao_multipla -> marca várias opções (ex: tipos de dependência)
+  foto            -> upload de imagem
+
+NÃO liste "assinatura" como campo — quem assina o documento já é registrado no campo ASSINA lá embaixo,
+não precisa repetir na lista de campos.
+
+------------------------------------------------------------
+
+### DOCUMENTO
+ID:
+NOME:
+OBJETIVO: (pra que esse documento existe — o que ele registra, comprova ou garante)
+CATEGORIA: (clinico / enfermagem / psicologico / administrativo / juridico / outro)
+QUEM_PREENCHE:
+QUANDO: (admissao / periodico / evento pontual / sob demanda — especificar)
+RECORRENCIA: (unico por paciente / recorrente)
+CAMPOS: (um por linha, neste formato -> nome do campo | tipo | obrigatorio sim/nao)
+-
+-
+-
+ASSINA: (nenhum / paciente / responsavel / profissional / mais de um — listar quem)
+AUDITORIA_GOVERNO: (sim / nao / nao sei)
+OBS:
+### FIM
+
+------------------------------------------------------------
+
+EXEMPLO PREENCHIDO (pra referência de como ficar):
+
+### DOCUMENTO
+ID: 2
+NOME: Termo de Acolhimento
+OBJETIVO: registrar que o paciente esta ciente de que o tratamento e gratuito e concorda com as normas da instituicao
+CATEGORIA: juridico
+QUEM_PREENCHE: coordenacao
+QUANDO: admissao
+RECORRENCIA: unico por paciente
+CAMPOS:
+- texto de ciencia das normas | texto_longo | nao (é fixo, so aparece, nao se preenche)
+- lista de pertences | texto_longo | nao
+ASSINA: paciente + responsavel
+AUDITORIA_GOVERNO: sim (acho, confirmar)
+OBS: tem uma via que fica com a familia, conferir se isso importa pro sistema
+### FIM
+
+------------------------------------------------------------
+
+MODO RÁPIDO (se estiver com muita pressa e não der pra listar campo por campo, anota isso e completa os
+campos detalhados depois, com calma ou revisando a foto do documento):
+ID | NOME | QUEM_ASSINA | AUDITORIA(sim/nao/?) | Nº aproximado de campos | OBS RÁPIDA
+
+Exemplo:
+5 | Avaliação Psicológica Inicial | profissional | ? | ~12 campos, a maioria texto_longo | só psicologo preenche, tem varias paginas

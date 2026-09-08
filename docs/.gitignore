@@ -1,0 +1,108 @@
+# ---------------------------------------------------------------------------
+# Reabilitah — prontuário eletrônico CERLUZ
+# Stack prevista: Next.js (front) + NestJS (back) + PostgreSQL
+# O protótipo em export-figma-make/ é Vite + React (pnpm).
+# ---------------------------------------------------------------------------
+
+# Dependências
+node_modules/
+.pnp
+.pnp.*
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/versions
+
+# Build / saída
+dist/
+build/
+out/
+.next/
+.nuxt/
+.turbo/
+.vite/
+*.tsbuildinfo
+next-env.d.ts
+
+# Cache de ferramentas
+.cache/
+.eslintcache
+.stylelintcache
+.parcel-cache/
+.swc/
+
+# Variáveis de ambiente — NUNCA commitar (credenciais de banco, JWT secret, etc.)
+.env
+.env.*
+!.env.example
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# Testes / cobertura
+coverage/
+.nyc_output/
+*.lcov
+
+# Banco de dados local / dumps
+*.sqlite
+*.sqlite3
+*.db
+*.dump
+*.sql.gz
+pgdata/
+
+# Uploads e arquivos gerados em runtime (PDFs de documentos, anexos assinados,
+# imagens de cabeçalho/rodapé institucional enviadas pela equipe).
+# ATENÇÃO: contêm dados sensíveis de paciente — jamais versionar.
+uploads/
+storage/
+tmp/
+temp/
+*.pdf.tmp
+
+# IDE / editores
+.vscode/*
+!.vscode/settings.json
+!.vscode/extensions.json
+.idea/
+*.swp
+*.swo
+*~
+
+# Sistema operacional
+Thumbs.db
+Thumbs.db:encryptable
+ehthumbs.db
+ehthumbs_vista.db
+Desktop.ini
+$RECYCLE.BIN/
+*.lnk
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+
+# ---------------------------------------------------------------------------
+# O que É versionado de propósito (não remover destas exceções):
+#
+#   mapeamento/fotos/*.jpg      fotos dos 17 tipos de documento em branco —
+#                               fonte de verdade do mapeamento (seção 9 do
+#                               CLAUDE.md). São formulários vazios, sem dado
+#                               de paciente.
+#   documentos-mapeados.md      consolidação do mapeamento
+#   mapeamento-documentos.csv   planilha do mapeamento
+#   rascunho-tabelas*.txt       rascunhos do schema
+#   export-figma-make/          protótipo (referência de UX)
+#
+# Se algum dia entrar aqui uma foto de documento PREENCHIDO (com dados reais
+# de acolhido), ela NÃO pode ser commitada — adicione uma regra específica.
+# ---------------------------------------------------------------------------
