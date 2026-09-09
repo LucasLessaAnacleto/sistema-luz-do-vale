@@ -1,0 +1,78 @@
+# Dependências (frontend, backend e projetos de referência)
+node_modules/
+.pnp
+.pnp.*
+
+# Build e caches
+dist/
+build/
+out/
+.next/
+.turbo/
+.vite/
+.cache/
+.swc/
+*.tsbuildinfo
+.eslintcache
+.stylelintcache
+
+# Variáveis locais; modelos sem credenciais podem ser versionados
+.env
+.env.*
+!.env.example
+!.env.*.example
+
+# Logs e diagnóstico
+logs/
+*.log
+*.pid
+*.pid.lock
+report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
+
+# Testes e cobertura
+coverage/
+.nyc_output/
+playwright-report/
+test-results/
+*.lcov
+
+# Banco local e backups (migrations e seeds continuam versionados)
+pgdata/
+backups/
+*.dump
+*.sql.gz
+*.sqlite
+*.sqlite3
+*.db
+
+# Arquivos gerados pela aplicação e anexos de pacientes
+uploads/
+storage/
+tmp/
+temp/
+.tmp/
+.temp/
+
+# Configurações locais de deploy
+.vercel/
+
+# Editores
+.idea/
+.vscode/*
+!.vscode/settings.json
+!.vscode/extensions.json
+!.vscode/tasks.json
+!.vscode/launch.json
+*.swp
+*.swo
+*~
+
+# Sistema operacional
+.DS_Store
+._*
+Thumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# Preservar no Git: lockfiles, migrations, seeds, documentação,
+# PDFs acadêmicos e fotos dos formulários em branco em docs/mapeamento/.

@@ -1,0 +1,105 @@
+Para seguir o exemplo do professor, crie uma pasta **`backend/` ao lado de `frontend/`** e use **NestJS + TypeORM + PostgreSQL**.
+
+**1. Confira Node.js e npm**
+
+No terminal do VS Code:
+
+```powershell
+node --version
+npm --version
+```
+
+Os dois precisam retornar uma versão.
+
+**2. Crie o projeto NestJS**
+
+Na raiz `sistema-luz-do-vale`, execute:
+
+```powershell
+npx @nestjs/cli@10 new backend --package-manager npm --skip-git --strict
+```
+
+Usei CLI 10 para manter proximidade com o NestJS 10 da referência. `--skip-git` evita criar outro repositório dentro do atual; `--strict` habilita verificações mais rigorosas do TypeScript. A criação pelo CLI é o fluxo oficial do Nest. [Documentação do CLI](https://docs.nestjs.com/cli/overview)
+
+A estrutura ficará assim:
+
+```text
+sistema-luz-do-vale/
+├── backend/
+├── frontend/
+├── docs/
+└── referencia-backend/
+```
+
+**3. Configure a porta e execute**
+
+```powershell
+cd backend
+```
+
+Em `src/main.ts`, altere a chamada de `listen` para:
+
+```ts
+await app.listen(process.env.PORT ?? 3010);
+```
+
+Assim, o frontend pode continuar usando a porta 3000.
+
+Execute:
+
+```powershell
+npm run start:dev
+```
+
+Abra **http://localhost:3010**. Deve aparecer `Hello World!`.
+
+**4. Instale as dependências iniciais**
+
+Pare o servidor com `Ctrl+C` e execute:
+
+```powershell
+npm install @nestjs/config@3 @nestjs/typeorm@10 typeorm@0.3 pg typeorm-naming-strategies
+npm install class-validator class-transformer @nestjs/mapped-types@2
+```
+
+Esses pacotes fornecem configuração por ambiente, integração com PostgreSQL usando TypeORM e validação das entradas. As versões das integrações Nest foram delimitadas para acompanhar a base Nest 10. [Integração oficial com TypeORM](https://docs.nestjs.com/techniques/database)
+
+**5. Prepare a conexão com o banco**
+
+Antes de criar tabelas:
+
+- Configure PostgreSQL local, preferencialmente com Docker Compose.
+- Crie `.env` com os dados da conexão e `.env.example` com valores fictícios.
+- Configure `ConfigModule` e `TypeOrmModule.forRootAsync` no `AppModule`, seguindo o professor.
+- Prepare o `DataSource` e as migrations.
+- Configure o `ValidationPipe` global.
+
+O arquivo de referência para essa etapa é `referencia-backend/controle-financeiro-nestjs-api/src/app.module.ts`.
+
+**6. Gere os primeiros módulos**
+
+Dentro de `backend/`:
+
+```powershell
+npx nest generate module useCases/auth
+npx nest generate controller useCases/auth
+npx nest generate service useCases/auth
+
+npx nest generate module useCases/pacientes
+npx nest generate controller useCases/pacientes
+npx nest generate service useCases/pacientes
+```
+
+Depois, acrescente as pastas `dto/` e `entities/` dentro de cada funcionalidade, conforme o [guia do backend](C:/Users/lucas.anacleto/Documents/sistema-luz-do-vale/docs/PADRAO-BACKEND-NESTJS.md).
+
+**7. Implemente nesta ordem**
+
+1. Conexão com banco e primeira migration.
+2. Usuário e login.
+3. Contexto do autor, transações e auditoria.
+4. Cadastro e consulta de pacientes.
+5. Tipos de documento e campos configuráveis.
+6. Documentos e versões imutáveis.
+7. Assinaturas e PDF.
+
+**A primeira entrega deve ser pequena: fazer login → cadastrar paciente apenas com nome → consultar o paciente salvo no PostgreSQL.** Isso confirma que a base funciona antes de avançar para o motor de documentos.
