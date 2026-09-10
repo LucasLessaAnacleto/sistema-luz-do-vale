@@ -9,8 +9,8 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "Entrar | Reabilitah",
-  description: "Acesso ao sistema de reabilitação da Luz do Vale.",
+  title: "Reabilitah | Luz do Vale",
+  description: "Conheça o Reabilitah, projeto de prontuário eletrônico para a Luz do Vale.",
 };
 
 export default function RootLayout({
