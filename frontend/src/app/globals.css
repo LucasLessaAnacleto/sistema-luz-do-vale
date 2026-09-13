@@ -28,13 +28,6 @@ body {
   font-family: var(--font-inter), Arial, Helvetica, sans-serif;
 }
 
-@layer components {
-  .login-input {
-    @apply w-full rounded-xl border border-border bg-input-background py-3 pr-4 pl-12 text-base text-foreground placeholder:text-muted-foreground;
-    @apply transition duration-200 focus:border-transparent focus:ring-2 focus:ring-ring focus:outline-none motion-reduce:transition-none;
-  }
-}
-
 @keyframes login-enter {
   from {
     opacity: 0;

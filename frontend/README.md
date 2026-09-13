@@ -1,36 +1,72 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Frontend — Reabilitah
 
-## Getting Started
+Next.js (App Router), React, TypeScript e Tailwind. Organização baseada em
+`referencia-frontend/front`; layout baseado em `docs/export-figma-make`.
 
-First, run the development server:
+## Rodar
 
 ```bash
+cd frontend
+npm ci
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Abra http://localhost:3000/login. A página pública continua em `/`.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Credenciais fictícias do mock:
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- Email: `demo@reabilitah.com.br`
+- Senha: `Demo123!`
 
-## Learn More
+O login valida essas credenciais, mostra erros e redireciona para `/home` após
+sucesso. A sessão de demonstração sobrevive à recarga na mesma aba por um marcador
+em `sessionStorage`; ao sair, o marcador é removido. Nenhuma senha, token ou dado
+pessoal é persistido. O mock serve apenas ao desenvolvimento da interface e não
+implementa autenticação de backend.
 
-To learn more about Next.js, take a look at the following resources:
+## Organização
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- `src/app/components/ui`: controles visuais reutilizáveis (`Button`, `Input`).
+- `src/app/components`: marca e estado de verificação de sessão.
+- `src/app/types`: contratos de autenticação e usuário, sem senha no tipo de leitura.
+- `src/app/services/authService.ts`: contrato usado pela interface.
+- `src/app/services/mocks/authMock.ts`: credenciais, latência e sessão simuladas.
+- `src/app/services/api.ts`: Axios centralizado, pronto para a API.
+- `src/app/redux`: store compartilhada, Provider e slice de sessão com reducers simples.
+- `src/app/login`: formulário, mensagens e coordenação do login.
+- `src/app/(sistema)`: layout que verifica sessão e página inicial mínima com logout.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Campos, mensagens e envio ficam no estado local. O Redux guarda apenas o usuário
+público e o estado da sessão. Serviços não navegam nem exibem mensagens; reducers
+não acessam armazenamento. A recuperação de sessão acontece no layout `(sistema)` ao acessar a área interna
+e na página de login para reconhecer uma sessão existente. Essas telas chamam o
+serviço em um `useEffect` e despacham ações simples; não usamos thunks. O Provider
+apenas disponibiliza a store. Falhas de verificação permitem nova tentativa.
 
-## Deploy on Vercel
+## Substituir o mock pela API
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Configure `NEXT_PUBLIC_API_URL` em `.env.local` (modelo em `.env.example`) e troque
+as implementações de `authService.ts` por chamadas ao cliente `api.ts`, mantendo:
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- `loginService(LoginRequest): Promise<LoginResponse>` — retorna `{ usuario }`.
+- `buscarUsuarioLogado(): Promise<Usuario | null>` — ausência de sessão retorna
+  `null`; falhas de rede/servidor devem lançar erro.
+- `logoutService(): Promise<void>` — resolve somente após encerramento confirmado.
+
+Os caminhos HTTP serão definidos com o backend. Normalize os erros da API no
+serviço para mensagens adequadas à interface. A API deverá definir o cookie
+HttpOnly, validar cada acesso e configurar CORS/credenciais e proteção das escritas.
+O Axios já envia credenciais; a interface e o Redux não precisam receber tokens.
+Remova o mock da aplicação nessa integração. O layout cliente controla navegação,
+mas a autorização dos dados será responsabilidade do backend.
+
+## Verificação
+
+```bash
+npm run build
+```
+
+Verificar em `/login`: campos obrigatórios, senha incorreta sem redirecionamento,
+valores preservados após erro, botão de envio ocupado, login válido, recarga em
+`/home`, retorno de `/login` para `/home` quando já logado, logout e acesso direto
+anônimo a `/home`. Conferir também teclado e largura de celular.
