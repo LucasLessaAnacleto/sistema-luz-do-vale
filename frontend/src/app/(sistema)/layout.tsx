@@ -2,16 +2,15 @@
 
 import { useEffect, type ReactNode } from "react";
 import { useRouter } from "next/navigation";
-import { useDispatch, useSelector } from "react-redux";
-import type { RootState } from "@/app/redux/store";
+import { useAppDispatch, useAppSelector } from "@/app/redux/hook";
 import { setUsuario, setStatus, logout } from "@/app/redux/slices/authSlice";
 import { buscarUsuarioLogado } from "@/app/services/authService";
 import SessionStatus from "@/app/components/SessionStatus";
 
 export default function SistemaLayout({ children }: { children: ReactNode }) {
-  const status = useSelector((state: RootState) => state.auth.status);
+  const status = useAppSelector((state) => state.auth.status);
   const router = useRouter();
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
 
   useEffect(() => {
     if (status !== "verificando") return;

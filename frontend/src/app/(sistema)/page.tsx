@@ -3,14 +3,13 @@
 import { useState } from "react";
 import Brand from "@/app/components/Brand";
 import Button from "@/app/components/ui/Button";
-import { useDispatch, useSelector } from "react-redux";
-import type { RootState } from "@/app/redux/store";
+import { useAppDispatch, useAppSelector } from "@/app/redux/hook";
 import { logout } from "@/app/redux/slices/authSlice";
 import { logoutService } from "@/app/services/authService";
 
 export default function HomePage() {
-  const usuario = useSelector((state: RootState) => state.auth.usuario);
-  const dispatch = useDispatch();
+  const usuario = useAppSelector((state) => state.auth.usuario);
+  const dispatch = useAppDispatch();
   const [loading, setLoading] = useState(false);
   const [erro, setErro] = useState("");
 

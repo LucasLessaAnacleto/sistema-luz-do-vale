@@ -7,16 +7,15 @@ import Brand from "@/app/components/Brand";
 import Button from "@/app/components/ui/Button";
 import Input from "@/app/components/ui/Input";
 import SessionStatus from "@/app/components/SessionStatus";
-import { useDispatch, useSelector } from "react-redux";
-import type { RootState } from "@/app/redux/store";
+import { useAppDispatch, useAppSelector } from "@/app/redux/hook";
 import { setUsuario, setStatus, logout } from "@/app/redux/slices/authSlice";
 import { loginService, buscarUsuarioLogado } from "@/app/services/authService";
 
 export default function LoginPage() {
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
-  const status = useSelector((state: RootState) => state.auth.status);
-  const dispatch = useDispatch();
+  const status = useAppSelector((state) => state.auth.status);
+  const dispatch = useAppDispatch();
   const router = useRouter();
 
 
