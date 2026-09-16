@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, type FormEvent } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Mail, Lock } from "lucide-react";
 import Brand from "@/app/components/Brand";
@@ -12,6 +12,9 @@ import { setUsuario, setStatus, logout } from "@/app/redux/slices/authSlice";
 import { loginService, buscarUsuarioLogado } from "@/app/services/authService";
 
 export default function LoginPage() {
+  // Mantém os valores digitados se a tentativa de login falhar.
+  const [email, setEmail] = useState("");
+  const [senha, setSenha] = useState("");
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
   const status = useAppSelector((state) => state.auth.status);
@@ -42,13 +45,11 @@ export default function LoginPage() {
   }, [status, dispatch]);
 
   useEffect(() => {
-    if (status === "autenticado") router.replace("/home");
+    if (status === "autenticado") router.replace("/");
   }, [status, router]);
 
-  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault();
+  async function handleSubmit(dados: FormData) {
     if (loading) return;
-    const dados = new FormData(event.currentTarget);
     setLoading(true);
     setMessage("");
     try {
@@ -74,9 +75,9 @@ export default function LoginPage() {
           <h1 id="login-title" className="mb-1 text-3xl font-semibold">Bem-vindo</h1>
           <p className="text-sm text-muted-foreground">Luz do Vale · Sistema de Reabilitação</p>
         </header>
-        <form onSubmit={handleSubmit} className="space-y-5" aria-busy={loading}>
-          <Input label="Email" id="email" name="email" type="email" autoComplete="username" autoCapitalize="none" spellCheck={false} placeholder="seu@email.com" icon={<Mail className="h-5 w-5" />} required disabled={loading} />
-          <Input label="Senha" id="password" name="senha" type="password" autoComplete="current-password" placeholder="••••••••" icon={<Lock className="h-5 w-5" />} required disabled={loading} />
+        <form action={handleSubmit} className="space-y-5" aria-busy={loading}>
+          <Input label="Email" id="email" name="email" type="email" value={email} onChange={(event) => setEmail(event.target.value)} autoComplete="username" autoCapitalize="none" spellCheck={false} placeholder="seu@email.com" icon={<Mail className="h-5 w-5" />} required disabled={loading} />
+          <Input label="Senha" id="password" name="senha" type="password" value={senha} onChange={(event) => setSenha(event.target.value)} autoComplete="current-password" placeholder="••••••••" icon={<Lock className="h-5 w-5" />} required disabled={loading} />
           <button type="button" disabled={loading} className="cursor-pointer rounded text-sm text-primary underline-offset-4 hover:underline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-primary disabled:opacity-60" onClick={() => setMessage("Para recuperar sua senha, entre em contato com a administração da instituição.")}>
             Esqueceu sua senha?
           </button>

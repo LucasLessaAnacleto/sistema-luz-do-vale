@@ -37,6 +37,7 @@ export default function SistemaLayout({ children }: { children: ReactNode }) {
   useEffect(() => {
     if (status === "naoAutenticado") router.replace("/login");
   }, [status, router]);
-  if (status !== "autenticado") return <SessionStatus erro={status === "erro"} onTentarNovamente={() => dispatch(setStatus("verificando"))} />;
+  if (status !== "autenticado") 
+    return <SessionStatus erro={status === "erro"} onTentarNovamente={() => dispatch(setStatus("verificando"))} />;
   return children;
 }
