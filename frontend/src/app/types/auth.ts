@@ -7,9 +7,18 @@ export interface LoginRequest {
 
 export interface LoginResponse {
   usuario: Usuario;
+  token: string;
 }
 
 export interface AuthState {
   usuario: Usuario | null;
-  status: "verificando" | "autenticado" | "naoAutenticado" | "erro";
+  token: string;
+  status: "verificando" | "autenticado" | "naoAutenticado";
+}
+
+export interface LoginFormState {
+  email: string;
+  senha: string;
+  erro: string;
+  tentativa: number;
 }

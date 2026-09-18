@@ -1,31 +1,13 @@
 "use client";
 
-import { useState } from "react";
 import Brand from "@/app/components/Brand";
 import Button from "@/app/components/ui/Button";
 import { useAppDispatch, useAppSelector } from "@/app/redux/hook";
 import { logout } from "@/app/redux/slices/authSlice";
-import { logoutService } from "@/app/services/authService";
 
 export default function HomePage() {
   const usuario = useAppSelector((state) => state.auth.usuario);
   const dispatch = useAppDispatch();
-  const [loading, setLoading] = useState(false);
-  const [erro, setErro] = useState("");
-
-  async function sair() {
-    if (loading) return;
-    setLoading(true);
-    setErro("");
-    try {
-      await logoutService();
-      dispatch(logout());
-    } catch {
-      setErro("Não foi possível encerrar a sessão. Tente novamente.");
-    } finally {
-      setLoading(false);
-    }
-  }
 
   return (
     <main className="flex min-h-svh items-center justify-center p-6">
@@ -33,8 +15,7 @@ export default function HomePage() {
         <Brand />
         <h1 className="text-3xl font-semibold">Olá, {usuario?.nome}!</h1>
         <p className="text-muted-foreground">Você entrou no Reabilitah. As próximas funcionalidades estarão disponíveis aqui.</p>
-        <Button onClick={sair} className="w-full" loading={loading} loadingText="Saindo...">Sair do sistema</Button>
-        <p role="status" className="text-sm text-muted-foreground">{erro}</p>
+        <Button onClick={() => dispatch(logout())} className="w-full">Sair do sistema</Button>
       </section>
     </main>
   );
