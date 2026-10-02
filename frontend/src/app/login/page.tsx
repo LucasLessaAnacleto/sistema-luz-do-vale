@@ -56,10 +56,19 @@ export default function LoginPage() {
           <p className="text-sm text-muted-foreground">Luz do Vale · Sistema de Reabilitação</p>
         </header>
         <form action={formAction} className="space-y-5" aria-busy={isPending}>
-          <Input key={`email-${formState.tentativa}`} label="Email" id="email" name="email" type="email" defaultValue={formState.email} autoComplete="username" autoCapitalize="none" spellCheck={false} placeholder="seu@email.com" icon={<Mail className="h-5 w-5" />} required disabled={isPending} />
-          <Input key={`senha-${formState.tentativa}`} label="Senha" id="password" name="senha" type="password" defaultValue={formState.senha} autoComplete="current-password" placeholder="••••••••" icon={<Lock className="h-5 w-5" />} required disabled={isPending} />
+
+          <Input key={`email-${formState.tentativa}`} label="Email" id="email" name="email" type="email" 
+            defaultValue={formState.email} autoComplete="username" autoCapitalize="none" spellCheck={false} 
+            placeholder="seu@email.com" icon={<Mail className="h-5 w-5" />} required disabled={isPending} 
+          />
+          <Input key={`senha-${formState.tentativa}`} label="Senha" id="password" name="senha" type="password" 
+            defaultValue={formState.senha} autoComplete="current-password" placeholder="••••••••" 
+            icon={<Lock className="h-5 w-5" />} required disabled={isPending} 
+          />
+
           <details className="text-sm text-primary">
-            <summary className="w-fit cursor-pointer rounded underline-offset-4 hover:underline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-primary">Esqueceu sua senha?</summary>
+            <summary className="w-fit cursor-pointer rounded underline-offset-4 hover:underline focus-visible:outline-2 
+              focus-visible:outline-offset-4 focus-visible:outline-primary">Esqueceu sua senha?</summary>
             <p className="mt-2 text-muted-foreground">Para recuperar sua senha, entre em contato com a administração da instituição.</p>
           </details>
           <Button type="submit" className="w-full" loading={isPending} loadingText="Entrando...">Entrar</Button>
