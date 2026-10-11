@@ -1,0 +1,80 @@
+PERMISSOES:
+    Role do Usuario: 
+        coluna role da tabela USUARIO
+        Admin(ROLE_ADMIN)
+        normal(ROLE_USER)
+    Visualizar documentos: 
+        Todos podem enxergar todos os documentos
+    Editar documentos: 
+        Só é possível editar enquanto o documento não foi assinado
+        Só admin e quem criou o documento
+    Criar documentos:
+        Admin concede permissão por TIPO_DOCUMENTO para os perfils de usuario. (tabela de PERMISSAO_PERFIL)
+        Novo paciente + ficha de acolhimento do paciente também é o adm que concede por perfil (flag na tabela PERFIL)
+    Excluir documento:
+        Não é possivel
+        Admin pode desativar o documento
+    Baixar pdf do documento:
+        Todos
+    Finalizar documento:
+        Admin e quem criou o documento
+    Alterar usuario:
+        Admin pode desativar usuario e alterar a senha dele
+    Alterar profissional:
+        O proprio profissional
+    Ver logs do sistema:
+        Admin
+
+    
+-----------------------------------------------------------------------------------------------------------------------
+
+Lista de seleções:
+
+    PARENTESCO:
+        Pai
+        Mãe
+        Filho(a)
+        Cônjuge
+        Companheiro(a)
+        Irmão(ã)
+        Avô(ó)
+        Tio(a)
+        Sobrinho(a)
+        Primo(a)
+        Padrasto
+        Madrasta
+        Enteado(a)
+        Genro
+        Nora
+        Sogro(a)
+        Cunhado(a)
+        Tutor(a) legal
+        Guardião(ã) legal
+        Curador(a)
+        Outro familiar
+        Responsável sem parentesco
+
+-----------------------------------------------------------------------------------------------------------------------
+Tecnologia:
+
+    Dependencia para geração do pdf apartir dos templates HTML/CSS:
+        <!-- Core do Open HTML to PDF -->
+        <dependency>
+            <groupId>io.github.openhtmltopdf</groupId>
+            <artifactId>openhtmltopdf-core</artifactId>
+            <version>1.1.92</version> <!-- Use a versão mais estável/recente -->
+        </dependency>
+
+        <!-- Módulo PDFBox necessário para a saída em PDF -->
+        <dependency>
+            <groupId>io.github.openhtmltopdf</groupId>
+            <artifactId>openhtmltopdf-pdfbox</artifactId>
+            <version>1.1.92</version>
+        </dependency>
+
+    Para gerenciamento dos dados dinamicos no template:
+        <dependency>
+            <groupId>org.thymeleaf</groupId>
+            <artifactId>thymeleaf</artifactId>
+            <version>3.1.2.RELEASE</version>
+        </dependency>
