@@ -1,4 +1,4 @@
-PERMISSOES:
+.PERMISSOES:
     Role do Usuario: 
         coluna role da tabela USUARIO
         Admin(ROLE_ADMIN)
