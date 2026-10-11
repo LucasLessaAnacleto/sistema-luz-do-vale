@@ -19,6 +19,7 @@ out/
 # Java
 application.properties
 
+
 # Variáveis locais; modelos sem credenciais podem ser versionados
 .env
 .env.*
