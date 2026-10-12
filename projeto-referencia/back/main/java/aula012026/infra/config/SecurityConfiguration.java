@@ -31,8 +31,7 @@ public class SecurityConfiguration {
                         "/swagger-resources/**",
                         "/v3/api-docs/**")
                         .permitAll()
-                        .requestMatchers(HttpMethod.GET,"/usuarios",
-                                "/ong").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.GET,"/usuarios","/ong").hasRole("ADMIN")
                         .requestMatchers("/pets").hasRole("ADMIN_ONG")
                         .anyRequest().authenticated()
                 )
