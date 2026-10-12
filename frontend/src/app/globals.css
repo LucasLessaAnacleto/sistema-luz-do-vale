@@ -5,6 +5,10 @@
   --background: #f7f8f5;
   --foreground: #4b4b4b;
   --primary: #6e7f4f;
+  --primary-dark: #56663c;
+  --secondary: #a8b98a;
+  --card: #ffffff;
+  --warning: #b87508;
   --muted-foreground: #6b7280;
   --border: #eaeaea;
   --input-background: #ffffff;
@@ -15,6 +19,10 @@
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-primary: var(--primary);
+  --color-primary-dark: var(--primary-dark);
+  --color-secondary: var(--secondary);
+  --color-card: var(--card);
+  --color-warning: var(--warning);
   --color-muted-foreground: var(--muted-foreground);
   --color-border: var(--border);
   --color-input-background: var(--input-background);
