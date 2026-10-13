@@ -78,3 +78,35 @@ Tecnologia:
             <artifactId>thymeleaf</artifactId>
             <version>3.1.2.RELEASE</version>
         </dependency>
+
+
+
+PROFISSIONAL:
+    sempre possui USUARIO
+
+USUARIO:
+    ROLE_USER ou ROLE_ADMIN
+    sempre criado por um ROLE_ADMIN
+    senha definida pelo admin
+    admin pode redefinir a senha
+    pode possuir PERFIL ou não
+    pode ser desativado
+
+PERFIL:
+    opcional
+    define permissões específicas de operação/documentos     
+
+ROLE:
+    ROLE_ADMIN + sem perfil
+        é administrador
+        acessa funções administrativas
+        não ganha automaticamente permissões de documento do perfil
+
+    ROLE_USER + perfil Enfermagem
+        não é administrador
+        ganha permissões configuradas para Enfermagem
+
+    ROLE_USER + sem perfil
+        entra normalmente
+        visualiza o que qualquer usuário pode visualizar
+        não cria o que depende de permissão de perfil   

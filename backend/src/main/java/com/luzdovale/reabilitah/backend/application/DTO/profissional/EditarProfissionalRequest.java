@@ -2,22 +2,18 @@ package com.luzdovale.reabilitah.backend.application.DTO.profissional;
 
 import java.time.LocalDate;
 
-public record CriarProfissionalRequest(
+public record EditarProfissionalRequest(
+    Long id,
     String nome,
     String telefone,
-    String regProfissional,
-    String cpf,
-    LocalDate dtNasc,
+    String regProfissional,     // adm
+    String cpf,                 // adm
+    LocalDate dtNasc,           // adm
 
     String enderecoRua,
     String enderecoNr,
     String enderecoBairro,
     String enderecoMunicipio,
-    String enderecoEstado,
-
-    String email,
-    String senha,
-
-    Long perfilId
-) {
+    String enderecoEstado
+) implements ProfissionalDados {
 }

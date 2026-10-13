@@ -48,6 +48,10 @@ public class Usuario implements UserDetails {
 
     private LocalDateTime dtCriacao = LocalDateTime.now();
 
+    public boolean isAdmin(){
+        return role.equals(EnumRoleUsuario.ROLE_ADMIN);
+    }
+
     @Override
     @NonNull
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -69,4 +73,5 @@ public class Usuario implements UserDetails {
     public boolean isEnabled() {
         return this.ativo;
     }
+
 }
