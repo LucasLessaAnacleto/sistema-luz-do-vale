@@ -22,9 +22,6 @@ public class UsuarioController {
     @GetMapping
     public ResponseEntity<List<UsuarioProfissionalResponse>> listarTodos(Authentication auth){
         var usuarioLogado = (Usuario) auth.getPrincipal();
-        if(usuarioLogado == null){
-            throw new ErroAoVerificarAutenticacao();
-        }
         return ResponseEntity.ok(
             usuarioService.listarComDadosProfissional(usuarioLogado)
         );
@@ -37,9 +34,6 @@ public class UsuarioController {
             Authentication auth
     ){
         var usuarioLogado = (Usuario) auth.getPrincipal();
-        if(usuarioLogado == null){
-            throw new ErroAoVerificarAutenticacao();
-        }
         usuarioService.redefinirSenha(id, dto.senha(), usuarioLogado);
         return ResponseEntity.ok().build();
     }

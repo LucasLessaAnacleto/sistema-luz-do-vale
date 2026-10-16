@@ -23,9 +23,6 @@ public class ProfissionalController {
     @GetMapping("/{id}")
     public ResponseEntity<Profissional> infosProfissionalPorUsuario(@PathVariable Long id, Authentication auth){
         var usuarioLogado = (Usuario) auth.getPrincipal();
-        if(usuarioLogado == null){
-            throw new ErroAoVerificarAutenticacao();
-        }
         return ResponseEntity.ok(
             profissionalService.buscarPorIdPermissaoAdm(id, usuarioLogado)
         );
