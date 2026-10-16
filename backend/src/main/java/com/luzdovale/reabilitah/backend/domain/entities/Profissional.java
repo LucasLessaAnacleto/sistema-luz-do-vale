@@ -21,7 +21,7 @@ public class Profissional {
 
     private String telefone;
     private String regProfissional;
-    private String CPF;
+    private CPF CPF;
     private String enderecoRua;
     private String enderecoNr;
     private String enderecoBairro;
