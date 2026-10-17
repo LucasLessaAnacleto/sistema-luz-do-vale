@@ -1,11 +1,14 @@
 package com.luzdovale.reabilitah.backend.domain.valueobjects;
 
+import jakarta.persistence.Embeddable;
+
+@Embeddable
 public class CPF {
 
     private String cpf;
 
-    public CPF (){
-        this.cpf ="";
+    protected CPF(){
+        this.cpf = "";
     }
 
     public CPF(String cpf){
@@ -39,7 +42,7 @@ public class CPF {
     }
 
     private String getNumeros(){
-        return this.cpf.replaceAll("[^0-9]","");
+        return this.cpf.replaceAll("\\D", "");
     }
 
     @Override

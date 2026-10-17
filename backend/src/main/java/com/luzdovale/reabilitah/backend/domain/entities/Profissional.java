@@ -1,5 +1,6 @@
 package com.luzdovale.reabilitah.backend.domain.entities;
 
+import com.luzdovale.reabilitah.backend.domain.valueobjects.CPF;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -21,6 +22,7 @@ public class Profissional {
 
     private String telefone;
     private String regProfissional;
+    @Embedded
     private CPF CPF;
     private String enderecoRua;
     private String enderecoNr;

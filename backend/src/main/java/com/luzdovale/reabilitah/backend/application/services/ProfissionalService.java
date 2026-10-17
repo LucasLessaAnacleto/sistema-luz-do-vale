@@ -11,6 +11,7 @@ import com.luzdovale.reabilitah.backend.domain.entities.Profissional;
 import com.luzdovale.reabilitah.backend.domain.entities.Usuario;
 import com.luzdovale.reabilitah.backend.domain.enuns.EnumRoleUsuario;
 import com.luzdovale.reabilitah.backend.domain.repository.ProfissionalRepository;
+import com.luzdovale.reabilitah.backend.domain.valueobjects.CPF;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -115,7 +116,7 @@ public class ProfissionalService {
 
         if(permissaoAdm){
             if (dados.cpf() != null) {
-                profissional.setCPF(dados.cpf());
+                profissional.setCPF(new CPF(dados.cpf()));
             }
 
             if (dados.regProfissional() != null) {
