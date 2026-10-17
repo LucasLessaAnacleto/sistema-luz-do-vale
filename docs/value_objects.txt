@@ -1,0 +1,21 @@
+CPF (Prioridade Inicial)
+ 
+A príncipio será usado no Profissional
+futuramente implementado para o paciente e responsável.
+ 
+---
+ 
+E-mail (Segunda Prioridade)
+ 
+A príncio sera usado para o Usuario
+
+
+...
+
+---
+
+Senha (Terceira Prioridade)
+
+...
+
+---
