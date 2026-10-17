@@ -110,3 +110,25 @@ ROLE:
         entra normalmente
         visualiza o que qualquer usuário pode visualizar
         não cria o que depende de permissão de perfil   
+
+-- USUARIO
+insert into public.usuario (email, senha, role, dt_criacao) values -- senha=123
+('teste@teste.com','$2a$10$wzs8Lt0TrWXNQIQoUN3vIugptnJ62JogQEf5naA/zetG9JNJBEpEu','ROLE_ADMIN', current_date);
+commit;
+
+--- PROFISSIONAL
+{
+  "nome": "Gabriel",
+  "telefone": "4891183179",
+  "regProfissional": "568902",
+  "cpf": "10724408908",
+  "dtNasc": "2026-01-31",
+  "enderecoRua": "RUA IVO ALEXANDRE MOREIRA",
+  "enderecoNr": "1648",
+  "enderecoBairro": "MARILI",
+  "enderecoMunicipio": "ICARA",
+  "enderecoEstado": "SC",
+  "email": "gabriel@teste.com",
+  "senha": "321",
+  "role": "ROLE_ADMIN"
+}
