@@ -1,7 +1,6 @@
 package com.luzdovale.reabilitah.backend.application.services;
 
-import com.luzdovale.reabilitah.backend.application.DTO.profissional.UsuarioProfissionalResponse;
-import com.luzdovale.reabilitah.backend.application.DTO.usuario.UsuarioResponse;
+import com.luzdovale.reabilitah.backend.application.DTO.usuario.UsuarioProfissionalResponse;
 import com.luzdovale.reabilitah.backend.application.exceptions.EmailJaCadastradoException;
 import com.luzdovale.reabilitah.backend.application.exceptions.UsuarioNaoEncontradoException;
 import com.luzdovale.reabilitah.backend.application.exceptions.UsuarioSemAutorizacao;
@@ -137,7 +136,8 @@ public class UsuarioService {
                         ? usuario.getPerfil().getNome()
                         : "",
                 usuario.getAtivo(),
-                usuario.getDtCriacao()
+                usuario.getDtCriacao(),
+                usuario.getDtDesativado()
         );
     }
 }
