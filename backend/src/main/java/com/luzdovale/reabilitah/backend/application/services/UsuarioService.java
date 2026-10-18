@@ -1,6 +1,7 @@
 package com.luzdovale.reabilitah.backend.application.services;
 
 import com.luzdovale.reabilitah.backend.application.DTO.profissional.UsuarioProfissionalResponse;
+import com.luzdovale.reabilitah.backend.application.DTO.usuario.UsuarioResponse;
 import com.luzdovale.reabilitah.backend.application.exceptions.EmailJaCadastradoException;
 import com.luzdovale.reabilitah.backend.application.exceptions.UsuarioNaoEncontradoException;
 import com.luzdovale.reabilitah.backend.application.exceptions.UsuarioSemAutorizacao;
@@ -11,6 +12,7 @@ import com.luzdovale.reabilitah.backend.domain.enuns.EnumRoleUsuario;
 import com.luzdovale.reabilitah.backend.domain.repository.UsuarioRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -99,21 +101,32 @@ public class UsuarioService {
                 .toList();
     }
 
+    public UsuarioProfissionalResponse getUsuarioLogado(){
+        var usuarioLogado = (Usuario) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        return mapeiaParaDTO(usuarioLogado);
+    }
+
     private UsuarioProfissionalResponse mapeiaParaDTO(Usuario usuario){
         Profissional profissional = usuario.getProfissional();
 
         return new UsuarioProfissionalResponse(
                 usuario.getId(),
-                profissional.getId(),
-                profissional.getNome(),
+                profissional != null
+                        ? profissional.getId()
+                        : null,
+                profissional != null
+                        ? profissional.getNome()
+                        : "",
                 usuario.getEmail(),
-                profissional.getTelefone(),
+                profissional != null
+                        ? profissional.getTelefone()
+                        : "",
                 usuario.getRole(),
                 usuario.getPerfil() != null
                         ? usuario.getPerfil().getNome()
-                        : null,
+                        : "",
                 usuario.getAtivo(),
-                usuario.getDtCriacao().toLocalDate()
+                usuario.getDtCriacao()
         );
     }
 }

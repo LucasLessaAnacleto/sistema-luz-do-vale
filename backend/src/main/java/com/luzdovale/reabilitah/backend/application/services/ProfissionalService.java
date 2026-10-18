@@ -3,9 +3,9 @@ package com.luzdovale.reabilitah.backend.application.services;
 import com.luzdovale.reabilitah.backend.application.DTO.profissional.CriarProfissionalRequest;
 import com.luzdovale.reabilitah.backend.application.DTO.profissional.EditarProfissionalRequest;
 import com.luzdovale.reabilitah.backend.application.DTO.profissional.ProfissionalDados;
+import com.luzdovale.reabilitah.backend.application.DTO.profissional.UsuarioProfissionalResponse;
 import com.luzdovale.reabilitah.backend.application.exceptions.ProfissionalNaoEncontradoException;
 import com.luzdovale.reabilitah.backend.application.exceptions.UsuarioSemAutorizacao;
-import com.luzdovale.reabilitah.backend.application.exceptions.UsuarioSemVinculoProfissional;
 import com.luzdovale.reabilitah.backend.domain.entities.Perfil;
 import com.luzdovale.reabilitah.backend.domain.entities.Profissional;
 import com.luzdovale.reabilitah.backend.domain.entities.Usuario;
@@ -14,7 +14,6 @@ import com.luzdovale.reabilitah.backend.domain.repository.ProfissionalRepository
 import com.luzdovale.reabilitah.backend.domain.valueobjects.CPF;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -28,7 +27,7 @@ public class ProfissionalService {
     private PerfilService perfilService;
 
     @Transactional
-    public void criar(CriarProfissionalRequest profissionalDto){
+    public UsuarioProfissionalResponse criar(CriarProfissionalRequest profissionalDto){
 
         Perfil perfil = perfilService.buscarOpcional(profissionalDto.perfilId());
 
@@ -38,20 +37,33 @@ public class ProfissionalService {
             true
         );
 
-        usuarioService.criar(
+        var usuario = usuarioService.criar(
             profissional,
             perfil,
             profissionalDto.email(),
             profissionalDto.senha(),
             profissionalDto.role()
         );
+
+        return new UsuarioProfissionalResponse(
+                usuario.getId(),
+                profissional.getId(),
+                profissional.getNome(),
+                usuario.getEmail(),
+                profissional.getTelefone(),
+                usuario.getRole(),
+                perfil != null ? perfil.getNome() : null,
+                usuario.getAtivo(),
+                usuario.getDtCriacao()
+        );
     }
 
     public Profissional alterar(
+        Long id,
         EditarProfissionalRequest profissionalDto,
         Usuario usuario
     ){
-        var profissional = buscarPorId(profissionalDto.id());
+        var profissional = buscarPorId(id);
         return salvar(
             profissional,
             profissionalDto,
@@ -62,7 +74,10 @@ public class ProfissionalService {
 
 
     public Profissional buscarPorIdPermissaoAdm(Long id, Usuario usuarioLogado) {
-        if(!id.equals(usuarioLogado.getProfissional().getId()) && !usuarioLogado.isAdmin()){
+        var profLogado = usuarioLogado.getProfissional();
+        if((profLogado == null || !id.equals(profLogado.getId()))
+                && !usuarioLogado.isAdmin()){
+
             throw new UsuarioSemAutorizacao();
         }
         return buscarPorId(id);

@@ -1,5 +1,6 @@
 package com.luzdovale.reabilitah.backend.domain.valueobjects;
 
+import com.fasterxml.jackson.annotation.JsonValue;
 import jakarta.persistence.Embeddable;
 
 @Embeddable
@@ -27,7 +28,7 @@ public class CPF {
             return false;
         }
 
-        return validarDigitosVerificadores(cpf);
+        return validarDigitosVerificadores(cpfTratado);
     }
 
     private boolean validarDigitosVerificadores(String cpf){
@@ -45,6 +46,7 @@ public class CPF {
         return this.cpf.replaceAll("\\D", "");
     }
 
+    @JsonValue
     @Override
     public String toString()
     {

@@ -3,6 +3,7 @@ package com.luzdovale.reabilitah.backend.application.DTO.profissional;
 import com.luzdovale.reabilitah.backend.domain.enuns.EnumRoleUsuario;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 public record UsuarioProfissionalResponse(
         Long      usuarioId,
@@ -13,6 +14,6 @@ public record UsuarioProfissionalResponse(
         EnumRoleUsuario role,
         String perfil,
         boolean ativo,
-        LocalDate dtCricao
+        LocalDateTime dtCricao
 ) {
 }

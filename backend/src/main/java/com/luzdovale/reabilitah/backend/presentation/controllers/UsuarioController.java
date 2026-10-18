@@ -2,9 +2,11 @@ package com.luzdovale.reabilitah.backend.presentation.controllers;
 
 import com.luzdovale.reabilitah.backend.application.DTO.profissional.UsuarioProfissionalResponse;
 import com.luzdovale.reabilitah.backend.application.DTO.usuario.RedefinirSenhaDto;
+import com.luzdovale.reabilitah.backend.application.DTO.usuario.UsuarioResponse;
 import com.luzdovale.reabilitah.backend.application.exceptions.ErroAoVerificarAutenticacao;
 import com.luzdovale.reabilitah.backend.application.services.UsuarioService;
 import com.luzdovale.reabilitah.backend.domain.entities.Usuario;
+import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -36,6 +38,13 @@ public class UsuarioController {
         var usuarioLogado = (Usuario) auth.getPrincipal();
         usuarioService.redefinirSenha(id, dto.senha(), usuarioLogado);
         return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/usuariologado")
+    @Operation(summary = "Consulta usuario logado",description = "busca usuario da sessão")
+    public ResponseEntity<UsuarioProfissionalResponse> getUsuarioLogado(){
+
+        return ResponseEntity.ok(usuarioService.getUsuarioLogado());
     }
 
 }
