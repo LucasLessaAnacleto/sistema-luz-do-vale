@@ -2,7 +2,7 @@ package com.luzdovale.reabilitah.backend.presentation.controllers;
 
 import com.luzdovale.reabilitah.backend.application.DTO.profissional.CriarProfissionalRequest;
 import com.luzdovale.reabilitah.backend.application.DTO.profissional.EditarProfissionalRequest;
-import com.luzdovale.reabilitah.backend.application.DTO.profissional.UsuarioProfissionalResponse;
+import com.luzdovale.reabilitah.backend.application.DTO.usuario.UsuarioProfissionalResponse;
 import com.luzdovale.reabilitah.backend.application.services.ProfissionalService;
 import com.luzdovale.reabilitah.backend.domain.entities.Profissional;
 import com.luzdovale.reabilitah.backend.domain.entities.Usuario;

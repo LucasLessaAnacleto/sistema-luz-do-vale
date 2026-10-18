@@ -3,7 +3,7 @@ package com.luzdovale.reabilitah.backend.application.services;
 import com.luzdovale.reabilitah.backend.application.DTO.profissional.CriarProfissionalRequest;
 import com.luzdovale.reabilitah.backend.application.DTO.profissional.EditarProfissionalRequest;
 import com.luzdovale.reabilitah.backend.application.DTO.profissional.ProfissionalDados;
-import com.luzdovale.reabilitah.backend.application.DTO.profissional.UsuarioProfissionalResponse;
+import com.luzdovale.reabilitah.backend.application.DTO.usuario.UsuarioProfissionalResponse;
 import com.luzdovale.reabilitah.backend.application.exceptions.ProfissionalNaoEncontradoException;
 import com.luzdovale.reabilitah.backend.application.exceptions.UsuarioSemAutorizacao;
 import com.luzdovale.reabilitah.backend.domain.entities.Perfil;
@@ -54,7 +54,8 @@ public class ProfissionalService {
                 usuario.getRole(),
                 perfil != null ? perfil.getNome() : null,
                 usuario.getAtivo(),
-                usuario.getDtCriacao()
+                usuario.getDtCriacao(),
+                usuario.getDtDesativado()
         );
     }
 

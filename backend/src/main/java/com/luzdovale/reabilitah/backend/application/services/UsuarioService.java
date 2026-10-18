@@ -1,7 +1,6 @@
 package com.luzdovale.reabilitah.backend.application.services;
 
-import com.luzdovale.reabilitah.backend.application.DTO.profissional.UsuarioProfissionalResponse;
-import com.luzdovale.reabilitah.backend.application.DTO.usuario.UsuarioResponse;
+import com.luzdovale.reabilitah.backend.application.DTO.usuario.UsuarioProfissionalResponse;
 import com.luzdovale.reabilitah.backend.application.exceptions.EmailJaCadastradoException;
 import com.luzdovale.reabilitah.backend.application.exceptions.UsuarioNaoEncontradoException;
 import com.luzdovale.reabilitah.backend.application.exceptions.UsuarioSemAutorizacao;
@@ -16,6 +15,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -101,6 +101,16 @@ public class UsuarioService {
                 .toList();
     }
 
+    public void alterarStatus(Long usuarioId, boolean ativo, Usuario usuarioLogado) {
+        if (!usuarioLogado.isAdmin()) {
+            throw new UsuarioSemAutorizacao();
+        }
+        Usuario usuario = buscarPorId(usuarioId);
+        usuario.setAtivo(ativo);
+        usuario.setDtDesativado(ativo ? null : LocalDateTime.now());
+        usuarioRepository.save(usuario);
+    }
+
     public UsuarioProfissionalResponse getUsuarioLogado(){
         var usuarioLogado = (Usuario) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         return mapeiaParaDTO(usuarioLogado);
@@ -126,7 +136,8 @@ public class UsuarioService {
                         ? usuario.getPerfil().getNome()
                         : "",
                 usuario.getAtivo(),
-                usuario.getDtCriacao()
+                usuario.getDtCriacao(),
+                usuario.getDtDesativado()
         );
     }
 }
