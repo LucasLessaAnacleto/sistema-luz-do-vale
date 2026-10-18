@@ -1,6 +1,7 @@
 package com.luzdovale.reabilitah.backend.presentation.controllers;
 
 import com.luzdovale.reabilitah.backend.application.DTO.profissional.UsuarioProfissionalResponse;
+import com.luzdovale.reabilitah.backend.application.DTO.usuario.AlterarStatusRequest;
 import com.luzdovale.reabilitah.backend.application.DTO.usuario.RedefinirSenhaDto;
 import com.luzdovale.reabilitah.backend.application.DTO.usuario.UsuarioResponse;
 import com.luzdovale.reabilitah.backend.application.exceptions.ErroAoVerificarAutenticacao;
@@ -37,6 +38,12 @@ public class UsuarioController {
     ){
         var usuarioLogado = (Usuario) auth.getPrincipal();
         usuarioService.redefinirSenha(id, dto.senha(), usuarioLogado);
+        return ResponseEntity.ok().build();
+    }
+
+    @PatchMapping("/{id}/alterar-status")
+    public ResponseEntity<Void> desativar(@PathVariable Long id, @RequestBody AlterarStatusRequest statusRequest, Authentication auth) {
+        usuarioService.alterarStatus(id, statusRequest.ativo(), (Usuario) auth.getPrincipal());
         return ResponseEntity.ok().build();
     }
 

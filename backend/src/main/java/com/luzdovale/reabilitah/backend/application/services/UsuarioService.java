@@ -16,6 +16,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -99,6 +100,16 @@ public class UsuarioService {
                 .stream()
                 .map(usuario -> mapeiaParaDTO(usuario))
                 .toList();
+    }
+
+    public void alterarStatus(Long usuarioId, boolean ativo, Usuario usuarioLogado) {
+        if (!usuarioLogado.isAdmin()) {
+            throw new UsuarioSemAutorizacao();
+        }
+        Usuario usuario = buscarPorId(usuarioId);
+        usuario.setAtivo(ativo);
+        usuario.setDtDesativado(ativo ? null : LocalDateTime.now());
+        usuarioRepository.save(usuario);
     }
 
     public UsuarioProfissionalResponse getUsuarioLogado(){
