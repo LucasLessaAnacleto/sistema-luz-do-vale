@@ -16,6 +16,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -25,6 +26,8 @@ public class UsuarioService {
     private UsuarioRepository usuarioRepository;
     @Autowired
     private PasswordEncoder passwordEncoder;
+    @Autowired
+    private PerfilService perfilService;
 
 
     @Transactional
@@ -48,12 +51,14 @@ public class UsuarioService {
 
         usuario.setSenha(passwordEncoder.encode(senha));
 
-        usuario.setRole(role);
+        if(role != null){
+            usuario.setRole(role);
+        }
         usuario.setAtivo(true);
 
+        validarCampos(usuario);
         return usuarioRepository.save(usuario);
     }
-
 
     public Usuario buscarPorId(Long id) {
 
@@ -71,7 +76,6 @@ public class UsuarioService {
                 .findByEmail(email)
                 .orElseThrow(() -> new UsuarioNaoEncontradoException(email));
     }
-
 
     public boolean existeUsuarioComEmail(String email) {
         return usuarioRepository.existsByEmail(email);
@@ -111,9 +115,34 @@ public class UsuarioService {
         usuarioRepository.save(usuario);
     }
 
+    public void alterarPerfil(Long usuarioId, Long perfilId, Usuario usuarioLogado) {
+        if (!usuarioLogado.isAdmin()) {
+            throw new UsuarioSemAutorizacao();
+        }
+        var usuario = buscarPorId(usuarioId);
+        var perfil  = perfilService.buscarOpcional(perfilId);
+        usuario.setPerfil(perfil);
+        usuarioRepository.save(usuario);
+    }
+
     public UsuarioProfissionalResponse getUsuarioLogado(){
         var usuarioLogado = (Usuario) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         return mapeiaParaDTO(usuarioLogado);
+    }
+
+    private void validarCampos(Usuario usuario) {
+        List<String> camposInvalidos = new ArrayList<>();
+
+        if(usuario.getEmail() == null){
+            camposInvalidos.add("email");
+        }
+        if(usuario.getSenha() == null){
+            camposInvalidos.add("senha");
+        }
+
+        if (!camposInvalidos.isEmpty()) {
+            throw new IllegalArgumentException("verifique os campos: " +String.join(", ", camposInvalidos));
+        }
     }
 
     private UsuarioProfissionalResponse mapeiaParaDTO(Usuario usuario){

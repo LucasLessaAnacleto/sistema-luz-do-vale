@@ -10,6 +10,12 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 @ControllerAdvice
 public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
 
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<ApiErrorMessage> handleIllegalArgument(IllegalArgumentException ex) {
+
+        return buildResponse(HttpStatus.BAD_REQUEST, ex.getMessage());
+    }
+
     @ExceptionHandler(EmailJaCadastradoException.class)
     public ResponseEntity<ApiErrorMessage> handleEmailJaCadastrado(EmailJaCadastradoException ex) {
 

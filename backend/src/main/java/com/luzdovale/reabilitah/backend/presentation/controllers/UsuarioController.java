@@ -1,5 +1,6 @@
 package com.luzdovale.reabilitah.backend.presentation.controllers;
 
+import com.luzdovale.reabilitah.backend.application.DTO.usuario.AlterarPerfilUsuario;
 import com.luzdovale.reabilitah.backend.application.DTO.usuario.UsuarioProfissionalResponse;
 import com.luzdovale.reabilitah.backend.application.DTO.usuario.AlterarStatusRequest;
 import com.luzdovale.reabilitah.backend.application.DTO.usuario.RedefinirSenhaDto;
@@ -41,7 +42,15 @@ public class UsuarioController {
 
     @PutMapping("/{id}/alterar-status")
     public ResponseEntity<Void> desativar(@PathVariable Long id, @RequestBody AlterarStatusRequest statusRequest, Authentication auth) {
+
         usuarioService.alterarStatus(id, statusRequest.ativo(), (Usuario) auth.getPrincipal());
+        return ResponseEntity.ok().build();
+    }
+
+    @PutMapping("/{id}/alterar-perfil")
+    public ResponseEntity<Void> alterarPerfil(@PathVariable Long id, @RequestBody AlterarPerfilUsuario perfilUsuario, Authentication auth) {
+
+        usuarioService.alterarPerfil(id, perfilUsuario.perfilId(), (Usuario) auth.getPrincipal());
         return ResponseEntity.ok().build();
     }
 

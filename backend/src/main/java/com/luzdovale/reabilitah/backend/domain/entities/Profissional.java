@@ -8,10 +8,10 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 
-@Entity
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@Entity
 public class Profissional {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -22,13 +22,13 @@ public class Profissional {
 
     private String telefone;
     private String regProfissional;
+
     @Embedded
     private CPF CPF;
-    private String enderecoRua;
-    private String enderecoNr;
-    private String enderecoBairro;
-    private String enderecoMunicipio;
-    private String enderecoEstado;
+
+    @Embedded
+    private Endereco endereco = new Endereco();
+
     private LocalDate dtNasc;
 
 }

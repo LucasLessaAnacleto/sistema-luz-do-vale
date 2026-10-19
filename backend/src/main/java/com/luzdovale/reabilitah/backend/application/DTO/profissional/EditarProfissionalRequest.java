@@ -1,5 +1,7 @@
 package com.luzdovale.reabilitah.backend.application.DTO.profissional;
 
+import com.luzdovale.reabilitah.backend.domain.entities.Endereco;
+
 import java.time.LocalDate;
 
 public record EditarProfissionalRequest(
@@ -9,10 +11,6 @@ public record EditarProfissionalRequest(
     String cpf,                 // adm
     LocalDate dtNasc,           // adm
 
-    String enderecoRua,
-    String enderecoNr,
-    String enderecoBairro,
-    String enderecoMunicipio,
-    String enderecoEstado
+    Endereco endereco
 ) implements ProfissionalDados {
 }
