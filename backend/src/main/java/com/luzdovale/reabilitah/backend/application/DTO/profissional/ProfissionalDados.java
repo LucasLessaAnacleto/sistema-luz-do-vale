@@ -1,5 +1,7 @@
 package com.luzdovale.reabilitah.backend.application.DTO.profissional;
 
+import com.luzdovale.reabilitah.backend.domain.entities.Endereco;
+
 import java.time.LocalDate;
 
 public interface ProfissionalDados {
@@ -8,9 +10,5 @@ public interface ProfissionalDados {
     String regProfissional();
     String cpf();
     LocalDate dtNasc();
-    String enderecoRua();
-    String enderecoNr();
-    String enderecoBairro();
-    String enderecoMunicipio();
-    String enderecoEstado();
+    Endereco endereco();
 }

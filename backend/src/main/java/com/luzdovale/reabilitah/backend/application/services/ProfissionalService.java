@@ -6,6 +6,7 @@ import com.luzdovale.reabilitah.backend.application.DTO.profissional.Profissiona
 import com.luzdovale.reabilitah.backend.application.DTO.usuario.UsuarioProfissionalResponse;
 import com.luzdovale.reabilitah.backend.application.exceptions.ProfissionalNaoEncontradoException;
 import com.luzdovale.reabilitah.backend.application.exceptions.UsuarioSemAutorizacao;
+import com.luzdovale.reabilitah.backend.domain.entities.Endereco;
 import com.luzdovale.reabilitah.backend.domain.entities.Perfil;
 import com.luzdovale.reabilitah.backend.domain.entities.Profissional;
 import com.luzdovale.reabilitah.backend.domain.entities.Usuario;
@@ -15,6 +16,9 @@ import com.luzdovale.reabilitah.backend.domain.valueobjects.CPF;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 public class ProfissionalService {
@@ -68,7 +72,7 @@ public class ProfissionalService {
         return salvar(
             profissional,
             profissionalDto,
-            usuario.getRole().equals(EnumRoleUsuario.ROLE_ADMIN)
+            usuario.isAdmin()
         );
     }
 
@@ -110,24 +114,24 @@ public class ProfissionalService {
         if (dados.telefone() != null) {
             profissional.setTelefone(dados.telefone());
         }
-        if (dados.enderecoEstado() != null) {
-            profissional.setEnderecoEstado(dados.enderecoEstado());
-        }
-
-        if (dados.enderecoMunicipio() != null) {
-            profissional.setEnderecoMunicipio(dados.enderecoMunicipio());
-        }
-
-        if (dados.enderecoBairro() != null) {
-            profissional.setEnderecoBairro(dados.enderecoBairro());
-        }
-
-        if (dados.enderecoRua() != null) {
-            profissional.setEnderecoRua(dados.enderecoRua());
-        }
-
-        if (dados.enderecoNr() != null) {
-            profissional.setEnderecoNr(dados.enderecoNr());
+        if (dados.endereco() != null) {
+            var endereco     = dados.endereco();
+            var profEndereco = profissional.getEndereco();
+            if(endereco.getEstado() != null){
+                profEndereco.setEstado(endereco.getEstado());
+            }
+            if(endereco.getMunicipio() != null){
+                profEndereco.setMunicipio(endereco.getMunicipio());
+            }
+            if(endereco.getBairro() != null){
+                profEndereco.setBairro(endereco.getBairro());
+            }
+            if(endereco.getRua() != null){
+                profEndereco.setRua(endereco.getRua());
+            }
+            if(endereco.getNumero() != null){
+                profEndereco.setNumero(endereco.getNumero());
+            }
         }
 
         if(permissaoAdm){
@@ -143,7 +147,25 @@ public class ProfissionalService {
                 profissional.setDtNasc(dados.dtNasc());
             }
         }
+        validarCampos(profissional);
         return profissionalRepository.save(profissional);
+    }
+
+    private void validarCampos(Profissional dado) {
+        List<String> camposInvalidos = new ArrayList<>();
+
+        if (dado.getNome() == null || dado.getNome().trim().length() < 3) {
+            camposInvalidos.add("nome");
+        }
+        if (dado.getCPF() == null) {
+            camposInvalidos.add("CPF");
+        }
+        if (dado.getDtNasc() == null) {
+            camposInvalidos.add("dtNasc");
+        }
+        if (!camposInvalidos.isEmpty()) {
+            throw new IllegalArgumentException("verifique os campos: " +String.join(", ", camposInvalidos));
+        }
     }
 
 }

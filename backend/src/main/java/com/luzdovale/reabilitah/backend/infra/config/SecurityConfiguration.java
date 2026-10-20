@@ -30,7 +30,8 @@ public class SecurityConfiguration {
                                 "/swagger-ui.html",
                                 "/webjars/**",
                                 "/swagger-resources/**",
-                                "/v3/api-docs/**"
+                                "/v3/api-docs/**",
+                                "/error"
                         ).permitAll()
                         .requestMatchers(HttpMethod.POST,"/profissionais").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.POST,"/profissionais/redefinir-senha").hasRole("ADMIN")

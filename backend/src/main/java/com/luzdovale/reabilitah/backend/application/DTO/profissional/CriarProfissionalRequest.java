@@ -1,5 +1,6 @@
 package com.luzdovale.reabilitah.backend.application.DTO.profissional;
 
+import com.luzdovale.reabilitah.backend.domain.entities.Endereco;
 import com.luzdovale.reabilitah.backend.domain.enuns.EnumRoleUsuario;
 
 import java.time.LocalDate;
@@ -11,11 +12,7 @@ public record CriarProfissionalRequest(
     String cpf,
     LocalDate dtNasc,
 
-    String enderecoRua,
-    String enderecoNr,
-    String enderecoBairro,
-    String enderecoMunicipio,
-    String enderecoEstado,
+    Endereco endereco,
 
     String email,
     String senha,
