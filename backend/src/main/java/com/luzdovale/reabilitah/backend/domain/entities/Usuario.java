@@ -1,5 +1,6 @@
 package com.luzdovale.reabilitah.backend.domain.entities;
 
+import com.luzdovale.reabilitah.backend.domain.valueobjects.Email;
 import com.luzdovale.reabilitah.backend.domain.enuns.EnumRoleUsuario;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -25,8 +26,8 @@ public class Usuario implements UserDetails {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(unique = true, nullable = false)
-    private String email;
+    @Embedded
+    private Email email;
 
     @Column(nullable = false)
     private String senha;
@@ -66,7 +67,7 @@ public class Usuario implements UserDetails {
     @Override
     @NonNull
     public String getUsername() {
-        return this.email;
+        return this.email.toString();
     }
 
     @Override

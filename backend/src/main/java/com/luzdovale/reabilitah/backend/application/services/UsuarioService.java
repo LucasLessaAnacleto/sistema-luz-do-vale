@@ -1,5 +1,6 @@
 package com.luzdovale.reabilitah.backend.application.services;
 
+import com.luzdovale.reabilitah.backend.domain.valueobjects.Email;
 import com.luzdovale.reabilitah.backend.application.DTO.usuario.UsuarioProfissionalResponse;
 import com.luzdovale.reabilitah.backend.application.exceptions.EmailJaCadastradoException;
 import com.luzdovale.reabilitah.backend.application.exceptions.UsuarioNaoEncontradoException;
@@ -39,7 +40,7 @@ public class UsuarioService {
             EnumRoleUsuario role
     ) {
 
-        if (usuarioRepository.existsByEmail(email)) {
+        if (usuarioRepository.existsByEmail_Email(email)) {
             throw new EmailJaCadastradoException(email);
         }
 
@@ -47,7 +48,7 @@ public class UsuarioService {
 
         usuario.setProfissional(profissional);
         usuario.setPerfil(perfil);
-        usuario.setEmail(email);
+        usuario.setEmail(new Email(email));
 
         usuario.setSenha(passwordEncoder.encode(senha));
 
@@ -73,12 +74,12 @@ public class UsuarioService {
     public Usuario buscarPorEmail(String email) {
 
         return usuarioRepository
-                .findByEmail(email)
+                .findByEmail_Email(email)
                 .orElseThrow(() -> new UsuarioNaoEncontradoException(email));
     }
 
     public boolean existeUsuarioComEmail(String email) {
-        return usuarioRepository.existsByEmail(email);
+        return usuarioRepository.existsByEmail_Email(email);
     }
 
     public void redefinirSenha(
@@ -156,7 +157,7 @@ public class UsuarioService {
                 profissional != null
                         ? profissional.getNome()
                         : "",
-                usuario.getEmail(),
+                usuario.getEmail().toString(),
                 profissional != null
                         ? profissional.getTelefone()
                         : "",

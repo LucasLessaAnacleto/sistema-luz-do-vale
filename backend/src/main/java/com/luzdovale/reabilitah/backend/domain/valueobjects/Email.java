@@ -1,10 +1,16 @@
 package com.luzdovale.reabilitah.backend.domain.valueobjects;
 
+import com.fasterxml.jackson.annotation.JsonValue;
+import jakarta.persistence.Column;
+import jakarta.persistence.Embeddable;
+
+@Embeddable
 public class Email {
 
+    @Column(unique = true, nullable = false)
     private String email;
 
-    public Email() {
+    protected Email() {
         this.email = "";
     }
 
@@ -20,6 +26,7 @@ public class Email {
         return email.matches("^[^\\s@]+@[^\\s@.]+(?:\\.[^\\s@.]+)+$");
     }
 
+    @JsonValue
     @Override
     public String toString() {
         return email;
