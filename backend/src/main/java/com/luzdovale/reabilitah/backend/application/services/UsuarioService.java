@@ -85,7 +85,7 @@ public class UsuarioService {
             EnumRoleUsuario role
     ) {
 
-        if (usuarioRepository.existsByEmail(email)) {
+        if (usuarioRepository.existsByEmail_Email(email)) {
             throw new EmailJaCadastradoException(email);
         }
 
@@ -93,7 +93,7 @@ public class UsuarioService {
 
         usuario.setProfissional(profissional);
         usuario.setPerfil(perfil);
-        usuario.setEmail(email);
+        usuario.setEmail(new Email(email));
 
         usuario.setSenha(passwordEncoder.encode(senha));
 
