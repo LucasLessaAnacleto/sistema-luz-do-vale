@@ -1,8 +1,8 @@
 package com.luzdovale.reabilitah.backend.presentation.controllers;
 
-import com.luzdovale.reabilitah.backend.application.DTO.usuario.AlterarPerfilUsuario;
-import com.luzdovale.reabilitah.backend.application.DTO.usuario.UsuarioProfissionalResponse;
-import com.luzdovale.reabilitah.backend.application.DTO.usuario.AlterarStatusRequest;
+import com.luzdovale.reabilitah.backend.application.DTO.usuario.CriarUsuarioRequest;
+import com.luzdovale.reabilitah.backend.application.DTO.usuario.EditarUsuarioRequest;
+import com.luzdovale.reabilitah.backend.application.DTO.usuario.UsuarioResponse;
 import com.luzdovale.reabilitah.backend.application.DTO.usuario.RedefinirSenhaDto;
 import com.luzdovale.reabilitah.backend.application.services.UsuarioService;
 import com.luzdovale.reabilitah.backend.domain.entities.Usuario;
@@ -22,41 +22,60 @@ public class UsuarioController {
     private UsuarioService usuarioService;
 
     @GetMapping
-    public ResponseEntity<List<UsuarioProfissionalResponse>> listarTodos(Authentication auth){
+    public ResponseEntity<List<UsuarioResponse>> listarTodos(Authentication auth){
         var usuarioLogado = (Usuario) auth.getPrincipal();
+
         return ResponseEntity.ok(
-            usuarioService.listarComDadosProfissional(usuarioLogado)
+                usuarioService.listarComDadosProfissional(usuarioLogado)
         );
     }
 
-    @PostMapping("/{id}/redefinir-senha")
+    @GetMapping("/{id}")
+    public ResponseEntity<UsuarioResponse> buscarPorId(
+            @PathVariable Long id,
+            Authentication auth
+    ){
+        var usuarioLogado = (Usuario) auth.getPrincipal();
+
+        return ResponseEntity.ok(
+                usuarioService.buscarComDadosProfissional(id, usuarioLogado)
+        );
+    }
+
+    @PostMapping
+    public ResponseEntity<UsuarioResponse> criar( @RequestBody CriarUsuarioRequest usuarioDto ){
+        return ResponseEntity.ok(
+                usuarioService.criar(usuarioDto)
+        );
+    }
+
+    @PatchMapping("/{id}")
+    public ResponseEntity<UsuarioResponse> editar(
+            @PathVariable Long id,
+            @RequestBody EditarUsuarioRequest usuarioDto,
+            Authentication auth
+    ){
+        var usuarioLogado = (Usuario) auth.getPrincipal();
+
+        return ResponseEntity.ok(
+                usuarioService.alterar(id, usuarioDto, usuarioLogado)
+        );
+    }
+
+    @PatchMapping("/{id}/senha")
     public ResponseEntity<Void> redefinirSenha(
-            @PathVariable Long  id,
+            @PathVariable Long id,
             @RequestBody RedefinirSenhaDto dto,
             Authentication auth
     ){
         var usuarioLogado = (Usuario) auth.getPrincipal();
-        usuarioService.redefinirSenha(id, dto.senha(), usuarioLogado);
-        return ResponseEntity.ok().build();
-    }
-
-    @PutMapping("/{id}/alterar-status")
-    public ResponseEntity<Void> desativar(@PathVariable Long id, @RequestBody AlterarStatusRequest statusRequest, Authentication auth) {
-
-        usuarioService.alterarStatus(id, statusRequest.ativo(), (Usuario) auth.getPrincipal());
-        return ResponseEntity.ok().build();
-    }
-
-    @PutMapping("/{id}/alterar-perfil")
-    public ResponseEntity<Void> alterarPerfil(@PathVariable Long id, @RequestBody AlterarPerfilUsuario perfilUsuario, Authentication auth) {
-
-        usuarioService.alterarPerfil(id, perfilUsuario.perfilId(), (Usuario) auth.getPrincipal());
+        usuarioService.redefinirSenha( id, dto.senha(), usuarioLogado );
         return ResponseEntity.ok().build();
     }
 
     @GetMapping("/usuariologado")
     @Operation(summary = "Consulta usuario logado",description = "busca usuario da sessão")
-    public ResponseEntity<UsuarioProfissionalResponse> getUsuarioLogado(){
+    public ResponseEntity<UsuarioResponse> getUsuarioLogado(){
 
         return ResponseEntity.ok(usuarioService.getUsuarioLogado());
     }

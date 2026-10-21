@@ -6,8 +6,6 @@ import com.luzdovale.reabilitah.backend.domain.repository.PerfilRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.Optional;
 
 @Service
 public class PerfilService {

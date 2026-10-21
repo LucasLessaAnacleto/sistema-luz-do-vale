@@ -33,8 +33,8 @@ public class SecurityConfiguration {
                                 "/v3/api-docs/**",
                                 "/error"
                         ).permitAll()
-                        .requestMatchers(HttpMethod.POST,"/profissionais").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.POST,"/profissionais/redefinir-senha").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.POST,"/usuarios").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.PATCH,"/usuarios/*/senha").hasRole("ADMIN")
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
