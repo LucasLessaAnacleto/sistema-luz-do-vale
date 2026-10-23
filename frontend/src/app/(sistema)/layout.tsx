@@ -4,19 +4,31 @@ import { useEffect, type ReactNode } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { useAppSelector } from "@/app/redux/hook";
 import SessionStatus from "@/app/components/SessionStatus";
+import Header from "@/app/components/Header";
 import BottomNavigation from "@/app/components/BottomNavigation";
 
-export default function SistemaLayout({ children }: { children: ReactNode }) {
+export default function SistemaLayout({
+  children,
+}: {
+  children: ReactNode;
+}) {
   const status = useAppSelector((state) => state.auth.status);
   const router = useRouter();
   const pathname = usePathname();
 
   useEffect(() => {
-    if (status === "naoAutenticado") router.replace("/login");
+    if (status === "naoAutenticado") {
+      router.replace("/login");
+    }
   }, [status, router]);
-  if (status !== "autenticado")
+
+  if (status !== "autenticado") {
     return <SessionStatus />;
-  if (pathname === "/landing") return children;
+  }
+
+  if (pathname === "/landing") {
+    return children;
+  }
 
   return (
     <div className="min-h-svh pb-[calc(104px+env(safe-area-inset-bottom))]">
@@ -26,9 +38,13 @@ export default function SistemaLayout({ children }: { children: ReactNode }) {
       >
         Ir para o conteúdo
       </a>
+
+      <Header />
+
       <main id="conteudo" tabIndex={-1}>
         {children}
       </main>
+
       <BottomNavigation />
     </div>
   );
