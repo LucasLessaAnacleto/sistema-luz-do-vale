@@ -1,6 +1,8 @@
 package com.luzdovale.reabilitah.backend.application.services;
 
 import com.luzdovale.reabilitah.backend.application.DTO.paciente.PacienteRequest;
+import com.luzdovale.reabilitah.backend.application.DTO.paciente.PacienteResponse;
+import com.luzdovale.reabilitah.backend.application.DTO.responsavel.ResponsavelResponse;
 import com.luzdovale.reabilitah.backend.application.exceptions.UsuarioSemAutorizacao;
 import com.luzdovale.reabilitah.backend.domain.entities.Paciente;
 import com.luzdovale.reabilitah.backend.domain.entities.Responsavel;
@@ -23,9 +25,9 @@ public class PacienteService {
     private ResponsavelService responsavelService;
 
     @Transactional
-    public Paciente criar(PacienteRequest dto, Usuario usuarioLogado) {
+    public PacienteResponse criar(PacienteRequest dto, Usuario usuarioLogado) {
         if(!usuarioLogado.isAdmin() && (
-                usuarioLogado.getPerfil() == null || usuarioLogado.getPerfil().isPermCadPaciente()
+                usuarioLogado.getPerfil() == null || !usuarioLogado.getPerfil().isPermCadPaciente()
         )){
             throw new UsuarioSemAutorizacao();
         }
@@ -44,7 +46,36 @@ public class PacienteService {
 
     }
 
-    private Paciente mapeiaParaDTO(Paciente paciente, Responsavel responsavel) {
+    private PacienteResponse mapeiaParaDTO(Paciente paciente, Responsavel responsavel) {
+        var responsavelResponse = new ResponsavelResponse(
+            responsavel.getId(),
+            responsavel.getNome(),
+            responsavel.getParentesco(),
+            responsavel.getCpf() != null
+                    ? responsavel.getCpf().toString()
+                    : "",
+            responsavel.getRg(),
+            responsavel.getTelefone(),
+            responsavel.getEndereco(),
+            responsavel.getDtNasc()
+        );
+
+        return new PacienteResponse(
+            paciente.getId(),
+            paciente.getNome(),
+            paciente.getApelido(),
+            paciente.getCpf() != null
+                    ? paciente.getCpf().toString()
+                    : "",
+            paciente.getRg(),
+            paciente.getTelefone(),
+            paciente.getEndereco(),
+            paciente.getDtNasc(),
+            paciente.isAtivo(),
+            paciente.getDtCriacao(),
+            paciente.getDtDesativado(),
+            responsavelResponse
+        );
     }
 
     private Paciente salvar(Paciente paciente, PacienteRequest dados){

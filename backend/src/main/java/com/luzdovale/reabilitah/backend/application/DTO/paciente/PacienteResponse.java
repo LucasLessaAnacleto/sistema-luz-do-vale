@@ -1,10 +1,10 @@
 package com.luzdovale.reabilitah.backend.application.DTO.paciente;
 
-import com.luzdovale.reabilitah.backend.application.DTO.responsavel.ResponsavelRequest;
 import com.luzdovale.reabilitah.backend.application.DTO.responsavel.ResponsavelResponse;
 import com.luzdovale.reabilitah.backend.domain.entities.Endereco;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 public record PacienteResponse(
         Long id,
@@ -16,6 +16,8 @@ public record PacienteResponse(
         Endereco endereco,
         LocalDate dtNasc,
         boolean ativo,
+        LocalDateTime dtCriacao,
+        LocalDateTime dtDesativado,
 
         ResponsavelResponse responsavel
 ) {

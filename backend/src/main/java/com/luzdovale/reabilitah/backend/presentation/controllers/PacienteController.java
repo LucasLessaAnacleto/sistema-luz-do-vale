@@ -1,6 +1,7 @@
 package com.luzdovale.reabilitah.backend.presentation.controllers;
 
 import com.luzdovale.reabilitah.backend.application.DTO.paciente.PacienteRequest;
+import com.luzdovale.reabilitah.backend.application.DTO.paciente.PacienteResponse;
 import com.luzdovale.reabilitah.backend.application.services.PacienteService;
 import com.luzdovale.reabilitah.backend.domain.entities.Paciente;
 import com.luzdovale.reabilitah.backend.domain.entities.Usuario;
@@ -27,7 +28,7 @@ public class PacienteController {
     }
 
     @PostMapping
-    public ResponseEntity<Paciente> criar(@RequestBody PacienteRequest dto, Authentication auth) {
+    public ResponseEntity<PacienteResponse> criar(@RequestBody PacienteRequest dto, Authentication auth) {
         return ResponseEntity.ok(
             pacienteService.criar(dto, (Usuario) auth.getPrincipal())
         );

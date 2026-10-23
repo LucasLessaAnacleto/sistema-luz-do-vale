@@ -22,8 +22,8 @@ public class ResponsavelService {
         responsavel.setPaciente(paciente);
 
         return salvar(
-                responsavel,
-                dto
+            responsavel,
+            dto
         );
     }
 

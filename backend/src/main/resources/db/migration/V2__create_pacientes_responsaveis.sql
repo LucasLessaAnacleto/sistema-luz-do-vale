@@ -30,7 +30,6 @@ CREATE TABLE responsavel (
     endereco_municipio VARCHAR(255),
     endereco_estado VARCHAR(255),
     dt_nasc DATE,
-    dt_criacao TIMESTAMP,
 
     CONSTRAINT fk_responsavel_paciente FOREIGN KEY (paciente_id) REFERENCES paciente(id)
 );
