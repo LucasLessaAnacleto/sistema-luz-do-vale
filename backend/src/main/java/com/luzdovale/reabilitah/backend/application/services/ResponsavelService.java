@@ -85,4 +85,8 @@ public class ResponsavelService {
 
         return responsavelRepository.save(responsavel);
     }
+
+    public Responsavel buscarComPaciente(Paciente paciente) {
+        return responsavelRepository.findByPaciente(paciente);
+    }
 }

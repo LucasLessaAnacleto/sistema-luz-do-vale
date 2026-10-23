@@ -3,6 +3,7 @@ package com.luzdovale.reabilitah.backend.application.services;
 import com.luzdovale.reabilitah.backend.application.DTO.paciente.PacienteRequest;
 import com.luzdovale.reabilitah.backend.application.DTO.paciente.PacienteResponse;
 import com.luzdovale.reabilitah.backend.application.DTO.responsavel.ResponsavelResponse;
+import com.luzdovale.reabilitah.backend.application.exceptions.PacienteNaoEncontradoException;
 import com.luzdovale.reabilitah.backend.application.exceptions.UsuarioSemAutorizacao;
 import com.luzdovale.reabilitah.backend.domain.entities.Paciente;
 import com.luzdovale.reabilitah.backend.domain.entities.Responsavel;
@@ -23,6 +24,25 @@ public class PacienteService {
     private PacienteRepository pacienteRepository;
     @Autowired
     private ResponsavelService responsavelService;
+
+    public List<PacienteResponse> listarTodos(Boolean ativo) {
+        return pacienteRepository.findAll()
+            .stream()
+            .filter(paciente ->
+                    ativo == null || paciente.isAtivo() == ativo
+            )
+            .map(paciente -> {
+                var responsavel = responsavelService.buscarComPaciente(paciente);
+                return mapeiaParaDTO(paciente, responsavel);
+            })
+            .toList();
+    }
+
+    public PacienteResponse buscar(Long id) {
+        var paciente    = pacienteRepository.findById(id).orElseThrow(PacienteNaoEncontradoException::new);
+        var responsavel = responsavelService.buscarComPaciente(paciente);
+        return mapeiaParaDTO(paciente,responsavel);
+    }
 
     @Transactional
     public PacienteResponse criar(PacienteRequest dto, Usuario usuarioLogado) {
@@ -144,12 +164,4 @@ public class PacienteService {
         }
     }
 
-    public List<Paciente> listarTodos(Boolean ativo) {
-        return pacienteRepository.findAll()
-                .stream()
-                .filter(paciente ->
-                        ativo == null || paciente.isAtivo() == ativo
-                )
-                .toList();
-    }
 }
