@@ -18,6 +18,6 @@ public class Perfil {
     @Column(nullable = false)
     private String nome;
 
-    private Boolean permCadPaciente = false;
+    private boolean permCadPaciente = false;
 
 }

@@ -234,3 +234,44 @@ POST /auth/login
   "senha": "654321"
 }
 ```
+
+---
+
+POST /pacientes
+```
+{
+  "nome": "Joao da Silva",
+  "apelido": "Joao",
+  "cpf": "11144477735",
+  "rg": "123456789",
+  "telefone": "48999998888",
+  "endereco": {
+    "rua": "Rua das Palmeiras",
+    "numero": "150",
+    "bairro": "Centro",
+    "municipio": "Criciuma",
+    "estado": "SC"
+  },
+  "dtNasc": "1990-08-15",
+
+  "responsavel": {
+    "nome": "Maria da Silva",
+    "parentesco": "Mae",
+    "cpf": "52998224725",
+    "rg": "987654321",
+    "telefone": "48999997777",
+    "endereco": {
+      "rua": "Rua das Palmeiras",
+      "numero": "150",
+      "bairro": "Centro",
+      "municipio": "Criciuma",
+      "estado": "SC"
+    },
+    "dtNasc": "1965-04-10"
+  }
+}
+```
+
+---
+
+

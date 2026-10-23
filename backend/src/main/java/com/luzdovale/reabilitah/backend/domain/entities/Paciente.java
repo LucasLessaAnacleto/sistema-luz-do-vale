@@ -34,7 +34,7 @@ public class Paciente {
 
     private LocalDate dtNasc;
 
-    boolean ativo = true;
+    private boolean ativo = true;
     private LocalDateTime dtCriacao = LocalDateTime.now();
     private LocalDateTime dtDesativado;
 }

@@ -34,12 +34,15 @@ public class UsuarioService {
     private ProfissionalService profissionalService;
 
 
-    public List<UsuarioResponse> listarComDadosProfissional(Usuario usuarioLogado) {
+    public List<UsuarioResponse> listarComDadosProfissional(Usuario usuarioLogado, Boolean ativo) {
 
         if(!usuarioLogado.isAdmin()){
             throw new UsuarioSemAutorizacao();
         }
         return usuarioRepository.findAll().stream()
+                .filter(usuario ->
+                        ativo == null || usuario.isAtivo() == ativo
+                )
                 .map(this::mapeiaParaDTO)
                 .toList();
     }
@@ -85,7 +88,7 @@ public class UsuarioService {
             EnumRoleUsuario role
     ) {
 
-        if (usuarioRepository.existsByEmail_Email(email)) {
+        if (usuarioRepository.existsByEmail(email)) {
             throw new EmailJaCadastradoException(email);
         }
 
@@ -93,7 +96,7 @@ public class UsuarioService {
 
         usuario.setProfissional(profissional);
         usuario.setPerfil(perfil);
-        usuario.setEmail(new Email(email));
+        usuario.setEmail(email);
 
         usuario.setSenha(passwordEncoder.encode(senha));
 
@@ -238,7 +241,7 @@ public class UsuarioService {
             usuario.getPerfil() != null
                     ? usuario.getPerfil().getNome()
                     : "",
-            usuario.getAtivo(),
+            usuario.isAtivo(),
             usuario.getDtCriacao(),
             usuario.getDtDesativado()
         );

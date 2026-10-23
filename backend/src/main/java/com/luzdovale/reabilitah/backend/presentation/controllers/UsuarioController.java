@@ -22,11 +22,11 @@ public class UsuarioController {
     private UsuarioService usuarioService;
 
     @GetMapping
-    public ResponseEntity<List<UsuarioResponse>> listarTodos(Authentication auth){
+    public ResponseEntity<List<UsuarioResponse>> listarTodos(@RequestParam(required = false) Boolean ativo, Authentication auth){
         var usuarioLogado = (Usuario) auth.getPrincipal();
 
         return ResponseEntity.ok(
-                usuarioService.listarComDadosProfissional(usuarioLogado)
+                usuarioService.listarComDadosProfissional(usuarioLogado, ativo)
         );
     }
 

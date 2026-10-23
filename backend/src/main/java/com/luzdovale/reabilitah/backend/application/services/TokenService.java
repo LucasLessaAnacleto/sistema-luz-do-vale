@@ -49,7 +49,7 @@ public class TokenService {
                 .orElseThrow(() -> new RuntimeException("Token não encontrado"));
 
         var usuario = tokenBanco.getUsuario();
-        if(!Boolean.TRUE.equals(usuario.getAtivo())){
+        if(!usuario.isAtivo()){
             throw new RuntimeException("Usuário desativado");
         }
         return usuario;

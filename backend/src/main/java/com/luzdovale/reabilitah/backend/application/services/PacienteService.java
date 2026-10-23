@@ -3,9 +3,11 @@ package com.luzdovale.reabilitah.backend.application.services;
 import com.luzdovale.reabilitah.backend.application.DTO.paciente.PacienteRequest;
 import com.luzdovale.reabilitah.backend.application.exceptions.UsuarioSemAutorizacao;
 import com.luzdovale.reabilitah.backend.domain.entities.Paciente;
+import com.luzdovale.reabilitah.backend.domain.entities.Responsavel;
 import com.luzdovale.reabilitah.backend.domain.entities.Usuario;
 import com.luzdovale.reabilitah.backend.domain.repository.PacienteRepository;
 import com.luzdovale.reabilitah.backend.domain.valueobjects.CPF;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -17,14 +19,32 @@ public class PacienteService {
 
     @Autowired
     private PacienteRepository pacienteRepository;
+    @Autowired
+    private ResponsavelService responsavelService;
 
+    @Transactional
     public Paciente criar(PacienteRequest dto, Usuario usuarioLogado) {
         if(!usuarioLogado.isAdmin() && (
-                usuarioLogado.getPerfil() == null || Boolean.FALSE.equals(usuarioLogado.getPerfil().getPermCadPaciente())
+                usuarioLogado.getPerfil() == null || usuarioLogado.getPerfil().isPermCadPaciente()
         )){
             throw new UsuarioSemAutorizacao();
         }
-        return salvar(new Paciente(), dto);
+
+        if(dto.responsavel() == null){
+            throw new IllegalArgumentException("verifique os campos: responsavel");
+        }
+        var paciente = salvar(new Paciente(), dto);
+
+        var responsavel = responsavelService.criar(
+                paciente,
+                dto.responsavel()
+        );
+
+        return mapeiaParaDTO(paciente, responsavel);
+
+    }
+
+    private Paciente mapeiaParaDTO(Paciente paciente, Responsavel responsavel) {
     }
 
     private Paciente salvar(Paciente paciente, PacienteRequest dados){

@@ -1,5 +1,6 @@
 package com.luzdovale.reabilitah.backend.application.DTO.paciente;
 
+import com.luzdovale.reabilitah.backend.application.DTO.responsavel.ResponsavelRequest;
 import com.luzdovale.reabilitah.backend.domain.entities.Endereco;
 
 import java.time.LocalDate;
@@ -11,6 +12,8 @@ public record PacienteRequest(
         String rg,
         String telefone,
         Endereco endereco,
-        LocalDate dtNasc
+        LocalDate dtNasc,
+
+        ResponsavelRequest responsavel
 ) {
 }

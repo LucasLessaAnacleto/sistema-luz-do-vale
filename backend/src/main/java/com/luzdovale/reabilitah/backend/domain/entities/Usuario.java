@@ -26,9 +26,7 @@ public class Usuario implements UserDetails {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(unique = true, nullable = false)
-    @Embedded
-    private Email email;
+    private String email;
 
     @Column(nullable = false)
     private String senha;
@@ -44,7 +42,7 @@ public class Usuario implements UserDetails {
     @Enumerated(EnumType.STRING)
     private EnumRoleUsuario role = EnumRoleUsuario.ROLE_USER;
 
-    private Boolean ativo = true;
+    private boolean ativo = true;
 
     private LocalDateTime dtDesativado;
 
