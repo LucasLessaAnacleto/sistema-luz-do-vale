@@ -9,7 +9,8 @@ interface MonthlyDocumentsProps {
 }
 
 const monthFormat = new Intl.DateTimeFormat("pt-BR", { month: "short", year: "numeric", timeZone: "UTC" });
-const buttonClass = "flex h-11 w-11 cursor-pointer items-center justify-center rounded-lg transition-colors hover:bg-white/10 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white";
+const buttonClass =
+  "flex h-11 w-11 cursor-pointer items-center justify-center rounded-lg transition-colors hover:bg-primary/10 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary";
 
 export default function MonthlyDocuments({ initialMonth, counts }: MonthlyDocumentsProps) {
   const [month, setMonth] = useState(initialMonth);
@@ -23,7 +24,7 @@ export default function MonthlyDocuments({ initialMonth, counts }: MonthlyDocume
   }
 
   return (
-    <div className="mt-2 flex flex-wrap items-center justify-between gap-x-4 gap-y-1 rounded-xl border border-white/15 bg-white/10 px-3 py-2 lg:mt-4">
+    <div className="mt-2 flex flex-wrap items-center justify-between gap-x-4 gap-y-1 rounded-xl border border-border bg-primary/5 px-3 py-2 text-primary-dark lg:mt-4">
       <p className="flex items-center gap-2 text-xs">
         <TrendingUp className="h-4 w-4" aria-hidden="true" />
         Documentos no mês
