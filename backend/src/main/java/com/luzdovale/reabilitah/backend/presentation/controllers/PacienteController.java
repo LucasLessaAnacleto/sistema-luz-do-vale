@@ -20,10 +20,17 @@ public class PacienteController {
     private PacienteService pacienteService;
 
     @GetMapping
-    public ResponseEntity<List<Paciente>> listar(@RequestParam(required = false) Boolean ativo) {
+    public ResponseEntity<List<PacienteResponse>> listar(@RequestParam(required = false) Boolean ativo) {
 
         return ResponseEntity.ok(
-                pacienteService.listarTodos(ativo)
+            pacienteService.listarTodos(ativo)
+        );
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<PacienteResponse> buscar(@PathVariable Long id) {
+        return ResponseEntity.ok(
+            pacienteService.buscar(id)
         );
     }
 
@@ -31,6 +38,13 @@ public class PacienteController {
     public ResponseEntity<PacienteResponse> criar(@RequestBody PacienteRequest dto, Authentication auth) {
         return ResponseEntity.ok(
             pacienteService.criar(dto, (Usuario) auth.getPrincipal())
+        );
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<PacienteResponse> editar(@PathVariable Long id, @RequestBody PacienteRequest dto, Authentication auth) {
+        return ResponseEntity.ok(
+            pacienteService.editar(id, dto, (Usuario) auth.getPrincipal())
         );
     }
 }

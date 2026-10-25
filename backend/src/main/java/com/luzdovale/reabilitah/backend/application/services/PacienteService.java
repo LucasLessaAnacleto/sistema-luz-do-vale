@@ -32,7 +32,7 @@ public class PacienteService {
                     ativo == null || paciente.isAtivo() == ativo
             )
             .map(paciente -> {
-                var responsavel = responsavelService.buscarComPaciente(paciente);
+                var responsavel = responsavelService.buscarPorPaciente(paciente);
                 return mapeiaParaDTO(paciente, responsavel);
             })
             .toList();
@@ -40,7 +40,7 @@ public class PacienteService {
 
     public PacienteResponse buscar(Long id) {
         var paciente    = pacienteRepository.findById(id).orElseThrow(PacienteNaoEncontradoException::new);
-        var responsavel = responsavelService.buscarComPaciente(paciente);
+        var responsavel = responsavelService.buscarPorPaciente(paciente);
         return mapeiaParaDTO(paciente,responsavel);
     }
 
@@ -56,91 +56,43 @@ public class PacienteService {
             throw new IllegalArgumentException("verifique os campos: responsavel");
         }
         var paciente = salvar(new Paciente(), dto);
+        var responsavel = responsavelService.criar(paciente, dto.responsavel());
 
-        var responsavel = responsavelService.criar(
+        return mapeiaParaDTO(paciente, responsavel);
+    }
+
+    public PacienteResponse editar(Long id, PacienteRequest dto, Usuario usuarioLogado) {
+        if(!usuarioLogado.isAdmin() && (
+                usuarioLogado.getPerfil() == null || !usuarioLogado.getPerfil().isPermCadPaciente()
+        )){
+            throw new UsuarioSemAutorizacao();
+        }
+
+        var paciente = pacienteRepository
+                .findById(id)
+                .orElseThrow(() -> new PacienteNaoEncontradoException(id));
+
+        if(dto.responsavel() == null){
+            throw new IllegalArgumentException("verifique os campos: responsavel");
+        }
+
+        paciente = salvar(paciente, dto);
+        var responsavel = responsavelService.editar(
                 paciente,
                 dto.responsavel()
         );
 
         return mapeiaParaDTO(paciente, responsavel);
-
-    }
-
-    private PacienteResponse mapeiaParaDTO(Paciente paciente, Responsavel responsavel) {
-        var responsavelResponse = new ResponsavelResponse(
-            responsavel.getId(),
-            responsavel.getNome(),
-            responsavel.getParentesco(),
-            responsavel.getCpf() != null
-                    ? responsavel.getCpf().toString()
-                    : "",
-            responsavel.getRg(),
-            responsavel.getTelefone(),
-            responsavel.getEndereco(),
-            responsavel.getDtNasc()
-        );
-
-        return new PacienteResponse(
-            paciente.getId(),
-            paciente.getNome(),
-            paciente.getApelido(),
-            paciente.getCpf() != null
-                    ? paciente.getCpf().toString()
-                    : "",
-            paciente.getRg(),
-            paciente.getTelefone(),
-            paciente.getEndereco(),
-            paciente.getDtNasc(),
-            paciente.isAtivo(),
-            paciente.getDtCriacao(),
-            paciente.getDtDesativado(),
-            responsavelResponse
-        );
     }
 
     private Paciente salvar(Paciente paciente, PacienteRequest dados){
-
-        if (dados.nome() != null) {
-            paciente.setNome(dados.nome());
-        }
-        if (dados.apelido() != null) {
-            paciente.setApelido(dados.apelido());
-        }
-        if (dados.telefone() != null) {
-            paciente.setTelefone(dados.telefone());
-        }
-        if (dados.endereco() != null) {
-            var endereco         = dados.endereco();
-            var pacienteEndereco = paciente.getEndereco();
-
-            if(endereco.getEstado() != null){
-                pacienteEndereco.setEstado(endereco.getEstado());
-            }
-            if(endereco.getMunicipio() != null){
-                pacienteEndereco.setMunicipio(endereco.getMunicipio());
-            }
-            if(endereco.getBairro() != null){
-                pacienteEndereco.setBairro(endereco.getBairro());
-            }
-            if(endereco.getRua() != null){
-                pacienteEndereco.setRua(endereco.getRua());
-            }
-            if(endereco.getNumero() != null){
-                pacienteEndereco.setNumero(endereco.getNumero());
-            }
-        }
-
-        if (dados.cpf() != null) {
-            paciente.setCpf(new CPF(dados.cpf()));
-        }
-
-        if (dados.rg() != null) {
-            paciente.setRg(dados.rg());
-        }
-
-        if (dados.dtNasc() != null) {
-            paciente.setDtNasc(dados.dtNasc());
-        }
+        paciente.setNome(dados.nome());
+        paciente.setApelido(dados.apelido());
+        paciente.setTelefone(dados.telefone());
+        paciente.setEndereco(dados.endereco());
+        paciente.setCpf(new CPF(dados.cpf()));
+        paciente.setRg(dados.rg());
+        paciente.setDtNasc(dados.dtNasc());
 
         validarCampos(paciente);
         return pacienteRepository.save(paciente);
@@ -162,6 +114,38 @@ public class PacienteService {
         if (!camposInvalidos.isEmpty()) {
             throw new IllegalArgumentException("verifique os campos: " +String.join(", ", camposInvalidos));
         }
+    }
+
+    private PacienteResponse mapeiaParaDTO(Paciente paciente, Responsavel responsavel) {
+        var responsavelResponse = new ResponsavelResponse(
+                responsavel.getId(),
+                responsavel.getNome(),
+                responsavel.getParentesco(),
+                responsavel.getCpf() != null
+                        ? responsavel.getCpf().toString()
+                        : "",
+                responsavel.getRg(),
+                responsavel.getTelefone(),
+                responsavel.getEndereco(),
+                responsavel.getDtNasc()
+        );
+
+        return new PacienteResponse(
+                paciente.getId(),
+                paciente.getNome(),
+                paciente.getApelido(),
+                paciente.getCpf() != null
+                        ? paciente.getCpf().toString()
+                        : "",
+                paciente.getRg(),
+                paciente.getTelefone(),
+                paciente.getEndereco(),
+                paciente.getDtNasc(),
+                paciente.isAtivo(),
+                paciente.getDtCriacao(),
+                paciente.getDtDesativado(),
+                responsavelResponse
+        );
     }
 
 }

@@ -27,66 +27,32 @@ public class ResponsavelService {
         );
     }
 
-    private Responsavel salvar(
-            Responsavel responsavel,
-            ResponsavelRequest dados
-    ){
+    public Responsavel editar(Paciente paciente, ResponsavelRequest dto){
 
-        if(dados.nome() != null){
-            responsavel.setNome(dados.nome());
-        }
+        var responsavel = buscarPorPaciente(paciente);
+        return salvar(responsavel, dto);
+    }
 
-        if(dados.parentesco() != null){
-            responsavel.setParentesco(dados.parentesco());
-        }
+    private Responsavel salvar(Responsavel responsavel, ResponsavelRequest dados){
 
-        if(dados.telefone() != null){
-            responsavel.setTelefone(dados.telefone());
-        }
+        responsavel.setNome(dados.nome());
+        responsavel.setParentesco(dados.parentesco());
+        responsavel.setTelefone(dados.telefone());
+        responsavel.setEndereco(dados.endereco());
 
-        if(dados.endereco() != null){
-            var endereco            = dados.endereco();
-            var responsavelEndereco = responsavel.getEndereco();
+        responsavel.setCpf(
+                dados.cpf() != null
+                    ? new CPF(dados.cpf())
+                    : null
+        );
 
-            if(endereco.getEstado() != null){
-                responsavelEndereco.setEstado(endereco.getEstado());
-            }
-
-            if(endereco.getMunicipio() != null){
-                responsavelEndereco.setMunicipio(endereco.getMunicipio());
-            }
-
-            if(endereco.getBairro() != null){
-                responsavelEndereco.setBairro(endereco.getBairro());
-            }
-
-            if(endereco.getRua() != null){
-                responsavelEndereco.setRua(endereco.getRua());
-            }
-
-            if(endereco.getNumero() != null){
-                responsavelEndereco.setNumero(endereco.getNumero());
-            }
-        }
-
-        if(dados.cpf() != null){
-            responsavel.setCpf(
-                    new CPF(dados.cpf())
-            );
-        }
-
-        if(dados.rg() != null){
-            responsavel.setRg(dados.rg());
-        }
-
-        if(dados.dtNasc() != null){
-            responsavel.setDtNasc(dados.dtNasc());
-        }
+        responsavel.setRg(dados.rg());
+        responsavel.setDtNasc(dados.dtNasc());
 
         return responsavelRepository.save(responsavel);
     }
 
-    public Responsavel buscarComPaciente(Paciente paciente) {
+    public Responsavel buscarPorPaciente(Paciente paciente) {
         return responsavelRepository.findByPaciente(paciente);
     }
 }
