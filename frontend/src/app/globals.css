@@ -7,6 +7,7 @@
   --primary: #6e7f4f;
   --primary-dark: #56663c;
   --secondary: #a8b98a;
+  --accent: #dde8c8;
   --card: #ffffff;
   --warning: #b87508;
   --muted-foreground: #6b7280;
@@ -21,6 +22,7 @@
   --color-primary: var(--primary);
   --color-primary-dark: var(--primary-dark);
   --color-secondary: var(--secondary);
+  --color-accent: var(--accent);
   --color-card: var(--card);
   --color-warning: var(--warning);
   --color-muted-foreground: var(--muted-foreground);
