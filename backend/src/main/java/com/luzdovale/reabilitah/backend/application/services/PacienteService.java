@@ -61,6 +61,7 @@ public class PacienteService {
         return mapeiaParaDTO(paciente, responsavel);
     }
 
+    @Transactional
     public PacienteResponse editar(Long id, PacienteRequest dto, Usuario usuarioLogado) {
         if(!usuarioLogado.isAdmin() && (
                 usuarioLogado.getPerfil() == null || !usuarioLogado.getPerfil().isPermCadPaciente()
