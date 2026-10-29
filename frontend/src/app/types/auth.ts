@@ -10,6 +10,10 @@ export interface LoginResponse {
   token: string;
 }
 
+export interface LoginApiResponse {
+  token: string;
+}
+
 export interface AuthState {
   usuario: Usuario | null;
   token: string;
