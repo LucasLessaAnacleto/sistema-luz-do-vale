@@ -12,4 +12,5 @@ export interface LoginRequest{
 export interface AuthState {
     usuario: Usuario | null; 
     token: string;
+    status: "verificando" | "autenticado" | "naoAutenticado";
 }
