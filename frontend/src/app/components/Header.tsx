@@ -9,7 +9,7 @@ export default function Header() {
   const dispatch = useAppDispatch();
 
   return (
-    <header className="sticky top-0 z-30 border-b border-white/10 bg-primary text-white shadow-[0_3px_8px_rgba(0,0,0,0.15)]">
+    <header className="relative z-30 shrink-0 border-b border-white/10 bg-primary text-white shadow-[0_3px_8px_rgba(0,0,0,0.15)]">
       <div className="mx-auto flex min-h-16 max-w-6xl items-center justify-between gap-3 px-5 sm:px-8">
         <div className="flex items-center gap-3">
           <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-white/10">

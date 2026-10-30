@@ -1,53 +1,22 @@
-type UsuarioProps = {
-  id?: number | null;
+import { EnderecoUsuario } from "./endereco";
+
+export interface Usuario {
+  id: number;
+  profissionalId: number | null;
   nome: string;
+  telefone: string | null;
+  regProfissional: string | null;
+  cpf: string | null;
+  dtNasc: string | null;
+  endereco: EnderecoUsuario | null;
   email: string;
-  status?: string;
-  senha: string;
-};
-
-export class Usuario {
-  id: number | null;
-  nome: string;
-  email: string;
-  status: string;
-  senha: string;
-
-  // Forma com objeto
-  constructor(props: UsuarioProps);
-
-  // Forma com parâmetros
-  constructor(
-    id: number | null,
-    nome: string,
-    email: string,
-    status: string | undefined,
-    senha: string,
-  );
-
-  constructor(
-    idOuProps: number | null | UsuarioProps,
-    nome?: string,
-    email?: string,
-    status?: string,
-    senha?: string,
-  ) {
-    if (typeof idOuProps === "object" && idOuProps !== null) {
-      this.id = idOuProps.id ?? null;
-      this.nome = idOuProps.nome;
-      this.email = idOuProps.email;
-      this.status = idOuProps.status ?? "ATIVO";
-      this.senha = idOuProps.senha;
-    } else {
-      this.id = idOuProps;
-      this.nome = nome!;
-      this.email = email!;
-      this.status = status ?? "ATIVO";
-      this.senha = senha!;
-    }
-  }
+  role: "ROLE_ADMIN" | "ROLE_USER";
+  perfilId: number | null;
+  perfil: string | null;
+  ativo: boolean;
+  dtCriacao: string;
+  dtDesativado: string | null;
 }
-
 
 export interface AuthContextType {
   usuario: Usuario | null;
@@ -59,3 +28,5 @@ export interface AuthContextType {
 export interface UsuarioFormProps {
   usuarioExistente?: Usuario;
 }
+
+

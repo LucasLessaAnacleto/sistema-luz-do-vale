@@ -1,12 +1,21 @@
+import { EnderecoUsuario } from "./endereco";
 
-export class Usuario {
-    constructor(
-        public id: number|null,
-        public nome: string,
-        public email: string,
-        public status: string,
-        public senha: string 
-    ) { }
+export interface Usuario {
+  id: number;
+  profissionalId: number | null;
+  nome: string;
+  telefone: string | null;
+  regProfissional: string | null;
+  cpf: string | null;
+  dtNasc: string | null;
+  endereco: EnderecoUsuario | null;
+  email: string;
+  role: "ROLE_ADMIN" | "ROLE_USER";
+  perfilId: number | null;
+  perfil: string | null;
+  ativo: boolean;
+  dtCriacao: string;
+  dtDesativado: string | null;
 }
 
 export interface AuthContextType {
@@ -19,3 +28,4 @@ export interface AuthContextType {
 export interface UsuarioFormProps {
     usuarioExistente?: Usuario
 }
+
