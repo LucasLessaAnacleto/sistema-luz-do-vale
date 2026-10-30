@@ -9,7 +9,7 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 
 @ControllerAdvice
 public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
-
+    
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<ApiErrorMessage> handleIllegalArgument(IllegalArgumentException ex) {
 
