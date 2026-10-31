@@ -1,0 +1,133 @@
+LINK: https://dbdiagram.io/d/6acaeded50a8c6fc361fb1c8
+
+Table PACIENTE {
+  ID int [pk, increment]
+  FICHA_DOCUMENTO_ID int [null, ref: > DOCUMENTO.ID]
+  NOME varchar
+  APELIDO varchar
+  CPF varchar
+  RG varchar
+  TELEFONE varchar
+  ENDERECO_RUA varchar
+  ENDERECO_NR varchar
+  ENDERECO_BAIRRO varchar
+  ENDERECO_MUNICIPIO varchar
+  ENDERECO_ESTADO varchar
+  DT_NASCIMENTO date
+  ATIVO boolean
+  DT_CRIACAO datetime 
+  DT_DESATIVADO datetime
+}
+
+Table TIPO_DEPENDENCIA {
+  ID int [pk, increment]
+  NOME varchar
+  CATEGORIA int
+}
+
+Table RESPONSAVEL {
+  ID int [pk, increment]
+  PACIENTE_ID int [not null, ref: > PACIENTE.ID]
+  NOME varchar
+  PARENTESCO varchar
+  CPF varchar
+  RG varchar
+  TELEFONE varchar
+  ENDERECO_RUA varchar
+  ENDERECO_NR varchar
+  ENDERECO_BAIRRO varchar
+  ENDERECO_MUNICIPIO varchar
+  ENDERECO_ESTADO varchar
+  DT_CRIACAO datetime
+}
+
+Table TIPO_DOCUMENTO {
+  ID int [pk, increment]
+  NOME varchar
+  DESCRICAO text
+  EXIGE_ASSINATURA boolean
+  ATIVO boolean
+  DT_DESATIVADO datetime
+}
+
+Table TIPO_DOCUMENTO_VERSAO {
+  ID int [pk, increment]
+  TIPO_DOCUMENTO_ID int [not null, ref: > TIPO_DOCUMENTO.ID]
+  VERSAO int
+  CAMPOS jsonb
+}
+
+Table DOCUMENTO {
+  ID int [pk, increment]
+  TIPO_DOCUMENTO_ID int [not null, ref: > TIPO_DOCUMENTO.ID]
+  PACIENTE_ID int [not null, ref: > PACIENTE.ID]
+  VERSAO int
+  DADOS jsonb
+  ATIVO boolean
+  DT_CRIACAO datetime
+  USUARIO_ID int [ref: > USUARIO.ID]
+  DT_ATUALIZACAO datetime
+  DT_ASSINATURA datetime
+  DT_DESATIVADO datetime
+}
+
+Table PROFISSIONAL {
+  ID int [pk, increment]
+  NOME varchar
+  TELEFONE varchar
+  REG_PROFISSIONAL varchar
+  CPF varchar
+  ENDERECO_RUA varchar
+  ENDERECO_NR varchar
+  ENDERECO_BAIRRO varchar
+  ENDERECO_MUNICIPIO varchar
+  ENDERECO_ESTADO varchar
+  DT_NASC date
+}
+
+Table USUARIO {
+  ID int [pk, increment]
+  PERFIL_ID int [ref: > PERFIL.ID]
+  PROFISSIONAL_ID int [not null,ref: > PROFISSIONAL.ID]
+  EMAIL varchar
+  SENHA varchar
+  ROLE varchar
+  ATIVO boolean
+  DT_DESATIVADO datetime
+  DT_CRIACAO datetime
+}
+
+Table TOKEN {
+  ID int [pk, increment]
+  USUARIO_ID int [not null,ref: > USUARIO.ID]
+  TOKEN varchar
+}
+
+Table PERFIL {
+  ID int [pk, increment]
+  NOME varchar
+  PERM_CAD_PACIENTE boolean
+}
+
+Table PERMISSAO_TIPO_DOCUMENTO {
+  ID int [pk, increment]
+  PERFIL_ID int [not null, ref: > PERFIL.ID]
+  TIPO_DOCUMENTO_ID int [not null, ref: > TIPO_DOCUMENTO.ID]
+}
+
+Table AVISO {
+  ID int [pk, increment]
+  USUARIO_ID int [not null, ref: > USUARIO.ID]
+  DT_CRIACAO date
+  DURACAO_DIAS int
+  CONTEUDO text 
+}
+
+Table HIST_DOCUMENTO {
+  ID int [pk, increment]
+  USUARIO_ID int [not null, ref: > USUARIO.ID]
+  DOCUMENTO_ID int [not null, ref: > DOCUMENTO.ID]
+  PACIENTE_ID int [not null, ref: > PACIENTE.ID]
+  OBSERVACAO text
+  DT_CRICAO datetime
+}
