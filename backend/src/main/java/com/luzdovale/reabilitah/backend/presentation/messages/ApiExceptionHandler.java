@@ -1,6 +1,9 @@
 package com.luzdovale.reabilitah.backend.presentation.messages;
 
 import com.luzdovale.reabilitah.backend.application.exceptions.*;
+import jakarta.servlet.http.HttpServletRequest;
+import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -9,6 +12,16 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 
 @ControllerAdvice
 public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
+
+    private static final Logger logger = LoggerFactory.getLogger(ApiExceptionHandler.class);
+
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<ApiErrorMessage> handleException(Exception ex, HttpServletRequest request) {
+
+        logger.error("Erro interno na request: %s".formatted(request.getRequestURI()),ex);
+
+        return buildResponse(HttpStatus.INTERNAL_SERVER_ERROR,"Erro interno no sistema");
+    }
     
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<ApiErrorMessage> handleIllegalArgument(IllegalArgumentException ex) {
