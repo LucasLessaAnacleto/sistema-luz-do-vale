@@ -20,7 +20,7 @@ public class Documento {
     @JoinColumn(name = "tipo_documento_versao_id")
     private TipoDocumentoVersao tipoDocumentoVersao;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "documento_origem_id")
     private Documento documentoOrigem;
 
@@ -30,14 +30,21 @@ public class Documento {
 
     @ManyToOne
     @JoinColumn(name = "usuario_id")
-    private Usuario usuario;
+    private Usuario criadoPor;
 
     private String observacao;
-    private String dados;
+
+    @Column(columnDefinition = "jsonb")
+    private String dados = "{}";
 
     private boolean ativo = true;
     private LocalDateTime dtCriacao = LocalDateTime.now();
     private LocalDateTime dtAtualizacao;
+    private LocalDateTime dtAssinatura;
     private LocalDateTime dtDesativado;
+
+    public boolean permiteEditar(){
+        return this.dtAssinatura != null;
+    }
 
 }

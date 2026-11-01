@@ -19,6 +19,10 @@ public class Paciente {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @OneToOne
+    @JoinColumn(name = "ficha_documento_id")
+    private Documento fichaDocumento;
+
     @Column(nullable = false)
     private String nome;
     private String apelido;

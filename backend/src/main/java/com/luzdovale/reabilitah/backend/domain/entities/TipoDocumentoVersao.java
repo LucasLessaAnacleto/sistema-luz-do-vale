@@ -21,6 +21,9 @@ public class TipoDocumentoVersao {
     private TipoDocumento tipoDocumento;
 
     private int versao;
+
+    @Column(columnDefinition = "jsonb")
     private String campos = "{}";
+
     private LocalDateTime dtCriacao;
 }
