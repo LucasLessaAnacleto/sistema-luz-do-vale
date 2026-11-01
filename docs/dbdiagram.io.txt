@@ -59,9 +59,10 @@ Table TIPO_DOCUMENTO_VERSAO {
 
 Table DOCUMENTO {
   ID int [pk, increment]
-  TIPO_DOCUMENTO_ID int [not null, ref: > TIPO_DOCUMENTO.ID]
+  TIPO_DOCUMENTO_VERSAO_ID int [not null, ref: > TIPO_DOCUMENTO_VERSAO.ID]
+  DOCUMENTO_ORIGEM_ID int [null, ref: > DOCUMENTO.ID]
   PACIENTE_ID int [not null, ref: > PACIENTE.ID]
-  VERSAO int
+  VERSAO_TIPO int
   DADOS jsonb
   ATIVO boolean
   DT_CRIACAO datetime
