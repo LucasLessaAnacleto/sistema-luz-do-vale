@@ -7,7 +7,9 @@ import com.luzdovale.reabilitah.backend.domain.entities.TipoDocumento;
 import com.luzdovale.reabilitah.backend.domain.entities.TipoDocumentoVersao;
 import com.luzdovale.reabilitah.backend.domain.valueobjects.CampoDocumento;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class TestarDocumentoCampos {
     public static void main(String[] args) {
@@ -16,36 +18,41 @@ public class TestarDocumentoCampos {
         versaoDocumento.setId(1L);
         versaoDocumento.setVersao(1);
         versaoDocumento.setCampos("""
-                [
-                  {
-                    "nome": "estadoCivil",
-                    "rotulo": "Estado civil",
-                    "tipo": "SELECAO",
-                    "opcoes": [
-                      "Solteiro",
-                      "Casado",
-                      "Divorciado"
-                    ]
-                  },
-                  {
-                    "nome": "hobbies",
-                    "rotulo": "Hobbies",
-                    "tipo": "MULTIPLA_ESCOLHA",
-                    "opcoes": [
-                      "Esportes",
-                      "Música",
-                      "Leitura"
-                    ]
-                  }
-                ]
-                """);
+            [
+              {
+                "nome": "destino",
+                "rotulo": "Destino",
+                "tipo": "TEXTO",
+                "obrigatorio": true
+              },
+              {
+                "nome": "dataSaida",
+                "rotulo": "Data da saída",
+                "tipo": "DATA",
+                "obrigatorio": true
+              },
+              {
+                "nome": "acompanhado",
+                "rotulo": "Está acompanhado?",
+                "tipo": "BOOLEANO",
+                "obrigatorio": false
+              }
+            ]
+            """);
         var tipoDocumento = new TipoDocumento();
         tipoDocumento.setId(1L);
         tipoDocumento.setNome("Controle de Saída");
         versaoDocumento.setTipoDocumento(tipoDocumento);
 
         var campos = documentoCamposService.lerCampos(versaoDocumento);
-        imprimirCampos(campos, 0);
+        var dados = new HashMap<String, Object>();
+        dados.put("destino", "Içara");
+        dados.put("dataSaida", "2026-11-02");
+        dados.put("acompanhado", "TRUE");
+        var dadosNormalizados = documentoCamposService
+                .validarENormalizarDados(campos, dados);
+        System.out.println(dadosNormalizados);
+//        imprimirCampos(campos, 0);
     }
 
     private static void imprimirCampos(List<CampoDocumento> campos, int nivel) {

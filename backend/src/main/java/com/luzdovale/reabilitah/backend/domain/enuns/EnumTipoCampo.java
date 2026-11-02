@@ -3,7 +3,8 @@ package com.luzdovale.reabilitah.backend.domain.enuns;
 public enum EnumTipoCampo {
     TEXTO,
     TEXTO_LONGO,
-    NUMERO,
+    INTEIRO,
+    DECIMAL,
     DATA,
     BOOLEANO,
     SELECAO,
