@@ -30,7 +30,7 @@ public class HistDocumento {
 
     private String acao;
     private String observacao;
-    private LocalDateTime dtCriacao;
+    private LocalDateTime dtCriacao = LocalDateTime.now();
 
 
 }

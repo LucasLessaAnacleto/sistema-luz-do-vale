@@ -39,7 +39,7 @@ public class PacienteService {
     }
 
     public PacienteResponse buscar(Long id) {
-        var paciente    = pacienteRepository.findById(id).orElseThrow(PacienteNaoEncontradoException::new);
+        var paciente    = buscarPaciente(id);
         var responsavel = responsavelService.buscarPorPaciente(paciente);
         return mapeiaParaDTO(paciente,responsavel);
     }
@@ -84,6 +84,10 @@ public class PacienteService {
         );
 
         return mapeiaParaDTO(paciente, responsavel);
+    }
+
+    public Paciente buscarPaciente(Long id) {
+        return pacienteRepository.findById(id).orElseThrow(PacienteNaoEncontradoException::new);
     }
 
     private Paciente salvar(Paciente paciente, PacienteRequest dados){
