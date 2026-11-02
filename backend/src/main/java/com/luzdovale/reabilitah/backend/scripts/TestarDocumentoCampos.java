@@ -52,7 +52,6 @@ public class TestarDocumentoCampos {
         var dadosNormalizados = documentoCamposService
                 .validarENormalizarDados(campos, dados);
         System.out.println(dadosNormalizados);
-//        imprimirCampos(campos, 0);
     }
 
     private static void imprimirCampos(List<CampoDocumento> campos, int nivel) {

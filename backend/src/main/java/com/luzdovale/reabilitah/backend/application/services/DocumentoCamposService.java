@@ -149,20 +149,21 @@ public class DocumentoCamposService {
 
     private Number validarNumero(CampoDocumento campo, Object input) {
         boolean isInteiro = campo.getTipo() == EnumTipoCampo.INTEIRO;
-        if(isInteiro && input instanceof Integer){
-            return (Integer) input;
-        }
-        if(!isInteiro && input instanceof Float){
-            return (Float) input;
+        if(input instanceof Number){
+            Number numero = (Number) input;
+            if(isInteiro){
+                return numero.intValue();
+            }
+            return numero.doubleValue();
         }
         if(input instanceof String){
 
             try{
                 if(isInteiro) {
                     return Integer.valueOf((String) input);
-                }else{
-                    return Float.valueOf((String) input);
                 }
+                return Double.valueOf((String) input);
+
             }catch (NumberFormatException e){
                 throw new DadosDocumentoInvalidosException(
                         "Campo \"%s\" possui valor inválido para um %s.".formatted(campo.getRotulo(), isInteiro ? "inteiro" : "número")
@@ -194,13 +195,13 @@ public class DocumentoCamposService {
         throw new DadosDocumentoInvalidosException("Campo \"%s\" %s.".formatted(campo.getRotulo(), "deve ser  verdadeiro ou falso"));
     }
 
-    private LocalDate validarData(CampoDocumento campo, Object input) {
+    private String validarData(CampoDocumento campo, Object input) {
         if(input instanceof LocalDate){
-            return (LocalDate) input;
+            return ((LocalDate) input).toString();
         }
         if(input instanceof String) {
             try{
-                return LocalDate.parse((String) input);
+                return LocalDate.parse((String) input).toString();
             }catch (DateTimeParseException ex){}
         }
         throw new DadosDocumentoInvalidosException("Campo \"%s\" %s.".formatted(
@@ -228,7 +229,10 @@ public class DocumentoCamposService {
 
     private List<String> validarMultiplaSelecao(CampoDocumento campo, Object input) {
         if(!(input instanceof List<?>)){
-            throw new DadosDocumentoInvalidosException("Campo \"%s\" deve ser uma lista de valores");
+            throw new DadosDocumentoInvalidosException(
+                    "Campo \"%s\" deve ser uma lista de valores"
+                            .formatted(campo.getRotulo())
+            );
         }
         List<?> valores = (List<?>) input;
         List<String> lista = new ArrayList<>();
@@ -241,7 +245,7 @@ public class DocumentoCamposService {
 
     private Map<String, Object> validarGrupo(CampoDocumento campo, Object input) {
         if (!(input instanceof Map<?, ?>)) {
-            throw new DadosDocumentoInvalidosException("Campo \"%s\" deve ser um objeto");
+            throw new DadosDocumentoInvalidosException("Campo \"%s\" deve ser um objeto".formatted(campo.getRotulo()));
         }
         Map<?, ?> inputGrupo = (Map<?, ?>) input;
         Map<String, Object> dadosGrupo = new HashMap<>();
