@@ -1,13 +1,13 @@
 package com.luzdovale.reabilitah.backend.domain.entities;
 
 import com.luzdovale.reabilitah.backend.domain.valueobjects.CPF;
+import com.luzdovale.reabilitah.backend.domain.valueobjects.Endereco;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 
 @Data
 @NoArgsConstructor

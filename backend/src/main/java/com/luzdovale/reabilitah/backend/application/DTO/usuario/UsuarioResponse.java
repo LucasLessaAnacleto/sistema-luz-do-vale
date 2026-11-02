@@ -1,6 +1,6 @@
 package com.luzdovale.reabilitah.backend.application.DTO.usuario;
 
-import com.luzdovale.reabilitah.backend.domain.entities.Endereco;
+import com.luzdovale.reabilitah.backend.domain.valueobjects.Endereco;
 import com.luzdovale.reabilitah.backend.domain.enuns.EnumRoleUsuario;
 
 import java.time.LocalDate;

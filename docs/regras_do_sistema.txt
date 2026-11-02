@@ -275,3 +275,245 @@ POST /pacientes
 ---
 
 
+PARA TESTE PRIMEIRO:
+
+INSERT INTO tipo_documento (nome,descricao,exige_assinatura,ativo) VALUES 
+('Controle de Saída','Registro de saída do paciente',false,true);
+
+INSERT INTO tipo_documento_versao (tipo_documento_id,versao,campos,dt_criacao) VALUES (
+    1,
+    1,
+    '[
+        {
+            "nome": "destino",
+            "rotulo": "Destino",
+            "tipo": "TEXTO",
+            "obrigatorio": true
+        },
+        {
+            "nome": "dataSaida",
+            "rotulo": "Data da saída",
+            "tipo": "DATA",
+            "obrigatorio": true
+        },
+        {
+            "nome": "acompanhado",
+            "rotulo": "Está acompanhado?",
+            "tipo": "BOOLEANO",
+            "obrigatorio": false
+        }
+    ]'::jsonb,
+    CURRENT_TIMESTAMP
+);
+
+FLUXO QUE PRECISAMOS SEGUIR
+
+1. busca TIPO_DOCUMENTO
+
+2. busca a versão atual
+
+3. lê:
+   tipoDocumentoVersao.campos
+
+4. Gson:
+   String → List<CampoDocumento>
+
+5. valida dados recebidos
+
+6. cria Documento
+
+7. documento.tipoDocumentoVersao = versão encontrada
+   documento.paciente = paciente
+   documento.criadoPor = usuario
+   documento.dados = json validado
+
+8. salva
+
+9. cria HIST_DOCUMENTO
+   acao = "CRIADO"
+
+
+---
+[
+  {
+    "nome": "destino",
+    "rotulo": "Destino",
+    "obrigatorio": true
+  },
+  {
+    "nome": "dataSaida",
+    "rotulo": "Data da saída",
+    "tipo": "DATA",
+    "obrigatorio": true
+  },
+  {
+    "nome": "acompanhado",
+    "rotulo": "Está acompanhado?",
+    "tipo": "BOOLEANO",
+    "obrigatorio": false
+  }
+]
+
+---
+
+[
+  {
+    "nome": "solicitante",
+    "rotulo": "Dados do solicitante",
+    "tipo": "GRUPO",
+    "campos": [
+      {
+        "nome": "nome",
+        "rotulo": "Nome completo",
+        "tipo": "TEXTO",
+        "obrigatorio": true
+      },
+      {
+        "nome": "cpf",
+        "rotulo": "CPF",
+        "tipo": "TEXTO",
+        "obrigatorio": true
+      },
+      {
+        "nome": "dataNascimento",
+        "rotulo": "Data de nascimento",
+        "tipo": "DATA"
+      }
+    ]
+  }
+]
+
+---
+
+[
+  {
+    "nome": "solicitante",
+    "rotulo": "Dados do solicitante",
+    "tipo": "GRUPO",
+    "campos": [
+      {
+        "nome": "nome",
+        "rotulo": "Nome",
+        "tipo": "TEXTO"
+      },
+      {
+        "nome": "endereco",
+        "rotulo": "Endereço",
+        "tipo": "GRUPO",
+        "campos": [
+          {
+            "nome": "rua",
+            "rotulo": "Rua",
+            "tipo": "TEXTO"
+          },
+          {
+            "nome": "numero",
+            "rotulo": "Número",
+            "tipo": "NUMERO"
+          },
+          {
+            "nome": "localizacao",
+            "rotulo": "Localização",
+            "tipo": "GRUPO",
+            "campos": [
+              {
+                "nome": "cidade",
+                "rotulo": "Cidade",
+                "tipo": "TEXTO"
+              },
+              {
+                "nome": "estado",
+                "rotulo": "Estado",
+                "tipo": "TEXTO"
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+]
+
+---
+
+[
+  {
+    "nome": "solicitante",
+    "rotulo": "Dados do solicitante",
+    "tipo": "GRUPO",
+    "campos": []
+  }
+]
+
+---
+
+[
+  {
+    "nome": "solicitante",
+    "rotulo": "Dados do solicitante",
+    "tipo": "GRUPO",
+    "campos": [
+      {
+        "nome": "",
+        "rotulo": "Nome",
+        "tipo": "TEXTO"
+      }
+    ]
+  }
+]
+
+---
+
+[
+  {
+    "nome": "solicitante",
+    "rotulo": "Dados do solicitante",
+    "tipo": "GRUPO",
+    "campos": [
+      {
+        "nome": "endereco",
+        "rotulo": "Endereço",
+        "tipo": "GRUPO",
+        "campos": []
+      }
+    ]
+  }
+]
+
+---
+
+[
+  {
+    "nome": "estadoCivil",
+    "rotulo": "Estado civil",
+    "tipo": "SELECAO"
+  }
+]
+
+---
+
+[
+  {
+    "nome": "estadoCivil",
+    "rotulo": "Estado civil",
+    "tipo": "SELECAO",
+    "opcoes": [
+      "Solteiro",
+      "Casado",
+      "Divorciado"
+    ]
+  },
+  {
+    "nome": "hobbies",
+    "rotulo": "Hobbies",
+    "tipo": "MULTIPLA_ESCOLHA",
+    "opcoes": [
+      "Esportes",
+      "Música",
+      "Leitura"
+    ]
+  }
+]
+
+---
+

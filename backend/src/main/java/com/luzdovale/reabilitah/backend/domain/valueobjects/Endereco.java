@@ -1,4 +1,4 @@
-package com.luzdovale.reabilitah.backend.domain.entities;
+package com.luzdovale.reabilitah.backend.domain.valueobjects;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;

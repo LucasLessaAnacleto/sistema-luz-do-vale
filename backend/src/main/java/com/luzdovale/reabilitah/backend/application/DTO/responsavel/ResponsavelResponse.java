@@ -1,6 +1,6 @@
 package com.luzdovale.reabilitah.backend.application.DTO.responsavel;
 
-import com.luzdovale.reabilitah.backend.domain.entities.Endereco;
+import com.luzdovale.reabilitah.backend.domain.valueobjects.Endereco;
 
 import java.time.LocalDate;
 

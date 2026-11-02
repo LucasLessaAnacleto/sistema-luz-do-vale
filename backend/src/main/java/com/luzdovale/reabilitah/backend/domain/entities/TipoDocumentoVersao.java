@@ -23,7 +23,7 @@ public class TipoDocumentoVersao {
     private int versao;
 
     @Column(columnDefinition = "jsonb")
-    private String campos = "{}";
+    private String campos = "[]";
 
     private LocalDateTime dtCriacao;
 }

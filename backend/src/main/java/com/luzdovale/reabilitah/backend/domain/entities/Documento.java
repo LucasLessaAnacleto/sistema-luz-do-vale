@@ -44,7 +44,7 @@ public class Documento {
     private LocalDateTime dtDesativado;
 
     public boolean permiteEditar(){
-        return this.dtAssinatura != null;
+        return this.dtAssinatura == null;
     }
 
 }
