@@ -20,11 +20,16 @@ const usuario: Usuario = {
 };
 
 export async function loginMock(dados: LoginRequest): Promise<LoginResponse> {
-  
+
   await new Promise((resolve) => setTimeout(resolve, 600));
-  
+
   if (dados.email.trim().toLowerCase() !== usuario.email || dados.senha !== "123") {
     throw new Error("Email ou senha inválidos.");
   }
-  return { usuario: { ...usuario }, token: "demo-token" };
+
+  return { usuario: { ...usuario }, token: "demo-token",};
+}
+
+export async function buscarUsuarioLogadoMock(): Promise<Usuario> {
+  return { ...usuario };
 }
