@@ -87,6 +87,7 @@ public class PacienteService {
     }
 
     public Paciente buscarPaciente(Long id) {
+        if(id == null) throw new PacienteNaoEncontradoException();
         return pacienteRepository.findById(id).orElseThrow(PacienteNaoEncontradoException::new);
     }
 

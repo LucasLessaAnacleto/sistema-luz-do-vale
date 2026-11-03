@@ -1,6 +1,7 @@
 package com.luzdovale.reabilitah.backend.presentation.controllers;
 
 import com.luzdovale.reabilitah.backend.application.DTO.documento.CriarDocumentoRequest;
+import com.luzdovale.reabilitah.backend.application.DTO.documento.DocumentoResponse;
 import com.luzdovale.reabilitah.backend.application.services.DocumentoService;
 import com.luzdovale.reabilitah.backend.domain.entities.Documento;
 import com.luzdovale.reabilitah.backend.domain.entities.Usuario;
@@ -19,7 +20,7 @@ public class DocumentoController {
     private DocumentoService documentoService;
 
     @PostMapping
-    public ResponseEntity<Documento> criar(@RequestBody CriarDocumentoRequest request, Authentication auth){
+    public ResponseEntity<DocumentoResponse> criar(@RequestBody CriarDocumentoRequest request, Authentication auth){
         return ResponseEntity.ok(
                 documentoService.criar(request, (Usuario) auth.getPrincipal())
         );

@@ -306,6 +306,21 @@ INSERT INTO tipo_documento_versao (tipo_documento_id,versao,campos,dt_criacao) V
     CURRENT_TIMESTAMP
 );
 
+---
+POST /documentos
+```
+{
+  "tipoDocumentoId": 1,
+  "pacienteId": 1,
+  "observacao": "Teste de criação do controle de saída",
+  "dados": {
+    "destino": "Içara",
+    "dataSaida": "2026-11-02",
+    "acompanhado": true
+  }
+}
+```
+
 FLUXO QUE PRECISAMOS SEGUIR
 
 1. busca TIPO_DOCUMENTO

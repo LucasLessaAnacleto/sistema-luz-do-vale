@@ -22,9 +22,28 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
 
         return buildResponse(HttpStatus.INTERNAL_SERVER_ERROR,"Erro interno no sistema");
     }
+
+    @ExceptionHandler(TipoDocumentoVersaoNaoEncontradoExeption.class)
+    public ResponseEntity<ApiErrorMessage> handleTipoDocumentoSemVersao(
+            TipoDocumentoVersaoNaoEncontradoExeption ex,
+            HttpServletRequest request
+    ) {
+        logger.error("Erro interno na request: {}", request.getRequestURI(), ex);
+
+        return buildResponse(HttpStatus.INTERNAL_SERVER_ERROR, ex.getMessage());
+    }
+
+    @ExceptionHandler(CamposDocumentoInvalidosException.class)
+    public ResponseEntity<ApiErrorMessage> handleCamposDocumentoInvalidos(CamposDocumentoInvalidosException ex) {
+
+        return buildResponse(HttpStatus.INTERNAL_SERVER_ERROR, ex.getMessage());
+    }
     
-    @ExceptionHandler(IllegalArgumentException.class)
-    public ResponseEntity<ApiErrorMessage> handleIllegalArgument(IllegalArgumentException ex) {
+    @ExceptionHandler({
+            IllegalArgumentException.class,
+            DadosDocumentoInvalidosException.class
+    })
+    public ResponseEntity<ApiErrorMessage> handleIllegalArgument(RuntimeException ex) {
 
         return buildResponse(HttpStatus.BAD_REQUEST, ex.getMessage());
     }
@@ -51,7 +70,8 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
         PerfilNaoEncontradoException.class,
         ProfissionalNaoEncontradoException.class,
         UsuarioNaoEncontradoException.class,
-        PacienteNaoEncontradoException.class
+        PacienteNaoEncontradoException.class,
+        TipoDocumentoNaoEncontradoException.class
     })
     public ResponseEntity<ApiErrorMessage> handleNaoEncontrado(RuntimeException ex) {
 
