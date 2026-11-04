@@ -36,9 +36,6 @@ public class UsuarioService {
 
     public List<UsuarioResponse> listarComDadosProfissional(Usuario usuarioLogado, Boolean ativo) {
 
-        if(!usuarioLogado.isAdmin()){
-            throw new UsuarioSemAutorizacao();
-        }
         return usuarioRepository.findAll().stream()
                 .filter(usuario ->
                         ativo == null || usuario.isAtivo() == ativo
@@ -116,7 +113,7 @@ public class UsuarioService {
         Usuario usuarioLogado
     ) {
 
-        if(!usuarioId.equals(usuarioLogado.getId()) && !usuarioLogado.isAdmin()){
+        if(!usuarioLogado.isAdmin()){
             throw new UsuarioSemAutorizacao();
         }
 

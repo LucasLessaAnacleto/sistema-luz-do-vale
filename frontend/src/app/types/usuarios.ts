@@ -29,4 +29,22 @@ export interface UsuarioFormProps {
   usuarioExistente?: Usuario;
 }
 
+// Campos enviados aos endpoints de criação e edição do backend.
+export interface CriarUsuarioRequest {
+  nome: string;
+  telefone: string | null;
+  regProfissional: string | null;
+  cpf: string;
+  dtNasc: string;
+  email: string;
+  senha: string;
+  role: Usuario["role"];
+  perfilId: number | null;
+}
 
+export type EditarUsuarioRequest = Omit<
+  CriarUsuarioRequest,
+  "senha" | "perfilId"
+> & {
+  ativo: boolean;
+};

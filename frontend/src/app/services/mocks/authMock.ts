@@ -19,17 +19,29 @@ const usuario: Usuario = {
   dtDesativado: null,
 };
 
-export async function loginMock(dados: LoginRequest): Promise<LoginResponse> {
+let usuarioLogado = usuario;
+const admin: Usuario = {
+  ...usuario,
+  id: 2,
+  nome: "Administrador de teste",
+  email: "admin@teste.com",
+  role: "ROLE_ADMIN",
+};
 
+export async function loginMock(dados: LoginRequest): Promise<LoginResponse> {
   await new Promise((resolve) => setTimeout(resolve, 600));
 
-  if (dados.email.trim().toLowerCase() !== usuario.email || dados.senha !== "123") {
+  const conta = [usuario, admin].find(
+    (item) => item.email === dados.email.trim().toLowerCase(),
+  );
+  if (!conta || dados.senha !== "123") {
     throw new Error("Email ou senha inválidos.");
   }
 
-  return { usuario: { ...usuario }, token: "demo-token",};
+  usuarioLogado = conta;
+  return { usuario: { ...usuarioLogado }, token: "demo-token" };
 }
 
 export async function buscarUsuarioLogadoMock(): Promise<Usuario> {
-  return { ...usuario };
+  return { ...usuarioLogado };
 }

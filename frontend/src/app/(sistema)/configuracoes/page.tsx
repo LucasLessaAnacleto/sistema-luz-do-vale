@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { Bell, ChevronRight, CircleHelp, LayoutTemplate, LogOut, UserRound, Users } from "lucide-react";
 import { useAppDispatch, useAppSelector } from "@/app/redux/hook";
 import { logout } from "@/app/redux/slices/authSlice";
@@ -55,14 +56,14 @@ export default function ConfiguracoesPage() {
         <section aria-label="Gestão">
           <h2 className="mb-3 text-xs font-medium tracking-wide text-muted-foreground uppercase">Gestão</h2>
           <div className="rounded-2xl border border-border bg-card p-2 shadow-sm sm:p-3">
-            <div className="flex items-center gap-4 rounded-xl p-4">
+            <Link href="/configuracoes/equipe" className="flex items-center gap-4 rounded-xl p-4 transition-colors hover:bg-accent focus-visible:outline-2 focus-visible:outline-primary">
               <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-accent text-primary"><Users className="h-5 w-5" aria-hidden="true" /></span>
               <div className="min-w-0 flex-1">
                 <h3 className="text-sm font-medium">Equipe</h3>
                 <p className="mt-0.5 text-xs leading-relaxed text-muted-foreground">Profissionais e contas de acesso</p>
               </div>
-              <span className="shrink-0 text-xs text-muted-foreground">Em breve</span>
-            </div>
+              <ChevronRight className="h-5 w-5 text-muted-foreground" aria-hidden="true" />
+            </Link>
           </div>
         </section>
 
