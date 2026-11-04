@@ -1,4 +1,4 @@
-export interface EnderecoUsuario {
+export interface Endereco {
   rua: string | null;
   numero: string | null;
   bairro: string | null;

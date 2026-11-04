@@ -1,4 +1,4 @@
-import { EnderecoUsuario } from "./endereco";
+import { Endereco } from "./endereco";
 
 export interface Usuario {
   id: number;
@@ -8,7 +8,7 @@ export interface Usuario {
   regProfissional: string | null;
   cpf: string | null;
   dtNasc: string | null;
-  endereco: EnderecoUsuario | null;
+  endereco: Endereco | null;
   email: string;
   role: "ROLE_ADMIN" | "ROLE_USER";
   perfilId: number | null;

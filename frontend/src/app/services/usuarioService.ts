@@ -3,7 +3,7 @@ import api from "./api";
 import { buscarUsuarioLogadoMock } from "./mocks/authMock";
 
 export async function buscarUsuarioLogado(): Promise<Usuario> {
-  if (process.env.NEXT_PUBLIC_USE_AUTH_MOCK === "true") {
+  if (process.env.NEXT_PUBLIC_USE_MOCK === "true") {
     return buscarUsuarioLogadoMock();
   }
 
