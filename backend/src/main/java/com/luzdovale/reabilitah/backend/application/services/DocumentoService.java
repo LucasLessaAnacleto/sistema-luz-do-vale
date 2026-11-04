@@ -2,8 +2,9 @@ package com.luzdovale.reabilitah.backend.application.services;
 
 
 import com.luzdovale.reabilitah.backend.application.DTO.documento.CriarDocumentoRequest;
+import com.luzdovale.reabilitah.backend.application.DTO.documento.DocumentoDetalhesResponse;
 import com.luzdovale.reabilitah.backend.application.DTO.documento.DocumentoResponse;
-import com.luzdovale.reabilitah.backend.application.exceptions.PacienteNaoEncontradoException;
+import com.luzdovale.reabilitah.backend.application.exceptions.DocumentoNaoEncontradoException;
 import com.luzdovale.reabilitah.backend.domain.entities.*;
 import com.luzdovale.reabilitah.backend.domain.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -56,6 +57,46 @@ public class DocumentoService {
         );
 
         return mapeiaParaDTO(documento);
+    }
+
+    public DocumentoDetalhesResponse buscar(Long id) {
+
+        Documento documento = buscarDocumento(id);
+
+        var versao = documento.getTipoDocumentoVersao();
+        var usuario = documento.getCriadoPor();
+
+        var campos = documentoCamposService.lerCampos(versao);
+        var dados = documentoCamposService.lerDados(documento.getDados());
+
+        String nomeUsuario;
+
+        if (usuario.getProfissional() != null) {
+            nomeUsuario = usuario.getProfissional().getNome();
+        } else {
+            nomeUsuario = usuario.getEmail();
+        }
+
+        return new DocumentoDetalhesResponse(
+                documento.getId(),
+                versao.getTipoDocumento().getId(),
+                versao.getTipoDocumento().getNome(),
+                versao.getVersao(),
+                documento.getPaciente().getId(),
+                usuario.getId(),
+                nomeUsuario,
+                documento.getObservacao(),
+                campos,
+                dados,
+                documento.isAtivo(),
+                documento.getDtCriacao(),
+                documento.getDtAtualizacao(),
+                documento.getDtAssinatura()
+        );
+    }
+
+    private Documento buscarDocumento(Long id) {
+        return documentoRepository.findById(id).orElseThrow(DocumentoNaoEncontradoException::new);
     }
 
     private DocumentoResponse mapeiaParaDTO(Documento documento) {

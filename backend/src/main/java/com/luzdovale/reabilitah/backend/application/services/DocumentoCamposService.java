@@ -39,6 +39,11 @@ public class DocumentoCamposService {
         return List.of();
     }
 
+    public Map<String, Object> lerDados(String dadosJson) {
+        Type tipoMap = new TypeToken<Map<String, Object>>() {}.getType();
+        return gson.fromJson(dadosJson, tipoMap);
+    }
+
     public List<CampoDocumento> lerCampos(TipoDocumentoVersao versaoDocumento)  {
         var camposJson    = versaoDocumento.getCampos();
         var tipoDocumento = versaoDocumento.getTipoDocumento();

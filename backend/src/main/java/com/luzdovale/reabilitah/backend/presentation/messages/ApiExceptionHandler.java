@@ -71,7 +71,8 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
         ProfissionalNaoEncontradoException.class,
         UsuarioNaoEncontradoException.class,
         PacienteNaoEncontradoException.class,
-        TipoDocumentoNaoEncontradoException.class
+        TipoDocumentoNaoEncontradoException.class,
+        DocumentoNaoEncontradoException.class
     })
     public ResponseEntity<ApiErrorMessage> handleNaoEncontrado(RuntimeException ex) {
 

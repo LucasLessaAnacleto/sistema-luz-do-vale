@@ -1,9 +1,10 @@
 package com.luzdovale.reabilitah.backend.presentation.controllers;
 
+import com.luzdovale.reabilitah.backend.application.DTO.documento.HistDocumentoResponse;
 import com.luzdovale.reabilitah.backend.application.DTO.paciente.PacienteRequest;
 import com.luzdovale.reabilitah.backend.application.DTO.paciente.PacienteResponse;
+import com.luzdovale.reabilitah.backend.application.services.HistDocumentoService;
 import com.luzdovale.reabilitah.backend.application.services.PacienteService;
-import com.luzdovale.reabilitah.backend.domain.entities.Paciente;
 import com.luzdovale.reabilitah.backend.domain.entities.Usuario;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -15,9 +16,10 @@ import java.util.List;
 @RestController
 @RequestMapping("/pacientes")
 public class PacienteController {
-
     @Autowired
     private PacienteService pacienteService;
+    @Autowired
+    private HistDocumentoService histDocumentoService;
 
     @GetMapping
     public ResponseEntity<List<PacienteResponse>> listar(@RequestParam(required = false) Boolean ativo) {
@@ -45,6 +47,13 @@ public class PacienteController {
     public ResponseEntity<PacienteResponse> editar(@PathVariable Long id, @RequestBody PacienteRequest dto, Authentication auth) {
         return ResponseEntity.ok(
             pacienteService.editar(id, dto, (Usuario) auth.getPrincipal())
+        );
+    }
+
+    @GetMapping("/{id}/historico")
+    public ResponseEntity<List<HistDocumentoResponse>> listarHistorico(@PathVariable Long id) {
+        return ResponseEntity.ok(
+                histDocumentoService.listarPorPaciente(id)
         );
     }
 }

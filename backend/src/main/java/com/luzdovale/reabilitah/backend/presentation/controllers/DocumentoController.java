@@ -1,6 +1,7 @@
 package com.luzdovale.reabilitah.backend.presentation.controllers;
 
 import com.luzdovale.reabilitah.backend.application.DTO.documento.CriarDocumentoRequest;
+import com.luzdovale.reabilitah.backend.application.DTO.documento.DocumentoDetalhesResponse;
 import com.luzdovale.reabilitah.backend.application.DTO.documento.DocumentoResponse;
 import com.luzdovale.reabilitah.backend.application.services.DocumentoService;
 import com.luzdovale.reabilitah.backend.domain.entities.Documento;
@@ -8,10 +9,7 @@ import com.luzdovale.reabilitah.backend.domain.entities.Usuario;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/documentos")
@@ -24,5 +22,10 @@ public class DocumentoController {
         return ResponseEntity.ok(
                 documentoService.criar(request, (Usuario) auth.getPrincipal())
         );
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<DocumentoDetalhesResponse> buscar(@PathVariable Long id) {
+        return ResponseEntity.ok(documentoService.buscar(id));
     }
 }
