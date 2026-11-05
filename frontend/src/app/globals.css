@@ -54,3 +54,12 @@ body {
     animation: login-enter 0.5s ease-out;
   }
 }
+
+@media print {
+  body:has(.documento-impresso) :is(header, nav) {
+    display: none;
+  }
+  body:has(.documento-impresso) {
+    background: white;
+  }
+}

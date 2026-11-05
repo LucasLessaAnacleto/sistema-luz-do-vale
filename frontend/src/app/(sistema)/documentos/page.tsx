@@ -2,23 +2,24 @@
 
 import Link from "next/link";
 import { useState } from "react";
-import { FileText, Search, SlidersHorizontal } from "lucide-react";
-import { documentsMock } from "@/app/services/mocks/recordsMock";
+import { FileText, Plus, Search, SlidersHorizontal } from "lucide-react";
+import { useDocuments } from "@/app/services/documentService";
 import { cn, normalizeSearch } from "@/app/util";
 
 export default function DocumentosPage() {
+  const { documents } = useDocuments();
   const [search, setSearch] = useState("");
   const [showFilters, setShowFilters] = useState(false);
   const [patient, setPatient] = useState("");
   const [type, setType] = useState("");
   const [status, setStatus] = useState("");
   const [author, setAuthor] = useState("");
-  const pendingCount = documentsMock.filter((document) => document.status === "pendente").length;
+  const pendingCount = documents.filter((document) => document.status === "pendente").length;
   const filterCount = [patient, type, status, author].filter(Boolean).length;
-  const patients = Array.from(new Map(documentsMock.map((document) => [document.patientId, document.patient])));
-  const types = Array.from(new Set(documentsMock.map((document) => document.title)));
-  const authors = Array.from(new Set(documentsMock.map((document) => document.author)));
-  const filteredDocuments = documentsMock.filter((document) =>
+  const patients = Array.from(new Map(documents.map((document) => [document.patientId, document.patient])));
+  const types = Array.from(new Set(documents.map((document) => document.title)));
+  const authors = Array.from(new Set(documents.map((document) => document.author)));
+  const filteredDocuments = documents.filter((document) =>
     normalizeSearch(`${document.title} ${document.code} ${document.patient} ${document.nickname} ${document.author}`).includes(normalizeSearch(search))
     && (!patient || String(document.patientId) === patient)
     && (!type || document.title === type)
@@ -38,21 +39,26 @@ export default function DocumentosPage() {
     <>
       <section className="border-b border-border bg-card">
         <div className="mx-auto max-w-6xl px-5 py-6 sm:px-8 sm:py-8">
-          <div className="flex items-center justify-between gap-4">
+          <div className="flex flex-wrap items-center justify-between gap-3">
             <div className="min-w-0">
               <h1 className="text-2xl font-semibold">Documentos</h1>
-              <p className="mt-1 text-xs text-muted-foreground">{documentsMock.length} documentos no total · <span className="text-warning">{pendingCount} pendentes</span></p>
+              <p className="mt-1 text-xs text-muted-foreground">{documents.length} documentos no total · <span className="text-warning">{pendingCount} pendentes</span></p>
             </div>
-            <button
-              type="button"
-              onClick={() => setShowFilters(!showFilters)}
-              aria-expanded={showFilters}
-              aria-controls="filtros-documentos"
-              className={cn("flex min-h-10 shrink-0 cursor-pointer items-center gap-1.5 rounded-full border px-3 py-2 text-sm transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary", showFilters ? "border-primary bg-primary text-white" : "border-border bg-card hover:bg-accent")}
-            >
-              <SlidersHorizontal className="h-4 w-4" aria-hidden="true" />
-              Filtros{filterCount > 0 && <span> ({filterCount})</span>}
-            </button>
+            <div className="flex flex-wrap gap-2">
+              <Link href="/documentos/novo" className="flex min-h-10 items-center gap-1.5 rounded-full bg-primary px-4 py-2 text-sm font-medium text-white hover:bg-primary-dark">
+                <Plus className="h-4 w-4" aria-hidden="true" />Novo documento
+              </Link>
+              <button
+                type="button"
+                onClick={() => setShowFilters(!showFilters)}
+                aria-expanded={showFilters}
+                aria-controls="filtros-documentos"
+                className={cn("flex min-h-10 shrink-0 cursor-pointer items-center gap-1.5 rounded-full border px-3 py-2 text-sm transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary", showFilters ? "border-primary bg-primary text-white" : "border-border bg-card hover:bg-accent")}
+              >
+                <SlidersHorizontal className="h-4 w-4" aria-hidden="true" />
+                Filtros{filterCount > 0 && <span> ({filterCount})</span>}
+              </button>
+            </div>
           </div>
           <div className="mt-5">
             <div className="relative">
@@ -113,21 +119,21 @@ export default function DocumentosPage() {
       <section aria-label="Lista de documentos" className="mx-auto max-w-6xl space-y-3 px-5 py-4 sm:px-8">
         <p role="status" className="sr-only">{filteredDocuments.length} {filteredDocuments.length === 1 ? "documento encontrado" : "documentos encontrados"}</p>
         {filteredDocuments.length ? filteredDocuments.map((document) => (
-          <article key={document.id} className="flex items-start gap-3 rounded-2xl border border-border bg-card p-5 shadow-sm sm:p-6">
+          <article key={document.id} className="relative flex items-start gap-3 rounded-2xl border border-border bg-card p-5 shadow-sm hover:border-primary/40 sm:p-6">
             <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary">
               <FileText className="h-5 w-5" aria-hidden="true" />
             </span>
             <div className="min-w-0 flex-1">
               <div className="flex flex-wrap items-start justify-between gap-2">
                 <div className="min-w-0">
-                  <h2 className="break-words text-sm font-medium">{document.title}</h2>
+                  <h2 className="break-words text-sm font-medium"><Link href={"/documentos/" + document.id} className="after:absolute after:inset-0 after:rounded-2xl hover:text-primary-dark">{document.title}</Link></h2>
                   <p className="mt-0.5 text-xs text-muted-foreground">{document.code}</p>
                 </div>
                 <span className={cn("inline-flex shrink-0 rounded-full border px-3 py-1 text-xs font-medium", document.status === "pendente" ? "border-amber-200 bg-amber-50 text-amber-800" : "border-primary/20 bg-primary/10 text-primary-dark")}>
                   {document.status === "pendente" ? "Pendente de assinatura" : "Assinado"}
                 </span>
               </div>
-              <Link href={`/pacientes/${document.patientId}`} className="mt-2 flex w-fit max-w-full items-center gap-2 rounded-lg text-xs hover:text-primary-dark focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+              <Link href={`/pacientes/${document.patientId}`} className="relative z-10 mt-2 flex w-fit max-w-full items-center gap-2 rounded-lg text-xs hover:text-primary-dark focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
                 <span aria-hidden="true" className="flex shrink-0 items-center justify-center rounded-full bg-secondary font-medium text-foreground h-8 w-8 text-xs">
                   {document.patient.trim().split(/\s+/).slice(0, 2).map((part) => part[0]).join("")}
                 </span>
@@ -135,7 +141,7 @@ export default function DocumentosPage() {
               </Link>
               <div className="mt-2 flex flex-wrap justify-between gap-2 text-xs text-muted-foreground">
                 <p>{document.author}</p>
-                <p>{document.updatedAt}</p>
+                <p>{document.date}</p>
               </div>
             </div>
           </article>
