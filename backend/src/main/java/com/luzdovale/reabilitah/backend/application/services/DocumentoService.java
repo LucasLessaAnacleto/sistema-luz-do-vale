@@ -1,15 +1,16 @@
 package com.luzdovale.reabilitah.backend.application.services;
 
 
-import com.luzdovale.reabilitah.backend.application.DTO.documento.CriarDocumentoRequest;
-import com.luzdovale.reabilitah.backend.application.DTO.documento.DocumentoDetalhesResponse;
-import com.luzdovale.reabilitah.backend.application.DTO.documento.DocumentoResponse;
+import com.luzdovale.reabilitah.backend.application.DTO.documento.*;
 import com.luzdovale.reabilitah.backend.application.exceptions.DocumentoNaoEncontradoException;
 import com.luzdovale.reabilitah.backend.domain.entities.*;
 import com.luzdovale.reabilitah.backend.domain.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 public class DocumentoService {
@@ -57,6 +58,35 @@ public class DocumentoService {
         );
 
         return mapeiaParaDTO(documento);
+    }
+
+    public List<DocumentoRelacionadoResponse> listarRelacionados(Long id) {
+
+        Documento documento = buscarDocumento(id);
+        List<DocumentoRelacionadoResponse> relacionados = new ArrayList<>();
+
+        if (documento.getDocumentoOrigem() != null) {
+            relacionados.add(
+                mapeiaRelacionado(documento.getDocumentoOrigem(), "ORIGEM")
+            );
+        }
+
+        var derivados = documentoRepository.findByDocumentoOrigem(documento);
+
+        derivados.forEach(derivado ->
+            relacionados.add(
+                mapeiaRelacionado(derivado, "DERIVADO")
+            )
+        );
+
+        return relacionados;
+    }
+
+    public List<HistDocumentoResponse> listarHistorico(Long documentoId) {
+
+        Documento documento = buscarDocumento(documentoId);
+
+        return histDocumentoService.listarPorDocumento(documento);
     }
 
     public DocumentoDetalhesResponse buscar(Long id) {
@@ -114,6 +144,20 @@ public class DocumentoService {
                 documento.isAtivo(),
                 documento.getDtCriacao(),
                 documento.getDtAssinatura()
+        );
+    }
+
+    private DocumentoRelacionadoResponse mapeiaRelacionado(Documento documento, String relacao) {
+
+        return new DocumentoRelacionadoResponse(
+                documento.getId(),
+                documento.getTipoDocumentoVersao()
+                        .getTipoDocumento()
+                        .getNome(),
+                relacao,
+                documento.getDtCriacao(),
+                documento.getDtAssinatura(),
+                documento.isAtivo()
         );
     }
 

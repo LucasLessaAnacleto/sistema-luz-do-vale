@@ -9,5 +9,5 @@ import java.util.List;
 
 @Repository
 public interface DocumentoRepository extends JpaRepository<Documento, Long> {
-//    List<Documento> findByDocumentoOrigem(Documento documentoOrigem);
+    List<Documento> findByDocumentoOrigem(Documento documentoOrigem);
 }

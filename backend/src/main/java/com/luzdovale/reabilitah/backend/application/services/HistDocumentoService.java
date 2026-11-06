@@ -6,7 +6,6 @@ import com.luzdovale.reabilitah.backend.domain.repository.HistDocumentoRepositor
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.print.Doc;
 import java.util.List;
 
 @Service
@@ -20,6 +19,14 @@ public class HistDocumentoService {
         var paciente = pacienteService.buscarPaciente(pacienteId);
         return histDocumentoRepository.findByPacienteOrderByDtCriacaoDesc(paciente)
                 .stream().map(this::mapeiaParaDTO).toList();
+    }
+
+    public List<HistDocumentoResponse> listarPorDocumento(Documento documento) {
+        return histDocumentoRepository
+                .findByDocumentoOrderByDtCriacaoDesc(documento)
+                .stream()
+                .map(this::mapeiaParaDTO)
+                .toList();
     }
 
     public void registrarHistorico(
