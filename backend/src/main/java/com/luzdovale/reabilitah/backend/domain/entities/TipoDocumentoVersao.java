@@ -25,5 +25,7 @@ public class TipoDocumentoVersao {
     @Column(columnDefinition = "jsonb")
     private String campos = "[]";
 
+    private String template;
+
     private LocalDateTime dtCriacao;
 }

@@ -14,10 +14,25 @@ public class HistDocumentoService {
     private HistDocumentoRepository histDocumentoRepository;
     @Autowired
     private PacienteService pacienteService;
+    @Autowired
+    private UsuarioService usuarioService;
 
-    public List<HistDocumentoResponse> listarPorPaciente(Long pacienteId) {
+    public List<HistDocumentoResponse> listarPorPaciente(Long pacienteId, Long usuarioId) {
         var paciente = pacienteService.buscarPaciente(pacienteId);
-        return histDocumentoRepository.findByPacienteOrderByDtCriacaoDesc(paciente)
+        List<HistDocumento> historicos;
+
+        if(usuarioId != null) {
+            Usuario criadoPor = usuarioService.buscarPorId(usuarioId);
+
+            historicos = histDocumentoRepository
+                    .findByPacienteAndCriadoPorOrderByDtCriacaoDesc(
+                        paciente,
+                        criadoPor
+                    );
+        }else{
+            historicos = histDocumentoRepository.findByPacienteOrderByDtCriacaoDesc(paciente);
+        }
+        return historicos
                 .stream().map(this::mapeiaParaDTO).toList();
     }
 

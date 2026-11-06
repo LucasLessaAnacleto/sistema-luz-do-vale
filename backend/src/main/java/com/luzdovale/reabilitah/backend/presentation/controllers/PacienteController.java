@@ -51,9 +51,9 @@ public class PacienteController {
     }
 
     @GetMapping("/{id}/historico")
-    public ResponseEntity<List<HistDocumentoResponse>> listarHistorico(@PathVariable Long id) {
+    public ResponseEntity<List<HistDocumentoResponse>> listarHistorico(@PathVariable Long id, @RequestParam(required = false) Long usuarioId) {
         return ResponseEntity.ok(
-                histDocumentoService.listarPorPaciente(id)
+                histDocumentoService.listarPorPaciente(id, usuarioId)
         );
     }
 }

@@ -27,40 +27,44 @@ class DocumentoCamposServiceTest {
     }
 
     @Test
-    void deveLerCamposValidosEUsarTextoComoTipoPadrao() {
+    void deveFalharQuandoTipoNaoForInformado() {
 
-        var versao = criarVersao("""
-                [
-                  {
-                    "nome": "destino",
-                    "rotulo": "Destino",
-                    "obrigatorio": true
-                  },
-                  {
-                    "nome": "dataSaida",
-                    "rotulo": "Data da saída",
-                    "tipo": "DATA",
-                    "obrigatorio": true
-                  },
-                  {
-                    "nome": "acompanhado",
-                    "rotulo": "Está acompanhado?",
-                    "tipo": "BOOLEANO",
-                    "obrigatorio": false
-                  }
-                ]
-                """);
+        String json = """
+        [
+          {
+            "nome": "nome",
+            "rotulo": "Nome"
+          }
+        ]
+        """;
 
-        var campos = documentoCamposService.lerCampos(versao);
+        TipoDocumentoVersao versao = criarVersao(json);
 
-        assertEquals(3, campos.size());
+        assertThrows(
+                CamposDocumentoInvalidosException.class,
+                () -> documentoCamposService.lerCampos(versao)
+        );
+    }
 
-        assertEquals("destino", campos.get(0).getNome());
-        assertEquals(EnumTipoCampo.TEXTO, campos.get(0).getTipo());
+    @Test
+    void deveFalharQuandoTipoForInvalido() {
 
-        assertEquals(EnumTipoCampo.DATA, campos.get(1).getTipo());
-        assertEquals(EnumTipoCampo.BOOLEANO, campos.get(2).getTipo());
-        assertFalse(campos.get(2).isObrigatorio());
+        String json = """
+        [
+          {
+            "nome": "nome",
+            "rotulo": "Nome",
+            "tipo": "TIPO_INEXISTENTE"
+          }
+        ]
+        """;
+
+        TipoDocumentoVersao versao = criarVersao(json);
+
+        assertThrows(
+                CamposDocumentoInvalidosException.class,
+                () -> documentoCamposService.lerCampos(versao)
+        );
     }
 
     @Test

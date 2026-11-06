@@ -280,9 +280,10 @@ public class DocumentoCamposService {
             }
 
             if (campo.getTipo() == null) {
-                campo.setTipo(EnumTipoCampo.TEXTO);
+                throw new IllegalArgumentException("campo \"tipo\" é obrigatório");
+            }
 
-            } else if (campo.getTipo() == EnumTipoCampo.SELECAO  || campo.getTipo() == EnumTipoCampo.MULTIPLA_SELECAO) {
+            if (campo.getTipo() == EnumTipoCampo.SELECAO  || campo.getTipo() == EnumTipoCampo.MULTIPLA_SELECAO) {
 
                 if ((campo.getOpcoes() == null || campo.getOpcoes().isEmpty()) &&
                         (campo.getTabelaLista() == null || campo.getTabelaLista().isBlank())) {

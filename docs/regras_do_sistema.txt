@@ -348,3 +348,30 @@ FLUXO QUE PRECISAMOS SEGUIR
    acao = "CRIADO"
 
 
+
+
+
+{
+  "tipoDocumentoId": 1,
+  "pacienteId": 1,
+  "dados": {
+    "nacionalidade": "Brasileira",
+    "naturalidade": "Florianópolis",
+    "municipioNaturalidade": "Florianópolis",
+    "nomePai": "João da Silva",
+    "nomeMae": "Maria da Silva",
+    "escolaridade": "Médio completo",
+    "profissao": "Auxiliar administrativo",
+    "cor": "Parda",
+    "estadoCivil": "Solteiro(a)",
+    "filhos": true,
+    "dependencias": [
+      "Álcool",
+      "Maconha/Haxixe"
+    ],
+    "primeiraDrogaLicita": "Álcool",
+    "idadePrimeiraDrogaLicita": 15,
+    "primeiraDrogaIlicita": "Maconha/Haxixe",
+    "idadePrimeiraDrogaIlicita": 17
+  }
+}
