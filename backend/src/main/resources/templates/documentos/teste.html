@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+
+    <style>
+        @page {
+            size: A4;
+            margin: 20mm;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            font-size: 12px;
+        }
+
+        .cabecalho {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        .cabecalho h1 {
+            font-size: 18px;
+            margin: 5px 0;
+        }
+
+        .cabecalho h2 {
+            font-size: 13px;
+            margin: 0;
+        }
+
+        .bloco {
+            border: 1px solid #000;
+            padding: 12px;
+            margin-bottom: 20px;
+            page-break-inside: avoid;
+        }
+
+        .campo {
+            margin-bottom: 10px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        td {
+            border: 1px solid #000;
+            padding: 8px;
+            vertical-align: top;
+        }
+
+        .nova-pagina {
+            page-break-before: always;
+        }
+
+        .assinatura {
+            width: 250px;
+            margin: 60px auto 0;
+            text-align: center;
+        }
+
+        .assinatura .linha {
+            border-top: 1px solid #000;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="cabecalho">
+        <h2>INSTITUIÇÃO LUZ DO VALE</h2>
+        <h1>CONTROLE DE SAÍDA</h1>
+    </div>
+
+    <div class="bloco">
+        <div class="campo">
+            <strong>Paciente:</strong>
+            <span th:text="${paciente.nome}"></span>
+        </div>
+
+        <div class="campo">
+            <strong>Destino:</strong>
+            <span th:text="${dados.destino}"></span>
+        </div>
+
+        <div class="campo">
+            <strong>Data da saída:</strong>
+            <span th:text="${dados.dataSaida}"></span>
+        </div>
+
+    </div>
+
+    <p>
+        <strong>Acompanhado:</strong>
+        <span th:text="${dados.acompanhado ? 'Sim' : 'Não'}"></span>
+    </p>
+
+    <div th:if="${dados.acompanhado}">
+        O paciente estará acompanhado durante a saída.
+    </div>
+
+    <p th:if="${documento.observacao != null}">
+        <strong>Observação:</strong>
+        <span th:text="${documento.observacao}"></span>
+    </p>
+
+    <div th:each="campo : ${campos}">
+
+        <strong th:text="${campo.rotulo}"></strong>
+
+        <span th:text="${dados[campo.nome]}"></span>
+
+    </div>
+
+    <table>
+        <tr>
+            <td>
+                <strong>Paciente</strong><br />
+                <span th:text="${paciente.nome}"></span>
+            </td>
+
+            <td>
+                <strong>Data</strong><br />
+                <span th:text="${dados.dataSaida}"></span>
+            </td>
+        </tr>
+    </table>
+
+    <div class="nova-pagina">
+        nova pagina aqui
+
+        <div class="assinatura">
+            <div class="linha"></div>
+
+            <p th:text="${usuario.profissional != null ? usuario.profissional.nome : usuario.email}">
+            </p>
+        </div>
+    </div>
+
+</body>
+</html>

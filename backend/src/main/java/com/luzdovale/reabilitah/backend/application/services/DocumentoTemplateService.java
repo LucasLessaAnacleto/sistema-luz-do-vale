@@ -29,9 +29,8 @@ public class DocumentoTemplateService {
 
     public String gerarHtml(Long documentoId) {
 
-        Documento documento = documentoRepository
-                .findById(documentoId)
-                .orElseThrow(DocumentoNaoEncontradoException::new);
+        Documento documento = documentoRepository.findById(documentoId)
+                .orElseThrow(() -> new DocumentoNaoEncontradoException());
 
         return gerarHtml(documento);
     }
@@ -56,11 +55,7 @@ public class DocumentoTemplateService {
         context.setVariable("campos", campos);
         context.setVariable("dados", dados);
 
-        String template = versao.getTemplate();
-
-        if (template == null || template.isBlank()) {
-            template = "generico";
-        }
+        String template = resolverTemplate(versao);
 
         return templateEngine.process("documentos/"+template, context);
     }

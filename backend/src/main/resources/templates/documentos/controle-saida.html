@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8" />
+
+    <style>
+        @page {
+            size: A4;
+            margin: 20mm;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            font-size: 12px;
+            line-height: 1.5;
+        }
+
+        .cabecalho {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        .cabecalho h1 {
+            font-size: 18px;
+            margin: 5px 0;
+        }
+
+        .cabecalho h2 {
+            font-size: 13px;
+            margin: 0;
+        }
+
+        .bloco {
+            border: 1px solid #000;
+            padding: 12px;
+            margin-bottom: 20px;
+        }
+
+        .campo {
+            margin-bottom: 8px;
+        }
+
+        .assinatura {
+            width: 250px;
+            margin: 60px auto 0;
+            text-align: center;
+        }
+
+        .assinatura .linha {
+            border-top: 1px solid #000;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="cabecalho">
+        <h2>INSTITUIÇÃO LUZ DO VALE</h2>
+
+        <h1 th:text="${tipoDocumento.nome}">
+            Documento
+        </h1>
+    </div>
+
+    <div class="bloco">
+
+        <div class="campo">
+            <strong>Paciente:</strong>
+            <span th:text="${paciente.nome}"></span>
+        </div>
+
+        <div class="campo">
+            <strong>Destino:</strong>
+            <span th:text="${dados.destino}"></span>
+        </div>
+
+        <div class="campo">
+            <strong>Data da saída:</strong>
+            <span th:text="${dados.dataSaida}"></span>
+        </div>
+
+        <div class="campo">
+            <strong>Acompanhado:</strong>
+            <span th:text="${dados.acompanhado ? 'Sim' : 'Não'}"></span>
+        </div>
+
+    </div>
+
+    <div th:if="${documento.observacao != null}">
+        <strong>Observações:</strong>
+        <p th:text="${documento.observacao}"></p>
+    </div>
+
+    <div class="assinatura">
+        <div class="linha"></div>
+
+        <span th:text="${usuario.profissional != null
+            ? usuario.profissional.nome
+            : usuario.email}">
+        </span>
+    </div>
+
+</body>
+</html>
