@@ -30,6 +30,7 @@ public class DocumentoController {
 
     @PostMapping
     public ResponseEntity<DocumentoResponse> criar(@RequestBody CriarDocumentoRequest request, Authentication auth){
+
         return ResponseEntity.ok(
                 documentoService.criar(request, (Usuario) auth.getPrincipal())
         );

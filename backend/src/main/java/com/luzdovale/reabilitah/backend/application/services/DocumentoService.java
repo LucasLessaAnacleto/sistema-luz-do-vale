@@ -28,7 +28,7 @@ public class DocumentoService {
     @Transactional
     public DocumentoResponse criar(CriarDocumentoRequest request, Usuario usuarioLogado) {
 
-        TipoDocumentoVersao versao = tipoDocumentoService.ultimaVersaoDocumento(request.tipoDocumentoId());
+        TipoDocumentoVersao versao = tipoDocumentoService.buscarVersaoId(request.tipoDocumentoVersaoId());
 
         var paciente = pacienteService.buscarPaciente(request.pacienteId());
 
