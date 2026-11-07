@@ -3,13 +3,17 @@ package com.luzdovale.reabilitah.backend.application.services;
 import com.google.gson.Gson;
 import com.google.gson.JsonParseException;
 import com.google.gson.reflect.TypeToken;
+import com.luzdovale.reabilitah.backend.application.DTO.documento.OpcaoLista;
 import com.luzdovale.reabilitah.backend.application.exceptions.CamposDocumentoInvalidosException;
 import com.luzdovale.reabilitah.backend.application.exceptions.DadosDocumentoInvalidosException;
+import com.luzdovale.reabilitah.backend.domain.entities.TipoDependencia;
 import com.luzdovale.reabilitah.backend.domain.entities.TipoDocumentoVersao;
 import com.luzdovale.reabilitah.backend.domain.enuns.EnumTipoCampo;
+import com.luzdovale.reabilitah.backend.domain.repository.TipoDependenciaRepository;
 import com.luzdovale.reabilitah.backend.domain.valueobjects.CampoDocumento;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.lang.reflect.Type;
@@ -29,14 +33,39 @@ public class DocumentoCamposService {
         this.gson = gson;
     }
 
-    public List<Map.Entry<String, String>> buscaListaOpcao(String nomeLista){
-        // if(nomeLista.equals("DROGAS_ILICITAS")){
-        //    return TipoDependenciaRepository.findByCategoriaILICITA()
-        //          .steam()
-        //          .map(d -> Map.entry(String.valueOf(d.getId()), d.getNome())
-        //          .toList();
-        // }
-        return List.of();
+    @Autowired
+    private TipoDependenciaRepository tipoDependenciaRepository;
+
+    public List<OpcaoLista> buscaListaOpcao(String nomeLista) {
+
+        if(nomeLista.startsWith("TIPO_DEPENDENCIA")){
+            List<TipoDependencia> dependencias = tipoDependenciaRepository.findAllByOrderByNomeAsc();
+
+            if ("TIPO_DEPENDENCIA_LICITA".equals(nomeLista)) {
+                dependencias = dependencias.stream().filter(dep -> dep.getCategoria() == 1).toList();
+            }
+
+            if ("TIPO_DEPENDENCIA_ILICITA".equals(nomeLista)) {
+                dependencias = dependencias.stream().filter(dep -> dep.getCategoria() == 2).toList();
+            }
+
+            return dependencias.stream().map(dep -> new OpcaoLista(String.valueOf(dep.getId()), dep.getNome()))
+                    .toList();
+        }
+
+        throw new IllegalArgumentException(
+                "Lista \"%s\" não encontrada.".formatted(nomeLista)
+        );
+    }
+
+    public Map<String, List<OpcaoLista>> resolverListas(
+            List<CampoDocumento> campos
+    ) {
+        Map<String, List<OpcaoLista>> listas = new HashMap<>();
+
+        resolverListasOpcoes(campos, listas);
+
+        return listas;
     }
 
     public Map<String, Object> lerDados(String dadosJson) {
@@ -73,6 +102,22 @@ public class DocumentoCamposService {
                 normalizarDados(campos, dados);
 
         return gson.toJson(dadosNormalizados);
+    }
+
+    private void resolverListasOpcoes(List<CampoDocumento> campos, Map<String, List<OpcaoLista>> listas){
+        for (CampoDocumento campo : campos){
+            String nomeLista = campo.getTabelaLista();
+
+            if(nomeLista != null && !nomeLista.isBlank()){
+                if(!listas.containsKey(nomeLista)){
+                    listas.put(nomeLista, buscaListaOpcao(nomeLista));
+                }
+            }
+
+            if(campo.getTipo() == EnumTipoCampo.GRUPO && campo.getCampos() != null){
+                resolverListasOpcoes(campo.getCampos(), listas);
+            }
+        }
     }
 
     private Map<String, Object> normalizarDados(
@@ -218,13 +263,16 @@ public class DocumentoCamposService {
 
     private String validarSelecao(CampoDocumento campo, Object input) {
         String valor = String.valueOf(input);
-        if(campo.getOpcoes() != null) {
+        if(campo.getOpcoes() != null && !campo.getOpcoes().isEmpty()) {
             if (campo.getOpcoes().contains(valor)) {
                 return valor;
             }
-        }else{
-            // verificar se existe o codigo na tabela?
-            return String.valueOf(input);
+        }else if(campo.getTabelaLista() != null && !campo.getTabelaLista().isBlank()){
+            var opcoes = buscaListaOpcao(campo.getTabelaLista());
+            boolean existe = opcoes.stream().anyMatch(opcao -> opcao.valor().equals(valor));
+            if (existe) {
+                return valor;
+            }
         }
         throw new DadosDocumentoInvalidosException(
             "Campo \"%s\" com valor \"%s\" não é uma opção válida."
@@ -240,12 +288,28 @@ public class DocumentoCamposService {
             );
         }
         List<?> valores = (List<?>) input;
-        List<String> lista = new ArrayList<>();
+        List<String> valoresValidos;
+
+        if (campo.getOpcoes() != null && !campo.getOpcoes().isEmpty()) {
+            valoresValidos = campo.getOpcoes();
+        } else {
+            valoresValidos = buscaListaOpcao(campo.getTabelaLista()).stream().map(op -> op.valor())
+                .toList();
+        }
+        List<String> resultado = new ArrayList<>();
 
         for(Object item : valores){
-            lista.add(validarSelecao(campo, item));
+            String valor = String.valueOf(item);
+
+            if(!valoresValidos.contains(valor)){
+                throw new DadosDocumentoInvalidosException("Campo \"%s\" com valor \"%s\" não é uma opção válida."
+                    .formatted(campo.getRotulo(), valor)
+                );
+
+            }
+            resultado.add(valor);
         }
-        return lista;
+        return resultado;
     }
 
     private Map<String, Object> validarGrupo(CampoDocumento campo, Object input) {

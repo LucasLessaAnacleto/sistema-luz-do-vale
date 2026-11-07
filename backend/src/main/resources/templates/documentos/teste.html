@@ -64,6 +64,18 @@
         .assinatura .linha {
             border-top: 1px solid #000;
         }
+
+        .checkbox {
+            display: inline-block;
+            width: 11px;
+            height: 11px;
+            border: 1px solid #000;
+            text-align: center;
+            line-height: 11px;
+            font-size: 9px;
+            font-weight: bold;
+            margin-right: 4px;
+        }
     </style>
 </head>
 
@@ -136,6 +148,7 @@
             <p th:text="${usuario.profissional != null ? usuario.profissional.nome : usuario.email}">
             </p>
         </div>
+
     </div>
 
 </body>

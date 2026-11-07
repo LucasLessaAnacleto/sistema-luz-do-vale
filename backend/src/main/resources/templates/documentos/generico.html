@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8" />
+
+    <style>
+        @page {
+            size: A4;
+            margin: 20mm;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            font-size: 12px;
+            line-height: 1.5;
+            color: #222;
+        }
+
+        .cabecalho {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        .cabecalho h1 {
+            font-size: 18px;
+            margin: 5px 0;
+        }
+
+        .cabecalho h2 {
+            font-size: 13px;
+            margin: 0;
+        }
+
+        .paciente {
+            border: 1px solid #ccc;
+            padding: 10px;
+            margin-bottom: 20px;
+        }
+
+        .campos {
+            width: 100%;
+        }
+
+        .campo {
+            margin-bottom: 14px;
+            page-break-inside: avoid;
+        }
+
+        .rotulo {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 3px;
+        }
+
+        .valor {
+            display: block;
+        }
+
+        .grupo {
+            border: 1px solid #ccc;
+            padding: 12px;
+            margin-bottom: 15px;
+            page-break-inside: avoid;
+        }
+
+        .grupo-titulo {
+            font-weight: bold;
+            font-size: 13px;
+            margin-bottom: 10px;
+            border-bottom: 1px solid #ddd;
+            padding-bottom: 5px;
+        }
+
+        .observacao {
+            margin-top: 25px;
+            page-break-inside: avoid;
+        }
+
+        .assinatura {
+            width: 250px;
+            margin: 60px auto 0;
+            text-align: center;
+            page-break-inside: avoid;
+        }
+
+        .assinatura .linha {
+            border-top: 1px solid #000;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="cabecalho">
+        <h2>INSTITUIÇÃO LUZ DO VALE</h2>
+
+        <h1 th:text="${tipoDocumento.nome}">
+            DOCUMENTO
+        </h1>
+    </div>
+
+
+    <div class="paciente">
+        <strong>Paciente:</strong>
+        <span th:text="${paciente.nome}"></span>
+    </div>
+
+
+    <div class="campos">
+
+        <div class="campo"
+             th:each="campo : ${campos}"
+             th:switch="${campo.tipo.name()}"
+        >
+            <!-- GRUPO -->
+            <div th:case="'GRUPO'" class="grupo">
+
+                <div class="grupo-titulo" th:text="${campo.rotulo}"></div>
+
+                <div class="campo" th:each="subcampo : ${campo.campos}">
+
+                    <span class="rotulo" th:text="${subcampo.rotulo}"></span>
+
+                    <!-- BOOLEANO dentro de grupo -->
+                    <span class="valor"
+                          th:if="${subcampo.tipo.name() == 'BOOLEANO'}"
+                          th:text="${dados[campo.nome][subcampo.nome] ? 'Sim' : 'Não'}">
+                    </span>
+
+                    <!-- MULTIPLA_SELECAO dentro de grupo -->
+                    <span class="valor" th:if="${subcampo.tipo.name() == 'MULTIPLA_SELECAO'}">
+
+                        <span th:each="item, status : ${dados[campo.nome][subcampo.nome]}">
+
+                            <span th:text="${item}"></span>
+                            <span th:if="${!status.last}">, </span>
+
+                        </span>
+                    </span>
+
+                    <!-- Demais tipos dentro de grupo -->
+                    <span
+                            class="valor"
+                            th:if="${subcampo.tipo.name() != 'BOOLEANO' and subcampo.tipo.name() != 'MULTIPLA_SELECAO'}"
+                            th:text="${dados[campo.nome][subcampo.nome]}">
+                    </span>
+
+                </div>
+            </div>
+
+
+            <!-- BOOLEANO -->
+            <div th:case="'BOOLEANO'">
+
+                <span class="rotulo" th:text="${campo.rotulo}"></span>
+
+                <span class="valor" th:text="${dados[campo.nome] ? 'Sim' : 'Não'}"></span>
+
+            </div>
+
+
+            <!-- MULTIPLA_SELECAO -->
+            <div th:case="'MULTIPLA_SELECAO'">
+
+                <span class="rotulo" th:text="${campo.rotulo}"></span>
+
+                <span class="valor">
+
+                    <span th:each="item, status : ${dados[campo.nome]}">
+                        <span th:text="${item}"></span>
+                        <span th:if="${!status.last}">,</span>
+                    </span>
+
+                </span>
+
+            </div>
+
+
+            <!-- TEXTO, TEXTO_LONGO, INTEIRO, DECIMAL, DATA, SELECAO -->
+            <div th:case="*">
+
+                <span class="rotulo" th:text="${campo.rotulo}"></span>
+
+                <span class="valor" th:text="${dados[campo.nome]}"></span>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <div class="observacao" th:if="${documento.observacao != null and !documento.observacao.isBlank()}">
+
+        <strong>Observação:</strong>
+        <p th:text="${documento.observacao}"></p>
+
+    </div>
+
+
+    <div class="assinatura" th:if="${documento.dtAssinatura != null}">
+
+        <div class="linha"></div>
+
+        <span th:text="${usuario.profissional != null
+            ? usuario.profissional.nome
+            : usuario.email}"></span>
+
+    </div>
+
+</body>
+</html>

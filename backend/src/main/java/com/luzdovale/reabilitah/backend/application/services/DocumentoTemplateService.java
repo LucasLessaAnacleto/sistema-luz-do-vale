@@ -18,12 +18,12 @@ public class DocumentoTemplateService {
 
     @Autowired
     private DocumentoRepository documentoRepository;
-
     @Autowired
     private DocumentoCamposService documentoCamposService;
-
     @Autowired
     private ITemplateEngine templateEngine;
+    @Autowired
+    private ResponsavelService responsavelService;
     @Autowired
     private ResourceLoader resourceLoader;
 
@@ -40,12 +40,15 @@ public class DocumentoTemplateService {
         var versao = documento.getTipoDocumentoVersao();
         var campos = documentoCamposService.lerCampos(versao);
         var dados = documentoCamposService.lerDados(documento.getDados());
+        var responsavel = responsavelService.buscarPorPaciente(documento.getPaciente());
+        var listas = documentoCamposService.resolverListas(campos);
 
         Context context = new Context();
 
         context.setVariable("documento", documento);
         context.setVariable("tipoDocumento",versao.getTipoDocumento());
         context.setVariable("paciente", documento.getPaciente());
+        context.setVariable("responsavel", responsavel);
         context.setVariable("usuario", documento.getCriadoPor());
         context.setVariable("profissional",
             documento.getCriadoPor() != null
@@ -54,6 +57,7 @@ public class DocumentoTemplateService {
         );
         context.setVariable("campos", campos);
         context.setVariable("dados", dados);
+        context.setVariable("listas", listas);
 
         String template = resolverTemplate(versao);
 
