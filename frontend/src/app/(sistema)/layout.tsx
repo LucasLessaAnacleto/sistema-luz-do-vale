@@ -31,7 +31,7 @@ export default function SistemaLayout({
   }
 
   return (
-    <div className="min-h-svh pb-[calc(104px+env(safe-area-inset-bottom))]">
+    <div className="flex h-dvh min-h-0 flex-col overflow-hidden">
       <a
         href="#conteudo"
         className="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-30 focus:rounded-lg focus:bg-card focus:p-3 focus:text-primary-dark"
@@ -41,7 +41,11 @@ export default function SistemaLayout({
 
       <Header />
 
-      <main id="conteudo" tabIndex={-1}>
+      <main
+        id="conteudo"
+        tabIndex={-1}
+        className="min-h-0 flex-1 overflow-y-auto overscroll-contain pb-6 [scrollbar-gutter:stable_both-edges]"
+      >
         {children}
       </main>
 

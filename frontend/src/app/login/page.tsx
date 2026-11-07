@@ -9,8 +9,10 @@ import Input from "@/app/components/ui/Input";
 import SessionStatus from "@/app/components/SessionStatus";
 import { useAppDispatch, useAppSelector } from "@/app/redux/hook";
 import { LoginFormState } from "@/app/types/auth";
-import { setToken, setUsuario } from "@/app/redux/slices/authSlice";
+import { setToken, setUsuario, logout } from "@/app/redux/slices/authSlice";
 import { loginService } from "@/app/services/authService";
+import { buscarUsuarioLogado } from "@/app/services/usuarioService";
+
 
 
 
@@ -25,23 +27,37 @@ export default function LoginPage() {
     if (status === "autenticado") router.replace("/");
   }, [status, router]);
 
-  async function loginAction(previousState: LoginFormState, dados: FormData): Promise<LoginFormState> {
-    const email = String(dados.get("email") ?? "");
-    const senha = String(dados.get("senha") ?? "");
-    try {
-      const { usuario, token } = await loginService({ email, senha });
-      dispatch(setToken({ token }));
-      dispatch(setUsuario({ usuario }));
-      return initialState;
-    } catch (error) {
-      return {
-        email,
-        senha,
-        erro: error instanceof Error ? error.message : "Não foi possível entrar. Tente novamente.",
-        tentativa: previousState.tentativa + 1,
-      };
-    }
+async function loginAction(
+  previousState: LoginFormState,
+  dados: FormData
+): Promise<LoginFormState> {
+  const email = String(dados.get("email") ?? "");
+  const senha = String(dados.get("senha") ?? "");
+
+  try {
+    const { token } = await loginService({ email, senha });
+
+    dispatch(setToken({ token }));
+
+    const usuario = await buscarUsuarioLogado();
+
+    dispatch(setUsuario({ usuario }));
+
+    return initialState;
+  } catch (error) {
+    dispatch(logout());
+
+    return {
+      email,
+      senha,
+      erro:
+        error instanceof Error
+          ? error.message
+          : "Não foi possível entrar. Tente novamente.",
+      tentativa: previousState.tentativa + 1,
+    };
   }
+}
 
   const [formState, formAction, isPending] = useActionState(loginAction, initialState);
 
