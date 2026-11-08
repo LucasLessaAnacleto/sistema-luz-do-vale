@@ -2,7 +2,9 @@ package com.luzdovale.reabilitah.backend.application.services;
 
 
 import com.luzdovale.reabilitah.backend.application.DTO.documento.*;
+import com.luzdovale.reabilitah.backend.application.DTO.paciente.FichaAcolhimentoRequest;
 import com.luzdovale.reabilitah.backend.application.exceptions.DocumentoNaoEncontradoException;
+import com.luzdovale.reabilitah.backend.application.exceptions.PacienteNaoEncontradoException;
 import com.luzdovale.reabilitah.backend.domain.entities.*;
 import com.luzdovale.reabilitah.backend.domain.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,7 +21,7 @@ public class DocumentoService {
     @Autowired
     private TipoDocumentoService tipoDocumentoService;
     @Autowired
-    private PacienteService pacienteService;
+    private PacienteRepository pacienteRepository;
     @Autowired
     private DocumentoCamposService documentoCamposService;
     @Autowired
@@ -30,7 +32,10 @@ public class DocumentoService {
 
         TipoDocumentoVersao versao = tipoDocumentoService.buscarVersaoId(request.tipoDocumentoVersaoId());
 
-        var paciente = pacienteService.buscarPaciente(request.pacienteId());
+        tipoDocumentoService.validarPermissao(versao.getTipoDocumento(), usuarioLogado);
+
+        var paciente = pacienteRepository.findById(request.pacienteId())
+                .orElseThrow(() -> new PacienteNaoEncontradoException());
 
         var campos = documentoCamposService.lerCampos(versao);
 
@@ -58,6 +63,58 @@ public class DocumentoService {
         );
 
         return mapeiaParaDTO(documento);
+    }
+
+    @Transactional
+    public Documento criarFichaAcolhimento(
+            Paciente paciente,
+            Responsavel responsavel,
+            FichaAcolhimentoRequest ficha,
+            Usuario usuarioLogado,
+            Documento documentoOrigem
+    ) {
+
+        TipoDocumentoVersao versao = tipoDocumentoService.ultimaVersaoFichaAcolhimento();
+
+        var campos =
+                documentoCamposService.lerCampos(versao);
+
+        Map<String, Object> dados =
+                documentoCamposService.resolverDadosPadrao(
+                        campos,
+                        paciente,
+                        responsavel
+                );
+
+        completarDadosFicha(
+                dados,
+                ficha
+        );
+
+        String dadosNormalizados =
+                documentoCamposService.validarENormalizarDados(
+                        campos,
+                        dados
+                );
+
+        Documento documento = new Documento();
+
+        documento.setTipoDocumentoVersao(versao);
+        documento.setPaciente(paciente);
+        documento.setCriadoPor(usuarioLogado);
+        documento.setDocumentoOrigem(documentoOrigem);
+        documento.setDados(dadosNormalizados);
+
+        documento = documentoRepository.save(documento);
+
+        histDocumentoService.registrarHistorico(
+                documento,
+                paciente,
+                usuarioLogado,
+                "CRIADO"
+        );
+
+        return documento;
     }
 
     public List<DocumentoRelacionadoResponse> listarRelacionados(Long id) {

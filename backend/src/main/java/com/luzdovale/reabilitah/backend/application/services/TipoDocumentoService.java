@@ -4,6 +4,7 @@ import com.luzdovale.reabilitah.backend.application.DTO.documento.FormularioDocu
 import com.luzdovale.reabilitah.backend.application.DTO.tipoDocumento.TipoDocumentoResponse;
 import com.luzdovale.reabilitah.backend.application.exceptions.TipoDocumentoNaoEncontradoException;
 import com.luzdovale.reabilitah.backend.application.exceptions.TipoDocumentoVersaoNaoEncontradoExeption;
+import com.luzdovale.reabilitah.backend.application.exceptions.UsuarioSemAutorizacao;
 import com.luzdovale.reabilitah.backend.domain.entities.PermissaoTipoDocumento;
 import com.luzdovale.reabilitah.backend.domain.entities.TipoDocumento;
 import com.luzdovale.reabilitah.backend.domain.entities.TipoDocumentoVersao;
@@ -11,6 +12,7 @@ import com.luzdovale.reabilitah.backend.domain.entities.Usuario;
 import com.luzdovale.reabilitah.backend.domain.repository.PermissaoTipoDocumentoRepository;
 import com.luzdovale.reabilitah.backend.domain.repository.TipoDocumentoRepository;
 import com.luzdovale.reabilitah.backend.domain.repository.TipoDocumentoVersaoRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -27,14 +29,25 @@ public class TipoDocumentoService {
     private DocumentoCamposService documentoCamposService;
     @Autowired
     private PermissaoTipoDocumentoRepository permissaoTipoDocumentoRepository;
+    @Autowired
+    private PerfilService perfilService;
+    @Autowired
+    private PacienteService pacienteService;
+    @Autowired
+    private ResponsavelService responsavelService;
 
-    public FormularioDocumentoResponse buscarFormulario(Long tipoDocumentoId) {
+    public FormularioDocumentoResponse buscarFormulario(Long tipoDocumentoId, Long pacienteId, Usuario usuarioLogado) {
 
         TipoDocumentoVersao versao = ultimaVersaoDocumento(tipoDocumentoId);
         TipoDocumento tipoDocumento = versao.getTipoDocumento();
 
+        validarPermissao(tipoDocumento, usuarioLogado);
+
+        var paciente = pacienteService.buscarPaciente(pacienteId);
+        var responsavel = responsavelService.buscarPorPaciente(paciente);
         var campos = documentoCamposService.lerCampos(versao);
         var listas = documentoCamposService.resolverListas(campos);
+        var dadosPadrao = documentoCamposService.resolverDadosPadrao(campos, paciente, responsavel);
 
         return new FormularioDocumentoResponse(
             tipoDocumento.getId(),
@@ -44,7 +57,8 @@ public class TipoDocumentoService {
             versao.getId(),
             versao.getVersao(),
             campos,
-            listas
+            listas,
+            dadosPadrao
         );
     }
 
@@ -56,6 +70,12 @@ public class TipoDocumentoService {
         return versaoRepository
                 .findFirstByTipoDocumentoOrderByVersaoDesc(tipoDocumento)
                 .orElseThrow(() -> new TipoDocumentoVersaoNaoEncontradoExeption());
+    }
+
+    public TipoDocumentoVersao ultimaVersaoFichaAcolhimento() {
+
+        return versaoRepository.findFirstByTemplateOrderByVersaoDesc("ficha-acolhimento")
+                .orElseThrow(TipoDocumentoVersaoNaoEncontradoExeption::new);
     }
 
     public TipoDocumentoVersao buscarVersaoId(Long versaoId){
@@ -84,6 +104,48 @@ public class TipoDocumentoService {
         }
 
         return tipos.stream().map(this::mapeiaParaDTO).toList();
+    }
+
+    public void adicionarPermissao(Long tipoDocumentoId, Long perfilId) {
+
+        TipoDocumento tipoDocumento = tipoDocumentoRepository.findById(tipoDocumentoId)
+                .orElseThrow(() -> new TipoDocumentoNaoEncontradoException(tipoDocumentoId));
+
+        var perfil = perfilService.buscarPorId(perfilId);
+
+        if (permissaoTipoDocumentoRepository.existsByPerfilAndTipoDocumento(perfil,tipoDocumento)) {
+            return;
+        }
+
+        PermissaoTipoDocumento permissao = new PermissaoTipoDocumento();
+
+        permissao.setPerfil(perfil);
+        permissao.setTipoDocumento(tipoDocumento);
+
+        permissaoTipoDocumentoRepository.save(permissao);
+    }
+
+    public void removerPermissao(Long tipoDocumentoId, Long perfilId) {
+
+        TipoDocumento tipoDocumento = tipoDocumentoRepository.findById(tipoDocumentoId)
+                .orElseThrow(() -> new TipoDocumentoNaoEncontradoException(tipoDocumentoId));
+
+        var perfil = perfilService.buscarPorId(perfilId);
+
+        permissaoTipoDocumentoRepository.deleteByPerfilAndTipoDocumento(perfil,tipoDocumento);
+    }
+
+    public void validarPermissao(TipoDocumento tipoDocumento, Usuario usuario) {
+
+        if (usuario.isAdmin()) {
+            return;
+        }
+
+        if (usuario.getPerfil() == null ||
+            !permissaoTipoDocumentoRepository.existsByPerfilAndTipoDocumento(usuario.getPerfil(),tipoDocumento)
+        ) {
+            throw new UsuarioSemAutorizacao();
+        }
     }
 
     private TipoDocumentoResponse mapeiaParaDTO(TipoDocumento tipoDocumento) {

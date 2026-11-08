@@ -5,6 +5,7 @@ import com.luzdovale.reabilitah.backend.application.DTO.paciente.PacienteRespons
 import com.luzdovale.reabilitah.backend.application.DTO.responsavel.ResponsavelResponse;
 import com.luzdovale.reabilitah.backend.application.exceptions.PacienteNaoEncontradoException;
 import com.luzdovale.reabilitah.backend.application.exceptions.UsuarioSemAutorizacao;
+import com.luzdovale.reabilitah.backend.domain.entities.Documento;
 import com.luzdovale.reabilitah.backend.domain.entities.Paciente;
 import com.luzdovale.reabilitah.backend.domain.entities.Responsavel;
 import com.luzdovale.reabilitah.backend.domain.entities.Usuario;
@@ -24,6 +25,8 @@ public class PacienteService {
     private PacienteRepository pacienteRepository;
     @Autowired
     private ResponsavelService responsavelService;
+    @Autowired
+    private DocumentoService documentoService;
 
     public List<PacienteResponse> listarTodos(Boolean ativo) {
         return pacienteRepository.findAll()
@@ -46,42 +49,66 @@ public class PacienteService {
 
     @Transactional
     public PacienteResponse criar(PacienteRequest dto, Usuario usuarioLogado) {
-        if(!usuarioLogado.isAdmin() && (
-                usuarioLogado.getPerfil() == null || !usuarioLogado.getPerfil().isPermCadPaciente()
-        )){
-            throw new UsuarioSemAutorizacao();
-        }
 
-        if(dto.responsavel() == null){
+        validarPermissaoCadastro(usuarioLogado);
+
+        if (dto.responsavel() == null) {
             throw new IllegalArgumentException("verifique os campos: responsavel");
         }
-        var paciente = salvar(new Paciente(), dto);
-        var responsavel = responsavelService.criar(paciente, dto.responsavel());
 
-        return mapeiaParaDTO(paciente, responsavel);
+        if (dto.fichaAcolhimento() == null) {
+            throw new IllegalArgumentException("verifique os campos: fichaAcolhimento");
+        }
+
+        var paciente = salvar(new Paciente(), dto);
+
+        var responsavel = responsavelService.criar(paciente,dto.responsavel());
+
+        Documento ficha = documentoService.criarFichaAcolhimento(
+            paciente,
+            responsavel,
+            dto.fichaAcolhimento(),
+            usuarioLogado,
+            null
+        );
+
+        paciente.setFichaDocumento(ficha);
+        pacienteRepository.save(paciente);
+
+        return mapeiaParaDTO(paciente,responsavel);
     }
 
     @Transactional
     public PacienteResponse editar(Long id, PacienteRequest dto, Usuario usuarioLogado) {
-        if(!usuarioLogado.isAdmin() && (
-                usuarioLogado.getPerfil() == null || !usuarioLogado.getPerfil().isPermCadPaciente()
-        )){
-            throw new UsuarioSemAutorizacao();
-        }
 
-        var paciente = pacienteRepository
-                .findById(id)
-                .orElseThrow(() -> new PacienteNaoEncontradoException(id));
+        validarPermissaoCadastro(usuarioLogado);
 
-        if(dto.responsavel() == null){
+        var paciente = pacienteRepository.findById(id)
+            .orElseThrow(() -> new PacienteNaoEncontradoException(id));
+
+        if (dto.responsavel() == null) {
             throw new IllegalArgumentException("verifique os campos: responsavel");
         }
 
+        if (dto.fichaAcolhimento() == null) {
+            throw new IllegalArgumentException("verifique os campos: fichaAcolhimento");
+        }
+
+        Documento fichaAnterior = paciente.getFichaDocumento();
         paciente = salvar(paciente, dto);
-        var responsavel = responsavelService.editar(
-                paciente,
-                dto.responsavel()
+
+        var responsavel = responsavelService.editar(paciente,dto.responsavel());
+
+        Documento novaFicha = documentoService.criarFichaAcolhimento(
+            paciente,
+            responsavel,
+            dto.fichaAcolhimento(),
+            usuarioLogado,
+            fichaAnterior
         );
+
+        paciente.setFichaDocumento(novaFicha);
+        pacienteRepository.save(paciente);
 
         return mapeiaParaDTO(paciente, responsavel);
     }
@@ -89,6 +116,15 @@ public class PacienteService {
     public Paciente buscarPaciente(Long id) {
         if(id == null) throw new PacienteNaoEncontradoException();
         return pacienteRepository.findById(id).orElseThrow(PacienteNaoEncontradoException::new);
+    }
+
+    private void validarPermissaoCadastro(Usuario usuarioLogado) {
+
+        if (!usuarioLogado.isAdmin() && (
+            usuarioLogado.getPerfil() == null || !usuarioLogado.getPerfil().isPermCadPaciente()
+        )) {
+            throw new UsuarioSemAutorizacao();
+        }
     }
 
     private Paciente salvar(Paciente paciente, PacienteRequest dados){

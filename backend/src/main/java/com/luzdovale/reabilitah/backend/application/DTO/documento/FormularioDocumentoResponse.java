@@ -13,6 +13,7 @@ public record FormularioDocumentoResponse(
     Long versaoId,
     int versao,
     List<CampoDocumento> campos,
-    Map<String, List<OpcaoLista>> listas
+    Map<String, List<OpcaoLista>> listas,
+    Map<String, Object> dadosPadrao
 ) {
 }

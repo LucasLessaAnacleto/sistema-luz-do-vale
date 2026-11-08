@@ -6,14 +6,15 @@ import com.luzdovale.reabilitah.backend.domain.valueobjects.Endereco;
 import java.time.LocalDate;
 
 public record PacienteRequest(
-        String nome,
-        String apelido,
-        String cpf,
-        String rg,
-        String telefone,
-        Endereco endereco,
-        LocalDate dtNasc,
+    String nome,
+    String apelido,
+    String cpf,
+    String rg,
+    String telefone,
+    Endereco endereco,
+    LocalDate dtNasc,
 
-        ResponsavelRequest responsavel
+    ResponsavelRequest responsavel,
+    FichaAcolhimentoRequest fichaAcolhimento
 ) {
 }

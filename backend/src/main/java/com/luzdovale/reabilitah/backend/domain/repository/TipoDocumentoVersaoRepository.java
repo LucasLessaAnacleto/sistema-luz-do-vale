@@ -11,4 +11,5 @@ import java.util.Optional;
 public interface TipoDocumentoVersaoRepository extends JpaRepository<TipoDocumentoVersao, Long> {
 
     Optional<TipoDocumentoVersao> findFirstByTipoDocumentoOrderByVersaoDesc(TipoDocumento tipoDocumento);
+    Optional<TipoDocumentoVersao> findFirstByTemplateOrderByVersaoDesc(String template);
 }

@@ -13,4 +13,5 @@ public interface PermissaoTipoDocumentoRepository extends JpaRepository<Permissa
 
     boolean existsByPerfilAndTipoDocumento(Perfil perfil, TipoDocumento tipoDocumento);
     List<PermissaoTipoDocumento> findByPerfil(Perfil perfil);
+    void deleteByPerfilAndTipoDocumento(Perfil perfil,TipoDocumento tipoDocumento);
 }

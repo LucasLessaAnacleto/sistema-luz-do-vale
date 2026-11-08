@@ -6,6 +6,8 @@ import com.google.gson.reflect.TypeToken;
 import com.luzdovale.reabilitah.backend.application.DTO.documento.OpcaoLista;
 import com.luzdovale.reabilitah.backend.application.exceptions.CamposDocumentoInvalidosException;
 import com.luzdovale.reabilitah.backend.application.exceptions.DadosDocumentoInvalidosException;
+import com.luzdovale.reabilitah.backend.domain.entities.Paciente;
+import com.luzdovale.reabilitah.backend.domain.entities.Responsavel;
 import com.luzdovale.reabilitah.backend.domain.entities.TipoDependencia;
 import com.luzdovale.reabilitah.backend.domain.entities.TipoDocumentoVersao;
 import com.luzdovale.reabilitah.backend.domain.enuns.EnumTipoCampo;
@@ -58,14 +60,42 @@ public class DocumentoCamposService {
         );
     }
 
-    public Map<String, List<OpcaoLista>> resolverListas(
-            List<CampoDocumento> campos
-    ) {
+    public Map<String, List<OpcaoLista>> resolverListas(List<CampoDocumento> campos) {
         Map<String, List<OpcaoLista>> listas = new HashMap<>();
 
         resolverListasOpcoes(campos, listas);
 
         return listas;
+    }
+
+    public Map<String, Object> resolverDadosPadrao(List<CampoDocumento> campos, Paciente paciente, Responsavel responsavel) {
+
+        Map<String, Object> dados = new HashMap<>();
+        for (CampoDocumento campo : campos) {
+
+            if (campo.getTipo() == EnumTipoCampo.GRUPO) {
+
+                var dadosGrupo = resolverDadosPadrao(campo.getCampos(), paciente, responsavel);
+
+                if (!dadosGrupo.isEmpty()) {
+                    dados.put(campo.getNome(),dadosGrupo);
+                }
+
+                continue;
+            }
+
+            if (campo.getOrigem() == null || campo.getOrigem().isBlank()) {
+                continue;
+            }
+
+            Object valor = resolverOrigem(campo.getOrigem(), paciente, responsavel);
+
+            if (valor != null) {
+                dados.put(campo.getNome(), valor);
+            }
+        }
+
+        return dados;
     }
 
     public Map<String, Object> lerDados(String dadosJson) {
@@ -102,6 +132,70 @@ public class DocumentoCamposService {
                 normalizarDados(campos, dados);
 
         return gson.toJson(dadosNormalizados);
+    }
+
+    private Object resolverOrigem(String origem, Paciente paciente, Responsavel responsavel) {
+
+        return switch (origem) {
+
+            case "PACIENTE.nome" -> paciente.getNome();
+
+            case "PACIENTE.cpf" -> paciente.getCpf() != null ? paciente.getCpf().toString() : null;
+
+            case "PACIENTE.rg" -> paciente.getRg();
+
+            case "PACIENTE.telefone" -> paciente.getTelefone();
+
+            case "PACIENTE.dtNasc" -> paciente.getDtNasc() != null
+                ? paciente.getDtNasc().toString() : null;
+
+            case "PACIENTE.endereco.rua" -> paciente.getEndereco() != null
+                ? paciente.getEndereco().getRua() : null;
+
+            case "PACIENTE.endereco.numero" -> paciente.getEndereco() != null
+                ? paciente.getEndereco().getNumero() : null;
+
+            case "PACIENTE.endereco.bairro" -> paciente.getEndereco() != null
+                ? paciente.getEndereco().getBairro() : null;
+
+            case "PACIENTE.endereco.municipio" -> paciente.getEndereco() != null
+                ? paciente.getEndereco().getMunicipio() : null;
+
+            case "PACIENTE.endereco.estado" -> paciente.getEndereco() != null
+                ? paciente.getEndereco().getEstado() : null;
+
+            case "RESPONSAVEL.nome" -> responsavel != null
+                ? responsavel.getNome() : null;
+
+            case "RESPONSAVEL.parentesco" -> responsavel != null
+                ? responsavel.getParentesco() : null;
+
+            case "RESPONSAVEL.cpf" -> responsavel != null && responsavel.getCpf() != null
+                ? responsavel.getCpf().toString() : null;
+
+            case "RESPONSAVEL.rg" -> responsavel != null
+                ? responsavel.getRg() : null;
+
+            case "RESPONSAVEL.telefone" -> responsavel != null
+                ? responsavel.getTelefone() : null;
+
+            case "RESPONSAVEL.endereco.rua" -> responsavel != null && responsavel.getEndereco() != null
+                ? responsavel.getEndereco().getRua() : null;
+
+            case "RESPONSAVEL.endereco.numero" -> responsavel != null && responsavel.getEndereco() != null
+                ? responsavel.getEndereco().getNumero() : null;
+
+            case "RESPONSAVEL.endereco.bairro" -> responsavel != null && responsavel.getEndereco() != null
+                ? responsavel.getEndereco().getBairro() : null;
+
+            case "RESPONSAVEL.endereco.municipio" -> responsavel != null && responsavel.getEndereco() != null
+                ? responsavel.getEndereco().getMunicipio() : null;
+
+            case "RESPONSAVEL.endereco.estado" -> responsavel != null && responsavel.getEndereco() != null
+                ? responsavel.getEndereco().getEstado() : null;
+
+            default -> null;
+        };
     }
 
     private void resolverListasOpcoes(List<CampoDocumento> campos, Map<String, List<OpcaoLista>> listas){
