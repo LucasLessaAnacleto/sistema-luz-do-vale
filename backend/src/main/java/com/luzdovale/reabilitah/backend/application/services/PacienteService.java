@@ -186,7 +186,10 @@ public class PacienteService {
                 paciente.isAtivo(),
                 paciente.getDtCriacao(),
                 paciente.getDtDesativado(),
-                responsavelResponse
+                responsavelResponse,
+                paciente.getFichaDocumento() != null
+                        ? paciente.getFichaDocumento().getId()
+                        : null
         );
     }
 

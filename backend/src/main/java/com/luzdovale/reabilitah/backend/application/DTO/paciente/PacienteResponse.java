@@ -19,6 +19,7 @@ public record PacienteResponse(
         LocalDateTime dtCriacao,
         LocalDateTime dtDesativado,
 
-        ResponsavelResponse responsavel
+        ResponsavelResponse responsavel,
+        Long fichaDocumentoId
 ) {
 }

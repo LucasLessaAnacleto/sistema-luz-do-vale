@@ -19,6 +19,7 @@ const pacientes: Paciente[] = [
     ativo: true,
     dtCriacao: "2026-11-03T20:40:48.909978",
     dtDesativado: null,
+    fichaDocumentoId: null,
     responsavel: {
       id: 1,
       nome: "Maria da Silva",
