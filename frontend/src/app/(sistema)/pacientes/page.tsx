@@ -40,7 +40,7 @@ export default function PacientesPage() {
             <button
               type="button"
               disabled
-              aria-label="Novo paciente — em breve"
+              
               title="Cadastro em breve"
               className="flex h-10 w-10 shrink-0 cursor-not-allowed items-center justify-center rounded-full bg-primary text-white opacity-70"
             >
@@ -71,7 +71,7 @@ export default function PacientesPage() {
       </section>
 
       <section
-        aria-label="Lista de pacientes"
+        
         className="mx-auto max-w-6xl space-y-3 px-5 py-4 sm:px-8"
       >
         <p role="status" className="sr-only">

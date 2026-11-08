@@ -81,11 +81,11 @@ export default function NovoDocumentoPage() {
         <div className="mx-auto max-w-3xl space-y-4 px-5 py-6 sm:px-8">
           <div className="flex items-center gap-3">
             {template ? (
-              <button type="button" aria-label="Voltar para os modelos" onClick={() => { setTemplate(null); setError(""); }} className={backClass}>
+              <button type="button"  onClick={() => { setTemplate(null); setError(""); }} className={backClass}>
                 <ArrowLeft className="h-5 w-5" />
               </button>
             ) : (
-              <Link href={backHref} aria-label="Voltar" className={backClass}><ArrowLeft className="h-5 w-5" /></Link>
+              <Link href={backHref}  className={backClass}><ArrowLeft className="h-5 w-5" /></Link>
             )}
             <div>
               {template && <p className="mb-1 text-xs text-muted-foreground">Novo documento</p>}

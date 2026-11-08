@@ -17,8 +17,8 @@ export default function LandingPage() {
         Pular para o conteúdo
       </a>
       <header className="border-b border-border bg-white/80">
-        <nav aria-label="Navegação principal" className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-4 px-6 py-5">
-          <Link href="/" aria-label="Reabilitah — início" className={`flex items-center gap-3 rounded-lg ${foco}`}>
+        <nav  className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-4 px-6 py-5">
+          <Link href="/"  className={`flex items-center gap-3 rounded-lg ${foco}`}>
             <Image src="/logo-login.png" alt="" width={40} height={40} className="h-10 w-10 object-contain" />
             <span className="text-xl font-semibold tracking-tight text-primary">Reabilitah</span>
           </Link>

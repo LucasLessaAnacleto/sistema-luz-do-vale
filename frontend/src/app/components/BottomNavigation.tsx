@@ -17,7 +17,7 @@ export default function BottomNavigation() {
 
   return (
     <nav
-      aria-label="Navegação principal"
+      
       className="relative z-20 shrink-0 border-t border-border bg-card pb-[env(safe-area-inset-bottom)]"
     >
       <div className="mx-auto grid min-h-20 max-w-lg grid-cols-4 px-2">

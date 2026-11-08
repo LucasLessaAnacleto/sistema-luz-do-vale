@@ -41,7 +41,7 @@ export default function DocumentoPage({ params, searchParams }: {
             <span className="flex-1 font-medium">{doc.patient} <span className="font-normal text-muted-foreground">({doc.nickname})</span></span>
             <History className="h-4 w-4 text-primary" /><span className="text-xs text-primary-dark">Histórico</span>
           </Link>
-          <div className="flex gap-4" role="group" aria-label="Visualização do documento">
+          <div className="flex gap-4" role="group" >
             {[{ label: "Documento", value: false, icon: FileText }, { label: "Auditoria", value: true, icon: Clock3 }].map(({ label, value, icon: Icon }) => (
               <button key={label} type="button" aria-pressed={audit === value} onClick={() => setAudit(value)} className={cn("flex items-center gap-2 border-b-2 px-2 py-2 text-sm font-medium", audit === value ? "border-primary text-primary-dark" : "border-transparent text-muted-foreground")}>
                 <Icon className="h-4 w-4" />{label}

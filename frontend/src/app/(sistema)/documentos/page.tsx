@@ -74,7 +74,7 @@ export default function DocumentosPage() {
               />
             </div>
             {showFilters && (
-              <section id="filtros-documentos" aria-label="Filtrar documentos" className="mt-4 rounded-2xl border border-border bg-background p-4">
+              <section id="filtros-documentos"  className="mt-4 rounded-2xl border border-border bg-background p-4">
                 <div className="mb-3 flex items-center justify-between gap-3">
                   <h2 className="text-sm font-medium">Filtrar por</h2>
                   <button type="button" onClick={clearFilters} className="min-h-9 cursor-pointer rounded px-2 text-xs text-primary-dark hover:underline focus-visible:outline-2 focus-visible:outline-primary">Limpar filtros</button>
@@ -116,7 +116,7 @@ export default function DocumentosPage() {
         </div>
       </section>
 
-      <section aria-label="Lista de documentos" className="mx-auto max-w-6xl space-y-3 px-5 py-4 sm:px-8">
+      <section  className="mx-auto max-w-6xl space-y-3 px-5 py-4 sm:px-8">
         <p role="status" className="sr-only">{filteredDocuments.length} {filteredDocuments.length === 1 ? "documento encontrado" : "documentos encontrados"}</p>
         {filteredDocuments.length ? filteredDocuments.map((document) => (
           <article key={document.id} className="relative flex items-start gap-3 rounded-2xl border border-border bg-card p-5 shadow-sm hover:border-primary/40 sm:p-6">

@@ -51,17 +51,17 @@ export default function PatientPage({ params }: { params: Promise<{ id: string }
 
   return (
     <>
-      <section aria-label="Resumo do paciente" className="bg-linear-to-br from-primary to-[#8a976f] text-white">
+      <section  className="bg-linear-to-br from-primary to-[#8a976f] text-white">
         <div className="mx-auto max-w-6xl px-5 py-6 sm:px-8">
           <div className="mb-6 flex items-center justify-between gap-3">
-            <Link href="/pacientes" aria-label="Voltar para pacientes" className="flex h-10 w-10 items-center justify-center rounded-full bg-white/10 hover:bg-white/20 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white">
+            <Link href="/pacientes"  className="flex h-10 w-10 items-center justify-center rounded-full bg-white/10 hover:bg-white/20 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white">
               <ArrowLeft className="h-5 w-5" aria-hidden="true" />
             </Link>
             <div className="flex items-center gap-2">
-              <button type="button" disabled aria-label="Editar paciente — em breve" title="Edição em breve" className="flex min-h-10 cursor-not-allowed items-center gap-1.5 rounded-full bg-white/10 px-3 text-sm opacity-70">
+              <button type="button" disabled  title="Edição em breve" className="flex min-h-10 cursor-not-allowed items-center gap-1.5 rounded-full bg-white/10 px-3 text-sm opacity-70">
                 <Pencil className="h-4 w-4" aria-hidden="true" />Editar
               </button>
-              <Link href={"/documentos/novo?paciente=" + patient.id} aria-label="Novo documento do paciente" title="Novo documento" className="flex h-10 w-10 items-center justify-center rounded-full bg-white text-primary hover:bg-accent">
+              <Link href={"/documentos/novo?paciente=" + patient.id}  title="Novo documento" className="flex h-10 w-10 items-center justify-center rounded-full bg-white text-primary hover:bg-accent">
                 <Plus className="h-5 w-5" aria-hidden="true" />
               </Link>
             </div>
@@ -81,7 +81,7 @@ export default function PatientPage({ params }: { params: Promise<{ id: string }
       </section>
 
       <div className="border-b border-border bg-card">
-        <div role="tablist" aria-label="Informações do paciente" className="mx-auto flex max-w-6xl">
+        <div role="tablist"  className="mx-auto flex max-w-6xl">
           {tabs.map((tab, index) => (
             <button
               key={tab.id}

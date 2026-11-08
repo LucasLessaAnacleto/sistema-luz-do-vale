@@ -98,13 +98,13 @@ export default function HomePage() {
               Documentos no mês
             </p>
             <div className="flex items-center gap-1">
-              <button type="button" onClick={() => changeMonth(-1)} aria-label="Mês anterior" className={buttonClass}>
+              <button type="button" onClick={() => changeMonth(-1)}  className={buttonClass}>
                 <ChevronLeft className="h-4 w-4" aria-hidden="true" />
               </button>
               <span className="min-w-24 text-center text-xs font-medium capitalize" aria-live="polite" aria-atomic="true">
                 {monthLabel}
               </span>
-              <button type="button" onClick={() => changeMonth(1)} aria-label="Próximo mês" className={buttonClass}>
+              <button type="button" onClick={() => changeMonth(1)}  className={buttonClass}>
                 <ChevronRight className="h-4 w-4" aria-hidden="true" />
               </button>
               <output aria-label={`Documentos em ${monthLabel}`} className="ml-2 min-w-6 text-right text-xl font-bold tabular-nums">

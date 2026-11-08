@@ -5,6 +5,9 @@ import { useAppDispatch, useAppSelector } from "@/app/redux/hook";
 import { logout } from "@/app/redux/slices/authSlice";
 import ConfiguracaoSecao from "./components/ConfigSecao";
 import ConfiguracaoLink from "./components/ConfigLink";
+import ConfigDetalhes from "./components/ConfigDetalhes";
+import Button from "@/app/components/ui/Button";
+import { iniciais } from "@/app/util";
 
 export default function ConfiguracoesPage() {
   const usuario = useAppSelector((state) => state.auth.usuario);
@@ -12,6 +15,7 @@ export default function ConfiguracoesPage() {
 
   const isAdmin = usuario?.role === "ROLE_ADMIN";
   console.log("usuario", usuario);
+  const resolveNome = usuario?.nome || (isAdmin ? "Administrador" : "Minha conta");
 
   return (
     <>
@@ -19,13 +23,12 @@ export default function ConfiguracoesPage() {
         <div className="mx-auto max-w-6xl px-5 py-6 sm:px-8 sm:py-8">
           <h1 className="text-2xl font-semibold">Configurações</h1>
           <div className="mt-5">
-            <section aria-label="Conta atual" className="flex items-center gap-4 rounded-2xl border border-border bg-background p-5 shadow-sm sm:p-6">
+            <section className="flex items-center gap-4 rounded-2xl border border-border bg-background p-5 shadow-sm sm:p-6">
               <span aria-hidden="true" className="flex shrink-0 items-center justify-center rounded-full bg-secondary font-medium text-foreground h-16 w-16 text-base">
-                {(usuario?.nome ?? "Minha conta").trim().split(/\s+/).slice(0, 2).map((part) => part[0]).join("")}
+                {iniciais(resolveNome)}
               </span>
               <div className="min-w-0">
-                <h2 className="break-words text-base font-medium">{usuario?.nome ?? "Minha conta"}</h2>
-                <p className="mt-0.5 text-sm text-muted-foreground">Luz do Vale</p>
+                <h2 className="break-words text-base font-medium">{resolveNome}</h2>
                 <p className="mt-1 break-all text-xs text-muted-foreground">{usuario?.email ?? "E-mail não informado"}</p>
               </div>
             </section>
@@ -37,13 +40,31 @@ export default function ConfiguracoesPage() {
 
         <ConfiguracaoSecao titulo="Conta">
 
-          <ConfiguracaoLink
-            href="/configuracoes/conta"
+          <ConfigDetalhes
             titulo="Informações Pessoais"
             descricao="Perfil, dados de acesso e senha"
-            icon={UserRound}
-          />
-          
+            icon={UserRound}            
+          >
+             <dl className="space-y-3">
+
+              <div>
+                <dt className="text-xs text-muted-foreground">Nome</dt>
+                <dd className="mt-1 text-sm">{usuario?.nome || (<span className="text-muted-foreground">{isAdmin ? "Conta de administrador" : "Não informado"}</span>)}</dd>
+              </div>
+
+              <div>
+                <dt className="text-xs text-muted-foreground">E-mail</dt>
+                <dd className="mt-1 text-sm">{usuario?.email || (<span className="text-muted-foreground">Não informado</span>)}</dd>
+              </div>
+
+              <div>
+                <dt className="text-xs text-muted-foreground">Perfil</dt>
+                <dd className="mt-1 text-sm">{usuario?.perfil || (<span className="text-muted-foreground">Não informado</span>)}</dd>
+              </div>
+
+            </dl>
+          </ConfigDetalhes>
+
         </ConfiguracaoSecao>
   
         <ConfiguracaoSecao titulo="Gestão">
@@ -66,7 +87,7 @@ export default function ConfiguracoesPage() {
 
         </ConfiguracaoSecao>
 
-        <ConfiguracaoSecao titulo="Documentos">
+        {/* <ConfiguracaoSecao titulo="Documentos">
 
           <ConfiguracaoLink
             href="/configuracoes/documentos"
@@ -84,11 +105,14 @@ export default function ConfiguracoesPage() {
             descricao="Ajuda e suporte técnico"
             icon={CircleHelp}
           />
-        </ConfiguracaoSecao>
+        </ConfiguracaoSecao> */}
 
-        <button type="button" onClick={() => dispatch(logout())} className="flex min-h-12 w-full cursor-pointer items-center justify-center gap-2 rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm font-medium text-red-600 transition-colors hover:bg-red-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-600">
-          <LogOut className="h-4 w-4" aria-hidden="true" />Sair da Conta
-        </button>
+        <Button className="w-full !bg-red-50 !text-red-600 border border-red-200 hover:!bg-red-100"
+          onClick={() => dispatch(logout())}
+        >
+          <LogOut className="h-4 w-4" aria-hidden="true" /> Sair da Conta
+        </Button>
+
         <p className="text-center text-xs text-muted-foreground">Reabilitah · Prontuário eletrônico</p>
       </div>
     </>
