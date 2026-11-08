@@ -11,9 +11,40 @@
         }
 
         body {
-            font-family: Arial, sans-serif;
+            font-family: Helvetica, Arial, sans-serif;
             font-size: 11px;
             color: #000;
+        }
+
+        table.grade {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 12px;
+        }
+
+        table.grade td {
+            border-bottom: 1px solid #000;
+            vertical-align: bottom;
+
+            /* espaço entre as linhas/campos */
+            padding: 7px 6px 1px 6px;
+        }
+
+        .rotulo {
+            font-size: 10px;
+            font-weight: bold;
+            text-transform: uppercase;
+
+            margin: 0 0 2px 0;
+            padding: 0;
+        }
+
+        .valor {
+            font-size: 12px;
+            line-height: 1;
+
+            margin: 0;
+            padding: 0 0 1px 0;
         }
 
         .cabecalho {
@@ -40,8 +71,8 @@
         }
 
         .titulo-documento-sub {
-            text-align: center;
-            font-size: 10px;
+            text-align: start;
+            font-size: 12px;
             margin: 0 0 18px 0;
         }
 
@@ -50,32 +81,6 @@
             font-weight: bold;
             margin: 18px 0 8px 0;
             text-transform: uppercase;
-        }
-
-        table.grade {
-            width: 100%;
-            border-collapse: collapse;
-            margin-bottom: 10px;
-        }
-
-        table.grade td {
-            border-bottom: 1px solid #000;
-            vertical-align: top;
-            padding: 4px 6px 2px 6px;
-        }
-
-        .rotulo {
-            font-size: 10px;
-            font-weight: bold;
-            text-transform: uppercase;
-            margin-bottom: 1px;
-        }
-
-        .valor {
-            font-size: 13px;
-            line-height: 1.1;
-            margin: 0;
-            padding: 0;
         }
 
         .mt-12 {
@@ -105,13 +110,13 @@
 
 <body>
 
-    <div class="cabecalho">
-        <h1>LUZ NO VALE</h1>
-        <div class="subtitulo">Instituição Luz do Vale</div>
-    </div>
+    <div th:replace="~{documentos/fragments/cabecalho-luz-do-vale :: cabecalho}"></div>
 
     <div class="titulo-documento">FICHA DE ACOLHIMENTO</div>
-    <div class="titulo-documento-sub">Prontuário de acolhimento do residente</div>
+    <div class="titulo-documento-sub">
+        Declaro para os devidos fins que é de livre e expontânea vontad internar-me para tratamento de desintoxicação
+        no Centro de Recuperação Luz no Vale - CERLUZ, situado no município de Nova Veneza/SC
+    </div>
 
 
     <div class="secao">
@@ -235,9 +240,8 @@
 
             <div class="opcao-dependencia" th:each="opcao : ${listas['TIPO_DEPENDENCIA']}">
 
-                <span class="check" th:text="${
-                        dados['dependencia']['tipos'] != null and #lists.contains(dados['dependencia']['tipos'], opcao.valor)
-                            ? 'X' : ''}">
+                <span class="check" th:text="${dados['dependencia']['tipos'] != null
+                    and #lists.contains(dados['dependencia']['tipos'], opcao.valor) ? 'X' : ''}">
                 </span>
 
                 <span th:text="${opcao.rotulo}"></span>
@@ -264,7 +268,7 @@
                 <td class="campo">
 
                     <div class="rotulo">Idade</div>
-                    <div class="valor" th:text="${dados['dependencia']['idadePrimeiraDrogaLicita']}"></div>
+                    <div class="valor" th:text="${fmt.inteiro(dados['dependencia']['idadePrimeiraDrogaLicita'])}"></div>
 
                 </td>
 
@@ -287,7 +291,7 @@
                 <td class="campo">
 
                     <div class="rotulo">Idade</div>
-                    <div class="valor" th:text="${dados['dependencia']['idadePrimeiraDrogaIlicita']}"></div>
+                    <div class="valor" th:text="${fmt.inteiro(dados['dependencia']['idadePrimeiraDrogaIlicita'])}"></div>
 
                 </td>
             </tr>
@@ -296,88 +300,64 @@
 
     <div class="secao" th:if="${dados['responsavel'] != null}">
 
-        <div class="secao-titulo">DADOS DO RESPONSÁVEL</div>
+        <div class="secao-titulo">DADOS DO RESPONSÁVEL:</div>
 
-        <table>
+        <table class="grade">
             <tr>
-                <td colspan="2" class="campo">
-
+                <td colspan="8">
                     <div class="rotulo">Nome</div>
                     <div class="valor" th:text="${dados['responsavel']['nome']}"></div>
-
                 </td>
 
-                <td class="campo">
-
+                <td colspan="4">
                     <div class="rotulo">Grau de parentesco</div>
                     <div class="valor" th:text="${dados['responsavel']['parentesco']}"></div>
-
                 </td>
-
             </tr>
 
             <tr>
-                <td class="campo">
-
+                <td colspan="6">
                     <div class="rotulo">CPF</div>
                     <div class="valor" th:text="${dados['responsavel']['cpf']}"></div>
-
                 </td>
 
-                <td class="campo">
-
+                <td colspan="6">
                     <div class="rotulo">RG</div>
                     <div class="valor" th:text="${dados['responsavel']['rg']}"></div>
-
                 </td>
+            </tr>
 
-                <td class="campo">
+            <tr>
+                <td colspan="12">
+                    <div class="rotulo">Endereço</div>
 
+                    <div class="valor"
+                     th:text="${fmt.endereco(
+                        dados['responsavel']['rua'],
+                        dados['responsavel']['numero'],
+                        dados['responsavel']['bairro'],
+                        dados['responsavel']['municipio'],
+                        dados['responsavel']['estado']
+                    )}"></div>
+                </td>
+            </tr>
+
+            <tr>
+                <td colspan="12">
                     <div class="rotulo">Contato</div>
                     <div class="valor" th:text="${dados['responsavel']['telefone']}"></div>
-
                 </td>
             </tr>
 
-            <tr>
-                <td colspan="2" class="campo">
-
-                    <div class="rotulo">Endereço</div>
-                    <div class="valor" th:text="${dados['responsavel']['rua']}"></div>
-
-                </td>
-
-                <td class="campo">
-
-                    <div class="rotulo">Nº</div>
-                    <div class="valor" th:text="${dados['responsavel']['numero']}"></div>
-
-                </td>
-            </tr>
-
-            <tr>
-                <td class="campo">
-
-                    <div class="rotulo">Bairro</div>
-                    <div class="valor" th:text="${dados['responsavel']['bairro']}"></div>
-
-                </td>
-
-                <td class="campo">
-
-                    <div class="rotulo">Município</div>
-                    <div class="valor" th:text="${dados['responsavel']['municipio']}"></div>
-
-                </td>
-
-                <td class="campo">
-
-                    <div class="rotulo">Estado</div>
-                    <div class="valor" th:text="${dados['responsavel']['estado']}"></div>
-
-                </td>
-            </tr>
         </table>
+
+        <div class="mt-12">
+
+            <div class="rotulo">Data de acolhimento</div>
+            <div class="valor" th:text="${fmt.data(paciente.dtCriacao)}"></div>
+
+        </div>
+
     </div>
 
     <!-- ASSINATURA -->

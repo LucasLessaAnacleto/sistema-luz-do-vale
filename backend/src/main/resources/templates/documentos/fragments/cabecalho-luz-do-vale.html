@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <style>
+        .cabecalho-oficial {
+            text-align: center;
+            margin-bottom: 22px;
+        }
+
+        .cabecalho-logo {
+            font-size: 21px;
+            font-weight: bold;
+            margin-bottom: 3px;
+        }
+
+        .cabecalho-linha {
+            border-top: 1px solid #000;
+            margin: 0 45px 3px 45px;
+        }
+
+        .cabecalho-endereco {
+            font-size: 8px;
+            font-weight: bold;
+            margin-bottom: 2px;
+        }
+
+        .cabecalho-diretoria {
+            font-size: 7px;
+            font-style: italic;
+        }
+    </style>
+</head>
+<body>
+
+    <div th:fragment="cabecalho" class="cabecalho-oficial">
+
+        <div class="cabecalho-logo">
+            <!-- logo entra aqui -->
+            LUZ NO VALE
+        </div>
+
+        <div class="cabecalho-linha"></div>
+
+        <div class="cabecalho-endereco">
+            Rua Angelino Oestro, 508 - Picadão - CEP: 88.865-000 - Nova Veneza/SC
+        </div>
+
+        <div class="cabecalho-diretoria">
+            Presidente: Sérgio Antonio Elias - 48 9603-1606 | Vice-presidente: Valter Silva - 48 9603-1498
+        </div>
+
+    </div>
+
+</body>
+</html>
