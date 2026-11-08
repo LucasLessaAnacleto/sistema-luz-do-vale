@@ -2,6 +2,7 @@ package com.luzdovale.reabilitah.backend.application.services;
 
 import com.luzdovale.reabilitah.backend.application.DTO.documento.FormularioDocumentoResponse;
 import com.luzdovale.reabilitah.backend.application.DTO.tipoDocumento.TipoDocumentoResponse;
+import com.luzdovale.reabilitah.backend.application.exceptions.PacienteNaoEncontradoException;
 import com.luzdovale.reabilitah.backend.application.exceptions.TipoDocumentoNaoEncontradoException;
 import com.luzdovale.reabilitah.backend.application.exceptions.TipoDocumentoVersaoNaoEncontradoExeption;
 import com.luzdovale.reabilitah.backend.application.exceptions.UsuarioSemAutorizacao;
@@ -9,6 +10,7 @@ import com.luzdovale.reabilitah.backend.domain.entities.PermissaoTipoDocumento;
 import com.luzdovale.reabilitah.backend.domain.entities.TipoDocumento;
 import com.luzdovale.reabilitah.backend.domain.entities.TipoDocumentoVersao;
 import com.luzdovale.reabilitah.backend.domain.entities.Usuario;
+import com.luzdovale.reabilitah.backend.domain.repository.PacienteRepository;
 import com.luzdovale.reabilitah.backend.domain.repository.PermissaoTipoDocumentoRepository;
 import com.luzdovale.reabilitah.backend.domain.repository.TipoDocumentoRepository;
 import com.luzdovale.reabilitah.backend.domain.repository.TipoDocumentoVersaoRepository;
@@ -32,9 +34,9 @@ public class TipoDocumentoService {
     @Autowired
     private PerfilService perfilService;
     @Autowired
-    private PacienteService pacienteService;
-    @Autowired
     private ResponsavelService responsavelService;
+    @Autowired
+    private PacienteRepository pacienteRepository;
 
     public FormularioDocumentoResponse buscarFormulario(Long tipoDocumentoId, Long pacienteId, Usuario usuarioLogado) {
 
@@ -43,7 +45,7 @@ public class TipoDocumentoService {
 
         validarPermissao(tipoDocumento, usuarioLogado);
 
-        var paciente = pacienteService.buscarPaciente(pacienteId);
+        var paciente = pacienteRepository.findById(pacienteId).orElseThrow(() -> new PacienteNaoEncontradoException(pacienteId));
         var responsavel = responsavelService.buscarPorPaciente(paciente);
         var campos = documentoCamposService.lerCampos(versao);
         var listas = documentoCamposService.resolverListas(campos);

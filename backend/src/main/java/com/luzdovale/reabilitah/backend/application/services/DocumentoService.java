@@ -12,7 +12,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class DocumentoService {
@@ -79,17 +81,9 @@ public class DocumentoService {
         var campos =
                 documentoCamposService.lerCampos(versao);
 
-        Map<String, Object> dados =
-                documentoCamposService.resolverDadosPadrao(
-                        campos,
-                        paciente,
-                        responsavel
-                );
+        Map<String, Object> dados = documentoCamposService.resolverDadosPadrao(campos,paciente, responsavel);
 
-        completarDadosFicha(
-                dados,
-                ficha
-        );
+        completarDadosFicha(dados, ficha);
 
         String dadosNormalizados =
                 documentoCamposService.validarENormalizarDados(
@@ -180,6 +174,31 @@ public class DocumentoService {
                 documento.getDtAtualizacao(),
                 documento.getDtAssinatura()
         );
+    }
+
+    private void completarDadosFicha(Map<String, Object> dados, FichaAcolhimentoRequest ficha) {
+
+        Map<String, Object> acolhido = (Map<String, Object>) dados.get("acolhido");
+
+        acolhido.put("nacionalidade", ficha.nacionalidade());
+        acolhido.put("naturalidade", ficha.naturalidade());
+        acolhido.put("nomePai", ficha.nomePai());
+        acolhido.put("nomeMae", ficha.nomeMae());
+        acolhido.put("escolaridade", ficha.escolaridade());
+        acolhido.put("profissao", ficha.profissao());
+        acolhido.put("cor", ficha.cor());
+        acolhido.put("estadoCivil", ficha.estadoCivil());
+        acolhido.put("filhos", ficha.filhos());
+
+        Map<String, Object> dependencia = new HashMap<>();
+
+        dependencia.put("tipos", ficha.tiposDependencia());
+        dependencia.put("primeiraDrogaLicita", ficha.primeiraDrogaLicita());
+        dependencia.put("idadePrimeiraDrogaLicita", ficha.idadePrimeiraDrogaLicita());
+        dependencia.put("primeiraDrogaIlicita", ficha.primeiraDrogaIlicita());
+        dependencia.put("idadePrimeiraDrogaIlicita", ficha.idadePrimeiraDrogaIlicita());
+
+        dados.put("dependencia", dependencia);
     }
 
     private Documento buscarDocumento(Long id) {

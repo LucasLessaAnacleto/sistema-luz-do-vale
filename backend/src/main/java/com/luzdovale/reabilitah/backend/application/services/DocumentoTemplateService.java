@@ -6,6 +6,7 @@ import com.luzdovale.reabilitah.backend.domain.entities.Documento;
 import com.luzdovale.reabilitah.backend.domain.entities.TipoDocumentoVersao;
 import com.luzdovale.reabilitah.backend.domain.repository.DocumentoRepository;
 
+import com.luzdovale.reabilitah.backend.domain.utils.FormatacaoTemplate;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -58,6 +59,7 @@ public class DocumentoTemplateService {
         context.setVariable("campos", campos);
         context.setVariable("dados", dados);
         context.setVariable("listas", listas);
+        context.setVariable("fmt", new FormatacaoTemplate());
 
         String template = resolverTemplate(versao);
 

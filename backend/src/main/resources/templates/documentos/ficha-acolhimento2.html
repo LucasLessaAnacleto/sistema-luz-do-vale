@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8" />
+
+    <style>
+        @page {
+            size: A4;
+            margin: 18mm 16mm 18mm 16mm;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            font-size: 11px;
+            color: #000;
+        }
+
+        .cabecalho {
+            text-align: center;
+            margin-bottom: 18px;
+        }
+
+        .cabecalho h1 {
+            font-size: 17px;
+            margin: 0 0 4px 0;
+            font-weight: bold;
+        }
+
+        .cabecalho .subtitulo {
+            font-size: 10px;
+            margin: 0 0 14px 0;
+        }
+
+        .titulo-documento {
+            text-align: center;
+            font-size: 15px;
+            font-weight: bold;
+            margin: 0 0 4px 0;
+        }
+
+        .titulo-documento-sub {
+            text-align: center;
+            font-size: 10px;
+            margin: 0 0 18px 0;
+        }
+
+        .secao-titulo {
+            font-size: 14px;
+            font-weight: bold;
+            margin: 18px 0 8px 0;
+            text-transform: uppercase;
+        }
+
+        table.grade {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 10px;
+        }
+
+        table.grade td {
+            border-bottom: 1px solid #000;
+            vertical-align: top;
+            padding: 4px 6px 2px 6px;
+        }
+
+        .rotulo {
+            font-size: 10px;
+            font-weight: bold;
+            text-transform: uppercase;
+            margin-bottom: 1px;
+        }
+
+        .valor {
+            font-size: 13px;
+            line-height: 1.1;
+            margin: 0;
+            padding: 0;
+        }
+
+        .mt-12 {
+            margin-top: 12px;
+        }
+
+        .checkbox-item {
+            display: inline-block;
+            width: 32%;
+            margin-bottom: 8px;
+            vertical-align: top;
+            font-size: 12px;
+        }
+
+        .checkbox {
+            display: inline-block;
+            width: 13px;
+            height: 13px;
+            border: 1px solid #000;
+            text-align: center;
+            line-height: 12px;
+            font-size: 11px;
+            margin-right: 6px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="cabecalho">
+        <h1>LUZ NO VALE</h1>
+        <div class="subtitulo">Instituição Luz do Vale</div>
+    </div>
+
+    <div class="titulo-documento">FICHA DE ACOLHIMENTO</div>
+    <div class="titulo-documento-sub">Prontuário de acolhimento do residente</div>
+
+
+    <div class="secao">
+        <div class="secao-titulo">DADOS DO ACOLHIDO:</div>
+
+        <table class="grade">
+            <tr>
+                <td colspan="12">
+                    <div class="rotulo">Nome</div>
+                    <div class="valor" th:text="${dados['acolhido']['nome']}"></div>
+                </td>
+            </tr>
+
+            <tr>
+                <td colspan="6">
+                    <div class="rotulo">CPF</div>
+                    <div class="valor" th:text="${dados['acolhido']['cpf']}"></div>
+                </td>
+                <td colspan="6">
+                    <div class="rotulo">RG</div>
+                    <div class="valor" th:text="${dados['acolhido']['rg']}"></div>
+                </td>
+            </tr>
+
+            <tr>
+                <td colspan="6">
+                    <div class="rotulo">Data de nascimento</div>
+                    <div class="valor" th:text="${fmt.data(dados['acolhido']['dataNascimento'])}"></div>
+                </td>
+                <td colspan="6">
+                    <div class="rotulo">Nacionalidade</div>
+                    <div class="valor" th:text="${dados['acolhido']['nacionalidade']}"></div>
+                </td>
+            </tr>
+
+            <tr>
+                <td colspan="6">
+                    <div class="rotulo">Naturalidade</div>
+                    <div class="valor" th:text="${dados['acolhido']['naturalidade']}"></div>
+                </td>
+                <td colspan="6">
+                    <div class="rotulo">Município</div>
+                    <div class="valor" th:text="${dados['acolhido']['municipio']}"></div>
+                </td>
+            </tr>
+
+            <tr>
+                <td colspan="12">
+                    <div class="rotulo">Nome do pai</div>
+                    <div class="valor" th:text="${dados['acolhido']['nomePai']}"></div>
+                </td>
+            </tr>
+
+            <tr>
+                <td colspan="12">
+                    <div class="rotulo">Nome da mãe</div>
+                    <div class="valor" th:text="${dados['acolhido']['nomeMae']}"></div>
+                </td>
+            </tr>
+
+            <tr>
+                <td colspan="6">
+                    <div class="rotulo">Escolaridade</div>
+                    <div class="valor" th:text="${dados['acolhido']['escolaridade']}"></div>
+                </td>
+                <td colspan="6">
+                    <div class="rotulo">Profissão</div>
+                    <div class="valor" th:text="${dados['acolhido']['profissao']}"></div>
+                </td>
+            </tr>
+
+            <tr>
+                <td colspan="4">
+                    <div class="rotulo">Cor</div>
+                    <div class="valor" th:text="${dados['acolhido']['cor']}"></div>
+                </td>
+                <td colspan="4">
+                    <div class="rotulo">Estado civil</div>
+                    <div class="valor" th:text="${dados['acolhido']['estadoCivil']}"></div>
+                </td>
+                <td colspan="4">
+                    <div class="rotulo">Filhos</div>
+                    <div class="valor" th:text="${fmt.simNao(dados['acolhido']['filhos'])}"></div>
+                </td>
+            </tr>
+
+            <tr>
+                <td colspan="9">
+                    <div class="rotulo">Endereço</div>
+                    <div class="valor" th:text="${dados['acolhido']['rua']}"></div>
+                </td>
+                <td colspan="3">
+                    <div class="rotulo">Nº</div>
+                    <div class="valor" th:text="${dados['acolhido']['numero']}"></div>
+                </td>
+            </tr>
+
+            <tr>
+                <td colspan="4">
+                    <div class="rotulo">Bairro</div>
+                    <div class="valor" th:text="${dados['acolhido']['bairro']}"></div>
+                </td>
+                <td colspan="4">
+                    <div class="rotulo">Município</div>
+                    <div class="valor" th:text="${dados['acolhido']['municipio']}"></div>
+                </td>
+                <td colspan="4">
+                    <div class="rotulo">Estado</div>
+                    <div class="valor" th:text="${dados['acolhido']['estado']}"></div>
+                </td>
+            </tr>
+        </table>
+
+    </div>
+
+    <div class="secao" th:if="${dados['dependencia'] != null}">
+
+        <div class="secao-titulo">TIPOS DE DEPENDÊNCIA:</div>
+
+        <div class="dependencias">
+
+            <div class="opcao-dependencia" th:each="opcao : ${listas['TIPO_DEPENDENCIA']}">
+
+                <span class="check" th:text="${
+                        dados['dependencia']['tipos'] != null and #lists.contains(dados['dependencia']['tipos'], opcao.valor)
+                            ? 'X' : ''}">
+                </span>
+
+                <span th:text="${opcao.rotulo}"></span>
+
+            </div>
+
+        </div>
+
+        <table>
+            <tr>
+                <td colspan="2" class="campo">
+
+                    <div class="rotulo">Primeira droga lícita</div>
+
+                    <div class="valor">
+                        <span th:each="opcao : ${listas['TIPO_DEPENDENCIA_LICITA']}" th:if="
+                                ${opcao.valor == dados['dependencia']['primeiraDrogaLicita']}"
+                                th:text="${opcao.rotulo}">
+                        </span>
+                    </div>
+
+                </td>
+
+                <td class="campo">
+
+                    <div class="rotulo">Idade</div>
+                    <div class="valor" th:text="${dados['dependencia']['idadePrimeiraDrogaLicita']}"></div>
+
+                </td>
+
+            </tr>
+
+            <tr>
+                <td colspan="2" class="campo">
+
+                    <div class="rotulo">Primeira droga ilícita</div>
+
+                    <div class="valor">
+                        <span th:each="opcao : ${listas['TIPO_DEPENDENCIA_ILICITA']}"
+                              th:if="${opcao.valor == dados['dependencia']['primeiraDrogaIlicita']}"
+                                th:text="${opcao.rotulo}">
+                        </span>
+                    </div>
+
+                </td>
+
+                <td class="campo">
+
+                    <div class="rotulo">Idade</div>
+                    <div class="valor" th:text="${dados['dependencia']['idadePrimeiraDrogaIlicita']}"></div>
+
+                </td>
+            </tr>
+        </table>
+    </div>
+
+    <div class="secao" th:if="${dados['responsavel'] != null}">
+
+        <div class="secao-titulo">DADOS DO RESPONSÁVEL</div>
+
+        <table>
+            <tr>
+                <td colspan="2" class="campo">
+
+                    <div class="rotulo">Nome</div>
+                    <div class="valor" th:text="${dados['responsavel']['nome']}"></div>
+
+                </td>
+
+                <td class="campo">
+
+                    <div class="rotulo">Grau de parentesco</div>
+                    <div class="valor" th:text="${dados['responsavel']['parentesco']}"></div>
+
+                </td>
+
+            </tr>
+
+            <tr>
+                <td class="campo">
+
+                    <div class="rotulo">CPF</div>
+                    <div class="valor" th:text="${dados['responsavel']['cpf']}"></div>
+
+                </td>
+
+                <td class="campo">
+
+                    <div class="rotulo">RG</div>
+                    <div class="valor" th:text="${dados['responsavel']['rg']}"></div>
+
+                </td>
+
+                <td class="campo">
+
+                    <div class="rotulo">Contato</div>
+                    <div class="valor" th:text="${dados['responsavel']['telefone']}"></div>
+
+                </td>
+            </tr>
+
+            <tr>
+                <td colspan="2" class="campo">
+
+                    <div class="rotulo">Endereço</div>
+                    <div class="valor" th:text="${dados['responsavel']['rua']}"></div>
+
+                </td>
+
+                <td class="campo">
+
+                    <div class="rotulo">Nº</div>
+                    <div class="valor" th:text="${dados['responsavel']['numero']}"></div>
+
+                </td>
+            </tr>
+
+            <tr>
+                <td class="campo">
+
+                    <div class="rotulo">Bairro</div>
+                    <div class="valor" th:text="${dados['responsavel']['bairro']}"></div>
+
+                </td>
+
+                <td class="campo">
+
+                    <div class="rotulo">Município</div>
+                    <div class="valor" th:text="${dados['responsavel']['municipio']}"></div>
+
+                </td>
+
+                <td class="campo">
+
+                    <div class="rotulo">Estado</div>
+                    <div class="valor" th:text="${dados['responsavel']['estado']}"></div>
+
+                </td>
+            </tr>
+        </table>
+    </div>
+
+    <!-- ASSINATURA -->
+    <div class="assinatura" th:if="${documento.dtAssinatura != null}">
+
+        <div class="assinatura-linha"></div>
+        <span th:text="${profissional != null ? profissional.nome : usuario.email}"></span>
+
+    </div>
+
+</body>
+</html>

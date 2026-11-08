@@ -676,3 +676,63 @@ VALUES (2, 2, CURRENT_TIMESTAMP, 'ficha-acolhimento',
     ]
   }
 ]'::jsonb);
+
+
+
+---
+
+droga licita:  1 - ALCOOL
+droga ilicita: 3 - COCAÍNA
+
+POST /pacientes
+```
+{
+  "nome": "Paciente Teste Ficha",
+  "apelido": "Teste",
+  "cpf": "52998224725",
+  "rg": "12345678",
+  "telefone": "48999999999",
+  "endereco": {
+    "rua": "Rua Teste",
+    "numero": "123",
+    "bairro": "Centro",
+    "municipio": "Içara",
+    "estado": "SC"
+  },
+  "dtNasc": "1995-05-10",
+
+  "responsavel": {
+    "nome": "Responsável Teste",
+    "parentesco": "Mãe",
+    "cpf": null,
+    "rg": "987654",
+    "telefone": "48988888888",
+    "endereco": {
+      "rua": "Rua Responsável",
+      "numero": "50",
+      "bairro": "Centro",
+      "municipio": "Içara",
+      "estado": "SC"
+    },
+    "dtNasc": "1970-01-01"
+  },
+
+  "fichaAcolhimento": {
+    "nacionalidade": "Brasileira",
+    "naturalidade": "Criciúma",
+    "nomePai": "Pai Teste",
+    "nomeMae": "Mãe Teste",
+    "escolaridade": "Ensino médio",
+    "profissao": "Pedreiro",
+    "cor": "Branca",
+    "estadoCivil": "Solteiro",
+    "filhos": true,
+
+    "tiposDependencia": ["1", "3"],
+    "primeiraDrogaLicita": "1",
+    "idadePrimeiraDrogaLicita": 14,
+    "primeiraDrogaIlicita": "3",
+    "idadePrimeiraDrogaIlicita": 17
+  }
+}
+```

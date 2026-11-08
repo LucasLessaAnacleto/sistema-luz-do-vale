@@ -1,8 +1,10 @@
 package com.luzdovale.reabilitah.backend.application.services;
 
 import com.luzdovale.reabilitah.backend.application.DTO.documento.HistDocumentoResponse;
+import com.luzdovale.reabilitah.backend.application.exceptions.PacienteNaoEncontradoException;
 import com.luzdovale.reabilitah.backend.domain.entities.*;
 import com.luzdovale.reabilitah.backend.domain.repository.HistDocumentoRepository;
+import com.luzdovale.reabilitah.backend.domain.repository.PacienteRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -13,12 +15,12 @@ public class HistDocumentoService {
     @Autowired
     private HistDocumentoRepository histDocumentoRepository;
     @Autowired
-    private PacienteService pacienteService;
-    @Autowired
     private UsuarioService usuarioService;
+    @Autowired
+    private PacienteRepository pacienteRepository;
 
     public List<HistDocumentoResponse> listarPorPaciente(Long pacienteId, Long usuarioId) {
-        var paciente = pacienteService.buscarPaciente(pacienteId);
+        var paciente = pacienteRepository.findById(pacienteId).orElseThrow(() -> new PacienteNaoEncontradoException(pacienteId));
         List<HistDocumento> historicos;
 
         if(usuarioId != null) {
