@@ -6,6 +6,7 @@ import { buscarListaPacientes } from "@/app/services/pacienteService";
 import type { Paciente } from "@/app/types/pacientes";
 import { Plus, Search } from "lucide-react";
 import { normalizeSearch } from "@/app/util";
+import ItemsVazio from "@/app/components/ItemsVazio";
 
 export default function PacientesPage() {
   const [search, setSearch] = useState("");
@@ -112,25 +113,11 @@ export default function PacientesPage() {
             </Link>
           ))
         ) : (
-          <div className="rounded-2xl border border-dashed border-secondary bg-card px-5 py-12 text-center">
-            <Search
-              className="mx-auto mb-3 h-7 w-7 text-primary"
-              aria-hidden="true"
+            <ItemsVazio
+              titulo="Nenhum paciente encontrado"
+              descricao="Tente buscar por outro nome ou apelido."
+              icon={Search}
             />
-            <h2 className="text-base font-semibold">
-              Nenhum paciente encontrado
-            </h2>
-            <p className="mt-1 text-sm text-muted-foreground">
-              Tente buscar por outro nome ou apelido.
-            </p>
-            <button
-              type="button"
-              onClick={() => setSearch("")}
-              className="mt-4 min-h-11 cursor-pointer rounded-xl px-4 text-sm font-medium text-primary-dark hover:bg-primary/5 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
-            >
-              Limpar filtros
-            </button>
-          </div>
         )}
       </section>
     </>

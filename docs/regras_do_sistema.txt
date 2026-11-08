@@ -736,3 +736,110 @@ POST /pacientes
   }
 }
 ```
+
+-------------------------
+
+As regras visuais que eu congelaria
+Para qualquer tela do sistema interno — Landing fica fora porque é marketing — usa estes padrões.
+
+Largura e padding da página
+
+Cabeçalhos/listagens:
+mx-auto max-w-6xl px-5 sm:px-8
+
+Formulários mais estreitos:
+mx-auto max-w-3xl px-5 sm:px-8
+
+Documentos/detalhes intermediários:
+mx-auto max-w-4xl px-5 sm:px-8
+
+Cabeçalho de tela
+<section className="border-b border-border bg-card">
+  <div className="mx-auto max-w-6xl px-5 py-6 sm:px-8 sm:py-8">
+
+Título:
+text-2xl font-semibold
+
+Subtítulo:
+mt-0.5 text-xs text-muted-foreground
+
+Busca sempre:
+mt-5
+
+Filtros logo depois:
+mt-3
+
+Conteúdo normal
+mx-auto max-w-6xl px-5 py-6 sm:px-8
+
+Lista mais compacta:
+mx-auto max-w-6xl px-5 py-4 sm:px-8
+
+Distância entre cards:
+space-y-3
+
+Distância entre seções grandes:
+space-y-6
+
+Card padrão
+rounded-2xl
+border border-border
+bg-card
+p-5
+shadow-sm
+sm:p-6
+
+Card compacto:
+rounded-2xl border border-border bg-card p-4 shadow-sm
+
+Hover de item clicável:
+hover:border-primary/40
+
+Campos de formulário
+label      → text-sm font-medium
+input      → rounded-xl
+altura     → min-h-11 / py-3
+grid       → gap-4
+form       → space-y-5
+
+Botões
+
+Ação principal:
+bg-primary
+text-white
+rounded-xl
+
+Ação pequena/listagem:
+rounded-full
+min-h-10
+px-4
+
+Então:
+Salvar / Entrar → Button normal rounded-xl
+Novo / Filtros → botão pill rounded-full
+Voltar → botão circular h-10 w-10
+
+Cores
+
+Nas telas internas, eu tentaria parar de inventar cor na mão.
+
+Usar principalmente:
+bg-background
+bg-card
+bg-primary
+bg-secondary
+bg-accent
+
+text-foreground
+text-muted-foreground
+text-primary
+text-primary-dark
+
+border-border
+
+Para alerta:
+amber-50
+amber-200
+amber-800
+
+A landing pode continuar com cores especiais, porque é outra proposta visual.

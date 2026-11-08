@@ -7,7 +7,7 @@ import ConfiguracaoSecao from "./components/ConfigSecao";
 import ConfiguracaoLink from "./components/ConfigLink";
 import ConfigDetalhes from "./components/ConfigDetalhes";
 import Button from "@/app/components/ui/Button";
-import { iniciais } from "@/app/util";
+import AvatarIniciais from "@/app/components/ui/AvatarIniciais";
 
 export default function ConfiguracoesPage() {
   const usuario = useAppSelector((state) => state.auth.usuario);
@@ -24,9 +24,9 @@ export default function ConfiguracoesPage() {
           <h1 className="text-2xl font-semibold">Configurações</h1>
           <div className="mt-5">
             <section className="flex items-center gap-4 rounded-2xl border border-border bg-background p-5 shadow-sm sm:p-6">
-              <span aria-hidden="true" className="flex shrink-0 items-center justify-center rounded-full bg-secondary font-medium text-foreground h-16 w-16 text-base">
-                {iniciais(resolveNome)}
-              </span>
+
+              <AvatarIniciais nome={resolveNome} tamanho="lg" />
+
               <div className="min-w-0">
                 <h2 className="break-words text-base font-medium">{resolveNome}</h2>
                 <p className="mt-1 break-all text-xs text-muted-foreground">{usuario?.email ?? "E-mail não informado"}</p>

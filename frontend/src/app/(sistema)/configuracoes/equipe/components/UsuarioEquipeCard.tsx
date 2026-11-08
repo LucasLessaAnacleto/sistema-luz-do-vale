@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { ChevronRight, ShieldCheck } from "lucide-react";
 import type { Usuario } from "@/app/types/usuarios";
-import { iniciais } from "@/app/util";
+import AvatarIniciais from "@/app/components/ui/AvatarIniciais";
 
 interface Props {
   usuario: Usuario;
@@ -18,9 +18,7 @@ export default function UsuarioEquipeCard({ usuario }: Props) {
         focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
     >
 
-      <span aria-hidden="true" className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-secondary text-sm font-medium text-foreground">
-        {iniciais(resolveNome)}
-      </span>
+      <AvatarIniciais nome={resolveNome} tamanho="md" />
 
       <div className="min-w-0 flex-1">
 

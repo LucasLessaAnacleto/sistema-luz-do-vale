@@ -12,6 +12,7 @@ import UsuarioEquipeCard from "./components/UsuarioEquipeCard";
 import BotaoNovo from "@/app/components/ui/BotaoNovo";
 import BarraPesquisa from "@/app/components/ui/BarraPesquisa";
 import BudgetFiltros from "@/app/components/ui/BudgetFiltros";
+import ItemsVazio from "@/app/components/ItemsVazio";
 
 export default function EquipePage() {
 
@@ -133,11 +134,10 @@ export default function EquipePage() {
           ))
 
         ) : (
-            <div className="flex flex-col items-center justify-center gap-2 py-10">
-                <h2 className="text-base text-center">
-                Nenhum profissional encontrado
-                </h2>
-            </div>
+            <ItemsVazio
+              titulo="Nenhum profissional encontrado"
+              descricao="Tente buscar por outro nome, perfil ou e-mail."
+            />
         )}
 
       </section>
