@@ -11,7 +11,7 @@ const usuario: Usuario = {
   dtNasc: null,
   endereco: null,
   email: "teste@teste.com",
-  role: "ROLE_USER",
+  role: "ROLE_ADMIN",
   perfilId: null,
   perfil: null,
   ativo: true,
