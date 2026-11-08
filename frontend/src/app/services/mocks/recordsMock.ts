@@ -1,3 +1,4 @@
+import { termoAcolhimento } from "./documentTemplates";
 import type { DocumentPreview } from "@/app/types/documentos";
 import type { PatientPreview } from "@/app/types/pacientes";
 
@@ -85,7 +86,27 @@ export const patientsMock: PatientPreview[] = [
 ];
 
 export const documentsMock: DocumentPreview[] = [
-  { id: 1, code: "DOC-000005", title: "Controle de Saída de Pacientes", patientId: 2, patient: "Marcos Santos", nickname: "Marquinho", author: "Enf. Maria Rodrigues", date: "25/10/2026 · 14:45", updatedAt: "há 15 minutos", status: "pendente" },
-  { id: 2, code: "DOC-000003", title: "Termo de Acolhimento", patientId: 1, patient: "João Silva", nickname: "Joãozinho", author: "Abel Rodrigues", date: "25/10/2026 · 13:00", updatedAt: "há 2 horas", status: "pendente" },
-  { id: 3, code: "DOC-000002", title: "Evolução Geral", patientId: 1, patient: "João Silva", nickname: "Joãozinho", author: "Dra. Ana Paula", date: "24/10/2026 · 15:00", updatedAt: "há 1 dia", status: "assinado" },
+  {
+    id: "1", code: "DOC-000005", title: "Controle de Saída de Pacientes",
+    patientId: 2, patient: "Marcos Santos", nickname: "Marquinho", author: "Enf. Maria Rodrigues",
+    date: "25/10/2026 · 14:45", updatedAt: "2026-10-25T17:45:00Z", status: "pendente",
+    fields: [
+      { label: "Data de saída", value: "26/10/2026" }, { label: "Horário de saída", value: "09:00" },
+      { label: "Data de retorno", value: "26/10/2026" }, { label: "Horário de retorno", value: "12:30" },
+      { label: "Motivo da saída", value: "Visita à família, acompanhado pelo responsável." },
+    ],
+  },
+  {
+    id: "2", code: "DOC-000003", title: "Termo de Acolhimento",
+    patientId: 1, patient: "João Silva", nickname: "Joãozinho", author: "Abel Rodrigues",
+    date: "25/10/2026 · 13:00", updatedAt: "2026-10-25T16:00:00Z", status: "pendente",
+    statement: termoAcolhimento,
+    fields: [{ label: "Lista de pertences", value: "Uma mochila azul, duas camisetas e um par de tênis." }],
+  },
+  {
+    id: "3", code: "DOC-000002", title: "Evolução Geral",
+    patientId: 1, patient: "João Silva", nickname: "Joãozinho", author: "Dra. Ana Paula",
+    date: "24/10/2026 · 15:00", updatedAt: "2026-10-24T18:00:00Z", status: "assinado",
+    fields: [{ label: "Registro de evolução", value: "Participou da atividade em grupo e relatou como foi sua adaptação à rotina da instituição." }],
+  },
 ];

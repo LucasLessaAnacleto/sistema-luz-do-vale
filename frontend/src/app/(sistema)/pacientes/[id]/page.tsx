@@ -1,10 +1,11 @@
 "use client";
 
 import Link from "next/link";
-import { notFound } from "next/navigation";
-import { use, useState, type KeyboardEvent } from "react";
+import { notFound, useRouter, useSearchParams } from "next/navigation";
+import { use, type KeyboardEvent } from "react";
 import { ArrowLeft, ClipboardList, Clock3, FileText, Pencil, Plus, UserRound, Users } from "lucide-react";
-import { documentsMock, patientsMock } from "@/app/services/mocks/recordsMock";
+import { patientsMock } from "@/app/services/mocks/recordsMock";
+import { useDocuments } from "@/app/services/documentService";
 import { cn } from "@/app/util";
 
 const tabs = [
@@ -14,13 +15,14 @@ const tabs = [
 
 export default function PatientPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
-  const [selectedTab, setSelectedTab] = useState({ patientId: id, tab: "prontuario" });
-  const activeTab = selectedTab.patientId === id ? selectedTab.tab : "prontuario";
+  const router = useRouter();
+  const activeTab = useSearchParams().get("aba") === "historico" ? "historico" : "prontuario";
+  const { documents: allDocuments, ready } = useDocuments();
   const patient = patientsMock.find((item) => String(item.id) === id);
 
   if (!patient) notFound();
 
-  const documents = documentsMock.filter((item) => item.patientId === patient.id);
+  const documents = allDocuments.filter((item) => item.patientId === patient.id);
   const fields = [
     { label: "Nome completo", value: patient.name },
     { label: "Apelido", value: patient.nickname },
@@ -29,6 +31,10 @@ export default function PatientPage({ params }: { params: Promise<{ id: string }
     { label: "Idade", value: `${patient.age} anos` },
     ...patient.fields.filter((field) => field.label !== "CPF" && field.label !== "RG"),
   ];
+
+  function selectTab(tab: string) {
+    router.replace("/pacientes/" + id + (tab === "historico" ? "?aba=historico" : ""), { scroll: false });
+  }
 
   function handleTabKey(event: KeyboardEvent<HTMLButtonElement>, index: number) {
     let nextIndex: number;
@@ -39,7 +45,7 @@ export default function PatientPage({ params }: { params: Promise<{ id: string }
     else return;
 
     event.preventDefault();
-    setSelectedTab({ patientId: id, tab: tabs[nextIndex].id });
+    selectTab(tabs[nextIndex].id);
     document.getElementById(`tab-${tabs[nextIndex].id}`)?.focus();
   }
 
@@ -55,9 +61,9 @@ export default function PatientPage({ params }: { params: Promise<{ id: string }
               <button type="button" disabled aria-label="Editar paciente — em breve" title="Edição em breve" className="flex min-h-10 cursor-not-allowed items-center gap-1.5 rounded-full bg-white/10 px-3 text-sm opacity-70">
                 <Pencil className="h-4 w-4" aria-hidden="true" />Editar
               </button>
-              <button type="button" disabled aria-label="Novo documento do paciente — em breve" title="Criação de documentos em breve" className="flex h-10 w-10 cursor-not-allowed items-center justify-center rounded-full bg-white text-primary opacity-70">
+              <Link href={"/documentos/novo?paciente=" + patient.id} aria-label="Novo documento do paciente" title="Novo documento" className="flex h-10 w-10 items-center justify-center rounded-full bg-white text-primary hover:bg-accent">
                 <Plus className="h-5 w-5" aria-hidden="true" />
-              </button>
+              </Link>
             </div>
           </div>
           <div className="flex items-center gap-4">
@@ -85,7 +91,7 @@ export default function PatientPage({ params }: { params: Promise<{ id: string }
               aria-selected={activeTab === tab.id}
               aria-controls={`painel-${tab.id}`}
               tabIndex={activeTab === tab.id ? 0 : -1}
-              onClick={() => setSelectedTab({ patientId: id, tab: tab.id })}
+              onClick={() => selectTab(tab.id)}
               onKeyDown={(event) => handleTabKey(event, index)}
               className={cn("min-h-13 flex-1 cursor-pointer border-b-2 px-4 py-4 text-sm font-medium focus-visible:outline-2 focus-visible:outline-offset-[-4px] focus-visible:outline-primary", activeTab === tab.id ? "border-primary text-primary-dark" : "border-transparent text-muted-foreground hover:bg-primary/5")}
             >
@@ -145,7 +151,11 @@ export default function PatientPage({ params }: { params: Promise<{ id: string }
         </section>
 
         <section id="painel-historico" role="tabpanel" aria-labelledby="tab-historico" hidden={activeTab !== "historico"} tabIndex={0} className="focus-visible:outline-2 focus-visible:outline-primary">
-          {documents.length ? (
+          <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
+            <h2 className="text-lg font-semibold">Histórico do paciente</h2>
+            <Link href={"/documentos/novo?paciente=" + patient.id} className="flex items-center gap-1.5 rounded-full bg-primary px-4 py-2 text-sm font-medium text-white hover:bg-primary-dark"><Plus className="h-4 w-4" />Novo documento</Link>
+          </div>
+          {!ready ? <p role="status">Carregando histórico...</p> : documents.length ? (
             <ol className="space-y-4">
               {documents.map((entry, index) => (
                 <li key={entry.id} className="relative flex gap-4">
@@ -153,10 +163,10 @@ export default function PatientPage({ params }: { params: Promise<{ id: string }
                   <span className={cn("z-10 flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-white", entry.status === "pendente" ? "bg-amber-500" : "bg-primary")}>
                     <FileText className="h-5 w-5" aria-hidden="true" />
                   </span>
-                  <article className="min-w-0 flex-1 rounded-2xl border border-border bg-card p-5 shadow-sm sm:p-6">
+                  <article className="relative min-w-0 flex-1 rounded-2xl border border-border bg-card p-5 shadow-sm hover:border-primary/40 sm:p-6">
                     <div className="flex flex-wrap items-start justify-between gap-2">
                       <div>
-                        <h2 className="text-sm font-medium">{entry.title}</h2>
+                        <h3 className="text-sm font-medium"><Link href={"/documentos/" + entry.id + "?origem=historico"} className="after:absolute after:inset-0 after:rounded-2xl hover:text-primary-dark">{entry.title}</Link></h3>
                         <p className="text-xs text-muted-foreground">{entry.code}</p>
                       </div>
                       <span className={cn("inline-flex shrink-0 rounded-full border px-3 py-1 text-xs font-medium", entry.status === "pendente" ? "border-amber-200 bg-amber-50 text-amber-800" : "border-primary/20 bg-primary/10 text-primary-dark")}>
@@ -165,7 +175,6 @@ export default function PatientPage({ params }: { params: Promise<{ id: string }
                     </div>
                     <p className="mt-3 flex items-center gap-1 text-xs text-muted-foreground"><Clock3 className="h-3.5 w-3.5" aria-hidden="true" />{entry.date}</p>
                     <p className="mt-1 text-xs text-muted-foreground">Por {entry.author}</p>
-                    <p className="mt-1 text-xs text-muted-foreground">{entry.updatedAt}</p>
                   </article>
                 </li>
               ))}
@@ -173,7 +182,7 @@ export default function PatientPage({ params }: { params: Promise<{ id: string }
           ) : (
             <div className="rounded-2xl border border-border bg-card p-8 text-center">
               <FileText className="mx-auto mb-3 h-7 w-7 text-primary" aria-hidden="true" />
-              <h2 className="text-base font-medium">Nenhum documento neste exemplo</h2>
+              <h2 className="text-base font-medium">Nenhum documento para este paciente</h2>
               <p className="mt-1 text-sm text-muted-foreground">Os registros do paciente serão exibidos aqui.</p>
             </div>
           )}
