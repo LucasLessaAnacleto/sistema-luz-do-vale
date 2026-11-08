@@ -1,52 +1,88 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head>
-    <style>
-        .cabecalho-oficial {
-            text-align: center;
-            margin-bottom: 22px;
-        }
 
-        .cabecalho-logo {
-            font-size: 21px;
-            font-weight: bold;
-            margin-bottom: 3px;
-        }
-
-        .cabecalho-linha {
-            border-top: 1px solid #000;
-            margin: 0 45px 3px 45px;
-        }
-
-        .cabecalho-endereco {
-            font-size: 8px;
-            font-weight: bold;
-            margin-bottom: 2px;
-        }
-
-        .cabecalho-diretoria {
-            font-size: 7px;
-            font-style: italic;
-        }
-    </style>
-</head>
 <body>
 
-    <div th:fragment="cabecalho" class="cabecalho-oficial">
+    <div th:fragment="cabecalho">
 
-        <div class="cabecalho-logo">
-            <!-- logo entra aqui -->
-            LUZ NO VALE
-        </div>
+        <style>
+            .cabecalho-oficial {
+                width: 82%;
+                margin: 0 auto 24px auto;
+                text-align: center;
+            }
 
-        <div class="cabecalho-linha"></div>
+            .cabecalho-logo {
+                text-align: center;
+                margin-bottom: 4px;
+            }
 
-        <div class="cabecalho-endereco">
-            Rua Angelino Oestro, 508 - Picadão - CEP: 88.865-000 - Nova Veneza/SC
-        </div>
+            .logo-superior {
+                font-size: 7px;
+                font-weight: bold;
+                letter-spacing: 1px;
+                margin-bottom: -2px;
+            }
 
-        <div class="cabecalho-diretoria">
-            Presidente: Sérgio Antonio Elias - 48 9603-1606 | Vice-presidente: Valter Silva - 48 9603-1498
+            .logo-principal {
+                font-size: 22px;
+                font-weight: bold;
+                line-height: 1;
+            }
+
+            .logo-no {
+                font-size: 10px;
+                font-weight: normal;
+            }
+
+            .cabecalho-linha {
+                width: 100%;
+                border-top: 1px solid #000;
+                margin: 5px auto 3px auto;
+            }
+
+            .cabecalho-endereco {
+                font-size: 8px;
+                font-weight: bold;
+                line-height: 1.2;
+                text-align: center;
+            }
+
+            .cabecalho-diretoria {
+                font-size: 7px;
+                font-style: italic;
+                line-height: 1.2;
+                text-align: center;
+                margin-top: 2px;
+            }
+        </style>
+
+        <div class="cabecalho-oficial">
+
+            <div class="cabecalho-logo">
+
+                <div class="logo-superior">
+                    CENTRO DE RECUPERAÇÃO
+                </div>
+
+                <div class="logo-principal">
+                    LUZ <span class="logo-no">NO</span> VALE
+                </div>
+
+            </div>
+
+            <div class="cabecalho-linha"></div>
+
+            <div class="cabecalho-endereco">
+                Rua Angelino Oestro, 508 - Picadão - CEP: 88.865-000 - Nova Veneza/SC
+            </div>
+
+            <div class="cabecalho-diretoria">
+                Presidente: Sérgio Antonio Elias - 48 9603-1606
+                |
+                Vice-presidente: Valter Silva - 48 9603-1498
+            </div>
+
         </div>
 
     </div>
