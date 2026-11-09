@@ -1,164 +1,249 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
-import { FileText, Plus, Search, SlidersHorizontal } from "lucide-react";
-import { useDocuments } from "@/app/services/documentService";
-import { cn, normalizeSearch } from "@/app/util";
+import { useEffect, useState } from "react";
+import { FileText, Search } from "lucide-react";
+
+import type { DocumentoLista } from "@/app/types/documentos";
+import { listarDocumentos } from "@/app/services/documentoService";
+import { formatarData, normalizeSearch } from "@/app/util";
+
+import BarraPesquisa from "@/app/components/ui/BarraPesquisa";
+import BotaoNovo from "@/app/components/ui/BotaoNovo";
+import BudgetFiltros from "@/app/components/ui/BudgetFiltros";
+import BudgetStatus from "@/app/components/ui/BudgeStatus";
+import AvatarIniciais from "@/app/components/ui/AvatarIniciais";
+import Card from "@/app/components/ui/Card";
+import ItemsVazio from "@/app/components/ItemsVazio";
 
 export default function DocumentosPage() {
-  const { documents } = useDocuments();
-  const [search, setSearch] = useState("");
-  const [showFilters, setShowFilters] = useState(false);
-  const [patient, setPatient] = useState("");
-  const [type, setType] = useState("");
-  const [status, setStatus] = useState("");
-  const [author, setAuthor] = useState("");
-  const pendingCount = documents.filter((document) => document.status === "pendente").length;
-  const filterCount = [patient, type, status, author].filter(Boolean).length;
-  const patients = Array.from(new Map(documents.map((document) => [document.patientId, document.patient])));
-  const types = Array.from(new Set(documents.map((document) => document.title)));
-  const authors = Array.from(new Set(documents.map((document) => document.author)));
-  const filteredDocuments = documents.filter((document) =>
-    normalizeSearch(`${document.title} ${document.code} ${document.patient} ${document.nickname} ${document.author}`).includes(normalizeSearch(search))
-    && (!patient || String(document.patientId) === patient)
-    && (!type || document.title === type)
-    && (!status || document.status === status)
-    && (!author || document.author === author),
-  );
 
-  function clearFilters() {
-    setSearch("");
-    setPatient("");
-    setType("");
-    setStatus("");
-    setAuthor("");
+  const [documentos, setDocumentos] = useState<DocumentoLista[]>([]);
+  const [pagina, setPagina] = useState(0);
+  const [totalPaginas, setTotalPaginas] = useState(0);
+  const [totalDocumentos, setTotalDocumentos] = useState(0);
+
+  const [search, setSearch] = useState("");
+  const [filtro, setFiltro] = useState("todos");
+
+  useEffect(() => {
+    carregarDocumentos();
+  }, [pagina]);
+
+  async function carregarDocumentos() {
+
+    try {
+
+      const dados = await listarDocumentos(pagina);
+
+      setDocumentos(dados.content);
+      setTotalPaginas(dados.totalPages);
+      setTotalDocumentos(dados.totalElements);
+
+    } catch (error) {
+
+      if (error instanceof Error) {
+        alert(error.message);
+      }
+
+    }
   }
+
+  const documentosFiltrados = documentos.filter((documento) => {
+
+    const busca = normalizeSearch(search);
+
+    const correspondeBusca =
+      normalizeSearch(documento.tipoDocumento).includes(busca) ||
+      normalizeSearch(documento.paciente).includes(busca) ||
+      normalizeSearch(documento.apelido || "").includes(busca) ||
+      normalizeSearch(documento.criadoPor).includes(busca);
+
+    const correspondeFiltro =
+      filtro === "todos" ||
+      (filtro === "pendentes" && documento.dtAssinatura === null) ||
+      (filtro === "assinados" && documento.dtAssinatura !== null);
+
+    return correspondeBusca && correspondeFiltro;
+  });
 
   return (
     <>
+
       <section className="border-b border-border bg-card">
+
         <div className="mx-auto max-w-6xl px-5 py-6 sm:px-8 sm:py-8">
-          <div className="flex flex-wrap items-center justify-between gap-3">
+
+          <div className="flex items-center justify-between gap-4">
+
             <div className="min-w-0">
 
               <h1 className="text-2xl font-semibold">Documentos</h1>
-              <p className="mt-1 text-xs text-muted-foreground">{documents.length} documentos no total · <span className="text-warning">{pendingCount} pendentes</span></p>
-              
+
+              <p className="mt-0.5 text-xs text-muted-foreground">
+                {totalDocumentos} documentos no total
+              </p>
+
             </div>
-            <div className="flex flex-wrap gap-2">
-              <Link href="/documentos/novo" className="flex min-h-10 items-center gap-1.5 rounded-full bg-primary px-4 py-2 text-sm font-medium text-white hover:bg-primary-dark">
-                <Plus className="h-4 w-4" aria-hidden="true" />Novo documento
-              </Link>
-              <button
-                type="button"
-                onClick={() => setShowFilters(!showFilters)}
-                aria-expanded={showFilters}
-                aria-controls="filtros-documentos"
-                className={cn("flex min-h-10 shrink-0 cursor-pointer items-center gap-1.5 rounded-full border px-3 py-2 text-sm transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary", showFilters ? "border-primary bg-primary text-white" : "border-border bg-card hover:bg-accent")}
-              >
-                <SlidersHorizontal className="h-4 w-4" aria-hidden="true" />
-                Filtros{filterCount > 0 && <span> ({filterCount})</span>}
-              </button>
-            </div>
+
+            <BotaoNovo href="/documentos/novo" texto="Novo documento" />
+
           </div>
+
+
           <div className="mt-5">
-            <div className="relative">
-              <label htmlFor="buscar-documento" className="sr-only">Buscar documento</label>
-              <Search className="pointer-events-none absolute top-1/2 left-4 h-5 w-5 -translate-y-1/2 text-muted-foreground" aria-hidden="true" />
-              <input
-                id="buscar-documento"
-                type="search"
-                value={search}
-                onChange={(event) => setSearch(event.target.value)}
-                placeholder="Buscar por paciente, título, ID ou autor..."
-                className="w-full rounded-2xl border border-border py-3 pr-4 pl-12 text-base placeholder:text-muted-foreground focus:ring-2 focus:ring-ring focus:outline-none bg-accent"
+
+            <BarraPesquisa
+              value={search}
+              onChange={setSearch}
+              placeholder="Buscar por paciente, tipo ou responsável..."
+            />
+
+            <div className="mt-3">
+
+              <BudgetFiltros
+                valor={filtro}
+                onChange={setFiltro}
+                opcoes={[
+                  { valor: "todos", label: "Todos" },
+                  { valor: "pendentes", label: "Pendentes" },
+                  { valor: "assinados", label: "Assinados" },
+                ]}
               />
+
             </div>
-            {showFilters && (
-              <section id="filtros-documentos"  className="mt-4 rounded-2xl border border-border bg-background p-4">
-                <div className="mb-3 flex items-center justify-between gap-3">
-                  <h2 className="text-sm font-medium">Filtrar por</h2>
-                  <button type="button" onClick={clearFilters} className="min-h-9 cursor-pointer rounded px-2 text-xs text-primary-dark hover:underline focus-visible:outline-2 focus-visible:outline-primary">Limpar filtros</button>
-                </div>
-                <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-                  <label className="block min-w-0 text-xs text-muted-foreground">
-                    Paciente
-                    <select value={patient} onChange={(event) => setPatient(event.target.value)} className="mt-1.5 min-h-11 w-full rounded-xl border border-border bg-card px-3 text-sm text-foreground focus:ring-2 focus:ring-ring focus:outline-none">
-                      <option value="">Todos</option>
-                      {patients.map(([id, name]) => <option key={id} value={id}>{name}</option>)}
-                    </select>
-                  </label>
-                  <label className="block min-w-0 text-xs text-muted-foreground">
-                    Tipo
-                    <select value={type} onChange={(event) => setType(event.target.value)} className="mt-1.5 min-h-11 w-full rounded-xl border border-border bg-card px-3 text-sm text-foreground focus:ring-2 focus:ring-ring focus:outline-none">
-                      <option value="">Todos os tipos</option>
-                      {types.map((name) => <option key={name}>{name}</option>)}
-                    </select>
-                  </label>
-                  <label className="block min-w-0 text-xs text-muted-foreground">
-                    Status
-                    <select value={status} onChange={(event) => setStatus(event.target.value)} className="mt-1.5 min-h-11 w-full rounded-xl border border-border bg-card px-3 text-sm text-foreground focus:ring-2 focus:ring-ring focus:outline-none">
-                      <option value="">Todos os status</option>
-                      <option value="pendente">Pendente de assinatura</option>
-                      <option value="assinado">Assinado</option>
-                    </select>
-                  </label>
-                  <label className="block min-w-0 text-xs text-muted-foreground">
-                    Responsável
-                    <select value={author} onChange={(event) => setAuthor(event.target.value)} className="mt-1.5 min-h-11 w-full rounded-xl border border-border bg-card px-3 text-sm text-foreground focus:ring-2 focus:ring-ring focus:outline-none">
-                      <option value="">Todos</option>
-                      {authors.map((name) => <option key={name}>{name}</option>)}
-                    </select>
-                  </label>
-                </div>
-              </section>
-            )}
+
           </div>
+
         </div>
+
       </section>
 
-      <section  className="mx-auto max-w-6xl space-y-3 px-5 py-4 sm:px-8">
-        <p role="status" className="sr-only">{filteredDocuments.length} {filteredDocuments.length === 1 ? "documento encontrado" : "documentos encontrados"}</p>
-        {filteredDocuments.length ? filteredDocuments.map((document) => (
-          <article key={document.id} className="relative flex items-start gap-3 rounded-2xl border border-border bg-card p-5 shadow-sm hover:border-primary/40 sm:p-6">
-            <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary">
-              <FileText className="h-5 w-5" aria-hidden="true" />
-            </span>
-            <div className="min-w-0 flex-1">
-              <div className="flex flex-wrap items-start justify-between gap-2">
-                <div className="min-w-0">
-                  <h2 className="break-words text-sm font-medium"><Link href={"/documentos/" + document.id} className="after:absolute after:inset-0 after:rounded-2xl hover:text-primary-dark">{document.title}</Link></h2>
-                  <p className="mt-0.5 text-xs text-muted-foreground">{document.code}</p>
+
+      <section className="mx-auto max-w-6xl space-y-3 px-5 py-4 sm:px-8">
+
+        {documentosFiltrados.length ? (
+
+          documentosFiltrados.map((documento) => (
+
+            <Card key={documento.id} className="relative flex items-start gap-3 transition-colors hover:border-primary/40">
+
+              <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary">
+                <FileText className="h-5 w-5" />
+              </span>
+
+              <div className="min-w-0 flex-1">
+
+                <div className="flex flex-wrap items-start justify-between gap-2">
+
+                  <div className="min-w-0">
+
+                    <h2 className="break-words text-sm font-medium">
+
+                      <Link
+                        href={`/documentos/${documento.id}`}
+                        className="after:absolute after:inset-0 after:rounded-2xl hover:text-primary-dark"
+                      >
+                        {documento.tipoDocumento}
+                      </Link>
+
+                    </h2>
+
+                    <p className="mt-0.5 text-xs text-muted-foreground">
+                      Documento #{documento.id} · Versão {documento.versao}
+                    </p>
+
+                  </div>
+
+                  <BudgetStatus
+                    texto={documento.dtAssinatura ? "Assinado" : "Pendente de assinatura"}
+                    tipo={documento.dtAssinatura ? "sucesso" : "alerta"}
+                  />
+
                 </div>
-                <span className={cn("inline-flex shrink-0 rounded-full border px-3 py-1 text-xs font-medium", document.status === "pendente" ? "border-amber-200 bg-amber-50 text-amber-800" : "border-primary/20 bg-primary/10 text-primary-dark")}>
-                  {document.status === "pendente" ? "Pendente de assinatura" : "Assinado"}
-                </span>
+
+
+                <Link
+                  href={`/pacientes/${documento.pacienteId}`}
+                  className="relative z-10 mt-3 flex w-fit max-w-full items-center gap-2"
+                >
+
+                  <AvatarIniciais nome={documento.paciente} tamanho="sm" />
+
+                  <span className="text-xs">
+
+                    {documento.paciente}
+
+                    {documento.apelido && (
+                      <span className="text-muted-foreground">
+                        {" "}({documento.apelido})
+                      </span>
+                    )}
+
+                  </span>
+
+                </Link>
+
+
+                <div className="mt-3 flex flex-wrap justify-between gap-2 text-xs text-muted-foreground">
+
+                  <p>{documento.criadoPor}</p>
+
+                  <p>{formatarData(documento.dtCriacao)}</p>
+
+                </div>
+
               </div>
-              <Link href={`/pacientes/${document.patientId}`} className="relative z-10 mt-2 flex w-fit max-w-full items-center gap-2 rounded-lg text-xs hover:text-primary-dark focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
-                <span aria-hidden="true" className="flex shrink-0 items-center justify-center rounded-full bg-secondary font-medium text-foreground h-8 w-8 text-xs">
-                  {document.patient.trim().split(/\s+/).slice(0, 2).map((part) => part[0]).join("")}
-                </span>
-                <span>{document.patient} <span className="text-muted-foreground">({document.nickname})</span></span>
-              </Link>
-              <div className="mt-2 flex flex-wrap justify-between gap-2 text-xs text-muted-foreground">
-                <p>{document.author}</p>
-                <p>{document.date}</p>
-              </div>
-            </div>
-          </article>
-        )) : (
-          <div className="rounded-2xl border border-dashed border-secondary bg-card px-5 py-12 text-center">
-            <Search className="mx-auto mb-3 h-7 w-7 text-primary" aria-hidden="true" />
-            <h2 className="text-base font-semibold">Nenhum documento encontrado</h2>
-            <p className="mt-1 text-sm text-muted-foreground">Tente outro termo ou altere os filtros.</p>
-            <button type="button" onClick={clearFilters} className="mt-4 min-h-11 cursor-pointer rounded-xl px-4 text-sm font-medium text-primary-dark hover:bg-primary/5 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
-              Limpar filtros
-            </button>
-          </div>
+
+            </Card>
+
+          ))
+
+        ) : (
+
+          <ItemsVazio
+            titulo="Nenhum documento encontrado"
+            descricao="Tente buscar por outro termo ou altere o filtro."
+            icon={Search}
+          />
+
         )}
-        <p className="pt-2 text-center text-xs text-muted-foreground">Dados de demonstração</p>
+
+{/* 
+        {totalPaginas > 1 && (
+
+          <div className="flex items-center justify-center gap-3 py-4">
+
+            <button
+              type="button"
+              disabled={pagina === 0}
+              onClick={() => setPagina(pagina - 1)}
+              className="rounded-xl border border-border bg-card px-4 py-2 text-sm
+                enabled:cursor-pointer enabled:hover:bg-accent disabled:opacity-50"
+            >
+              Anterior
+            </button>
+
+            <span className="text-sm text-muted-foreground">
+              Página {pagina + 1} de {totalPaginas}
+            </span>
+
+            <button
+              type="button"
+              disabled={pagina + 1 >= totalPaginas}
+              onClick={() => setPagina(pagina + 1)}
+              className="rounded-xl border border-border bg-card px-4 py-2 text-sm
+                enabled:cursor-pointer enabled:hover:bg-accent disabled:opacity-50"
+            >
+              Próxima
+            </button>
+
+          </div>
+
+        )} */}
+
       </section>
+
     </>
   );
 }

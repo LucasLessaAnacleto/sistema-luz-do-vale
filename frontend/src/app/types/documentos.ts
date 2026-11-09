@@ -52,7 +52,7 @@ export interface DocumentoDetalhes {
 
   observacao: string | null;
 
-  campos: string;
+  campos: CampoDocumento[];
   dados: Record<string, unknown>;
 
   ativo: boolean;
@@ -61,3 +61,70 @@ export interface DocumentoDetalhes {
   dtAtualizacao: string | null;
   dtAssinatura: string | null;
 }
+
+// documentos dinamicos
+
+export type TipoCampoDocumento =
+  | "TEXTO"
+  | "TEXTO_LONGO"
+  | "INTEIRO"
+  | "DECIMAL"
+  | "DATA"
+  | "BOOLEANO"
+  | "SELECAO"
+  | "MULTIPLA_SELECAO"
+  | "GRUPO";
+
+
+export interface CampoDocumento {
+  nome: string;
+  rotulo: string;
+  tipo: TipoCampoDocumento;
+
+  obrigatorio: boolean;
+
+  opcoes: string[] | null;
+  tabelaLista: string | null;
+
+  campos: CampoDocumento[] | null;
+
+  largura: number | null;
+
+  origem: string | null;
+
+  somenteLeitura: boolean;
+}
+
+
+export interface OpcaoLista {
+  valor: string;
+  rotulo: string;
+}
+
+
+export interface TipoDocumento {
+  id: number;
+  nome: string;
+  descricao: string;
+  exigeAssinatura: boolean;
+}
+
+
+export interface FormularioDocumento {
+  tipoDocumentoId: number;
+
+  nome: string;
+  descricao: string;
+
+  exigeAssinatura: boolean;
+
+  versaoId: number;
+  versao: number;
+
+  campos: CampoDocumento[];
+
+  listas: Record<string, OpcaoLista[]>;
+
+  dadosPadrao: Record<string, unknown>;
+}
+
