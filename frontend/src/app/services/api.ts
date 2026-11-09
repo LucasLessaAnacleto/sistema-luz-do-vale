@@ -1,5 +1,8 @@
 import axios from "axios";
 import Cookies from "js-cookie";
+import { logout } from "../redux/slices/authSlice";
+import { store } from "../redux/store";
+
 
 const api = axios.create({
   baseURL: process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8080",
@@ -15,5 +18,34 @@ api.interceptors.request.use((config) => {
 
   return config;
 });
+
+api.interceptors.response.use((response) => response, (error) => {
+
+    const status = error.response?.status;
+
+    if (status === 401) {
+
+      const isLogin = error.config?.url?.includes("/auth/login");
+
+      if (!isLogin) {
+        store.dispatch(logout());
+
+        return Promise.reject(new Error("Sua sessão expirou. Entre novamente.")
+        );
+      }
+
+      return Promise.reject(new Error("E-mail ou senha inválidos."));
+    }
+
+
+    if (status === 403) {
+
+      return Promise.reject(new Error("Você não tem permissão para realizar esta ação."));
+    }
+
+
+    return Promise.reject(error);
+  }
+);
 
 export default api;

@@ -7,10 +7,14 @@ import com.luzdovale.reabilitah.backend.application.exceptions.DocumentoNaoEncon
 import com.luzdovale.reabilitah.backend.application.exceptions.PacienteNaoEncontradoException;
 import com.luzdovale.reabilitah.backend.domain.entities.*;
 import com.luzdovale.reabilitah.backend.domain.repository.*;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -109,6 +113,26 @@ public class DocumentoService {
         );
 
         return documento;
+    }
+
+    public Page<DocumentoListaResponse> listar(int pagina) {
+
+        var pageable = PageRequest.of(pagina, 50);
+
+        return documentoRepository
+                .findByAtivoTrueOrderByDtCriacaoDesc(pageable)
+                .map(this::mapeiaParaListaDTO);
+    }
+
+    public List<DocumentoListaResponse> listarRecentes() {
+
+        LocalDateTime doisDiasAtras = LocalDateTime.now().minusDays(2);
+
+        return documentoRepository
+                .findTop10ByAtivoTrueAndDtCriacaoGreaterThanEqualOrderByDtCriacaoDesc(doisDiasAtras)
+                .stream()
+                .map(this::mapeiaParaListaDTO)
+                .toList();
     }
 
     public List<DocumentoRelacionadoResponse> listarRelacionados(Long id) {
@@ -223,6 +247,34 @@ public class DocumentoService {
         );
     }
 
+    private DocumentoListaResponse mapeiaParaListaDTO(Documento documento) {
+        var versao = documento.getTipoDocumentoVersao();
+        var paciente = documento.getPaciente();
+        var usuario = documento.getCriadoPor();
+
+        String nomeUsuario;
+        if (usuario.getProfissional() != null) {
+            nomeUsuario = usuario.getProfissional().getNome();
+        } else {
+            nomeUsuario = usuario.getEmail();
+        }
+
+        return new DocumentoListaResponse(
+                documento.getId(),
+                versao.getTipoDocumento().getId(),
+                versao.getTipoDocumento().getNome(),
+                versao.getVersao(),
+                paciente.getId(),
+                paciente.getNome(),
+                paciente.getApelido(),
+                usuario.getId(),
+                nomeUsuario,
+                documento.isAtivo(),
+                documento.getDtCriacao(),
+                documento.getDtAssinatura()
+        );
+    }
+
     private DocumentoRelacionadoResponse mapeiaRelacionado(Documento documento, String relacao) {
 
         return new DocumentoRelacionadoResponse(
@@ -236,6 +288,4 @@ public class DocumentoService {
                 documento.isAtivo()
         );
     }
-
-
 }

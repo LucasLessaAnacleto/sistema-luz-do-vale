@@ -13,6 +13,7 @@ import BotaoNovo from "@/app/components/ui/BotaoNovo";
 import BarraPesquisa from "@/app/components/ui/BarraPesquisa";
 import BudgetFiltros from "@/app/components/ui/BudgetFiltros";
 import ItemsVazio from "@/app/components/ItemsVazio";
+import BotaoVoltar from "@/app/components/ui/BotaoVoltar";
 
 export default function EquipePage() {
 
@@ -67,21 +68,7 @@ export default function EquipePage() {
 
             <div className="flex min-w-0 items-center gap-3">
 
-              <Link
-                href="/configuracoes"
-                
-                className="
-                  flex h-10 w-10 shrink-0
-                  items-center justify-center
-                  rounded-full bg-secondary
-                  transition-colors
-                  hover:bg-secondary/80
-                  focus-visible:outline-2
-                  focus-visible:outline-primary
-                "
-              >
-                <ArrowLeft className="h-5 w-5" aria-hidden="true"/>
-              </Link>
+              <BotaoVoltar href="/configuracoes" />
 
               <div className="min-w-0">
 

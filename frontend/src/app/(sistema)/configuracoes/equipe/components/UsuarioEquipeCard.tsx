@@ -2,6 +2,7 @@ import Link from "next/link";
 import { ChevronRight, ShieldCheck } from "lucide-react";
 import type { Usuario } from "@/app/types/usuarios";
 import AvatarIniciais from "@/app/components/ui/AvatarIniciais";
+import BudgeStatus from "@/app/components/ui/BudgeStatus";
 
 interface Props {
   usuario: Usuario;
@@ -46,16 +47,10 @@ export default function UsuarioEquipeCard({ usuario }: Props) {
 
       <div className="flex shrink-0 items-center gap-3">
 
-        <span className={`rounded-full border px-3 py-1 text-xs font-medium
-            ${
-              usuario.ativo
-                ? "border-primary/20 bg-primary/5 text-primary-dark"
-                : "border-border bg-muted text-muted-foreground"
-            }
-          `}
-        >
-          {usuario.ativo ? "Ativo" : "Inativo"}
-        </span>
+        <BudgeStatus
+          texto={usuario.ativo ? "Ativo" : "Inativo"}
+          tipo={usuario.ativo ? "sucesso" : "neutro"}
+        />
 
         <ChevronRight className="h-5 w-5 text-muted-foreground" aria-hidden="true"/>
 

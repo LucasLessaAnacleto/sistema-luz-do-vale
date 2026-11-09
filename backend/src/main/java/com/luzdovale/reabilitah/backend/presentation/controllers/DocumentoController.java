@@ -5,11 +5,8 @@ import com.luzdovale.reabilitah.backend.application.services.DocumentoPdfService
 import com.luzdovale.reabilitah.backend.application.services.DocumentoService;
 import com.luzdovale.reabilitah.backend.application.services.DocumentoTemplateService;
 import com.luzdovale.reabilitah.backend.domain.entities.Usuario;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpHeaders;
+import org.springframework.data.domain.Page;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -39,6 +36,18 @@ public class DocumentoController {
     @GetMapping("/{id}")
     public ResponseEntity<DocumentoDetalhesResponse> buscar(@PathVariable Long id) {
         return ResponseEntity.ok(documentoService.buscar(id));
+    }
+
+    @GetMapping
+    public ResponseEntity<Page<DocumentoListaResponse>> listar(@RequestParam(defaultValue = "0") int pagina) {
+
+        return ResponseEntity.ok(documentoService.listar(pagina));
+    }
+
+    @GetMapping("/recentes")
+    public ResponseEntity<List<DocumentoListaResponse>> listarRecentes() {
+
+        return ResponseEntity.ok(documentoService.listarRecentes());
     }
 
     @GetMapping("/{id}/relacionados")

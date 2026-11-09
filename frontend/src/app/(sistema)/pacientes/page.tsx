@@ -7,6 +7,9 @@ import type { Paciente } from "@/app/types/pacientes";
 import { Plus, Search } from "lucide-react";
 import { normalizeSearch } from "@/app/util";
 import ItemsVazio from "@/app/components/ItemsVazio";
+import BarraPesquisa from "@/app/components/ui/BarraPesquisa";
+import BotaoNovo from "@/app/components/ui/BotaoNovo";
+import AvatarIniciais from "@/app/components/ui/AvatarIniciais";
 
 export default function PacientesPage() {
   const [search, setSearch] = useState("");
@@ -37,50 +40,19 @@ export default function PacientesPage() {
       <section className="border-b border-border bg-card">
         <div className="mx-auto max-w-6xl px-5 py-6 sm:px-8 sm:py-8">
           <div className="flex items-center justify-between gap-4">
+
             <h1 className="min-w-0 text-2xl font-semibold">Pacientes</h1>
-            <button
-              type="button"
-              disabled
-              
-              title="Cadastro em breve"
-              className="flex h-10 w-10 shrink-0 cursor-not-allowed items-center justify-center rounded-full bg-primary text-white opacity-70"
-            >
-              <Plus className="h-5 w-5" aria-hidden="true" />
-            </button>
+            <BotaoNovo href="/pacientes/novo"/>
+
           </div>
 
           <div className="mt-5">
-            <div className="relative">
-              <label htmlFor="buscar-paciente" className="sr-only">
-                Buscar paciente
-              </label>
-              <Search
-                className="pointer-events-none absolute top-1/2 left-4 h-5 w-5 -translate-y-1/2 text-muted-foreground"
-                aria-hidden="true"
-              />
-              <input
-                id="buscar-paciente"
-                type="search"
-                value={search}
-                onChange={(event) => setSearch(event.target.value)}
-                placeholder="Buscar por nome ou apelido..."
-                className="w-full rounded-2xl border border-border py-3 pr-4 pl-12 text-base placeholder:text-muted-foreground focus:ring-2 focus:ring-ring focus:outline-none bg-card"
-              />
-            </div>
+            <BarraPesquisa value={search} onChange={setSearch} placeholder="Buscar por nome ou apelido..."/>
           </div>
         </div>
       </section>
 
-      <section
-        
-        className="mx-auto max-w-6xl space-y-3 px-5 py-4 sm:px-8"
-      >
-        <p role="status" className="sr-only">
-          {filteredPatients.length}{" "}
-          {filteredPatients.length === 1
-            ? "paciente encontrado"
-            : "pacientes encontrados"}
-        </p>
+      <section className="mx-auto max-w-6xl space-y-3 px-5 py-4 sm:px-8">
 
         {filteredPatients.length ? (
           filteredPatients.map((patient) => (
@@ -90,17 +62,7 @@ export default function PacientesPage() {
               aria-label={`Abrir prontuário de ${patient.nome}`}
               className="flex items-center gap-4 rounded-2xl border border-border bg-card p-5 shadow-sm transition-colors hover:border-primary/40 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary sm:p-6"
             >
-              <span
-                aria-hidden="true"
-                className="flex shrink-0 items-center justify-center rounded-full bg-secondary font-medium text-foreground h-16 w-16 text-base"
-              >
-                {patient.nome
-                  .trim()
-                  .split(/\s+/)
-                  .slice(0, 2)
-                  .map((part) => part[0])
-                  .join("")}
-              </span>
+              <AvatarIniciais nome={patient.nome} tamanho="lg" />
 
               <div className="min-w-0">
                 <h2 className="break-words text-lg font-medium">
