@@ -3,10 +3,15 @@
 import { MouseEvent } from "react";
 
 export default function BotaoPreencherTeste() {
+
     function preencherDados(event: MouseEvent<HTMLButtonElement>) {
+
         const form = event.currentTarget.form;
 
-        if (!form) return;
+        if (!form) {
+            return;
+        }
+
 
         const dados = {
             nome: "Lucas de Oliveira",
@@ -45,24 +50,54 @@ export default function BotaoPreencherTeste() {
             estadoCivil: "Solteiro",
             filhos: "true",
 
-            tiposDependencia: "Álcool, Cocaína, Tabaco",
-            primeiraDrogaLicita: "Álcool",
             idadePrimeiraDrogaLicita: "15",
-            primeiraDrogaIlicita: "Maconha",
             idadePrimeiraDrogaIlicita: "17",
         };
 
+
         for (const nome in dados) {
+
             const campo = form.elements.namedItem(nome);
 
             if (campo instanceof HTMLInputElement || campo instanceof HTMLSelectElement) {
+
                 campo.value = dados[nome as keyof typeof dados];
+
                 campo.dispatchEvent(new Event("input", { bubbles: true }));
                 campo.dispatchEvent(new Event("change", { bubbles: true }));
             }
         }
-    };
-    
+
+
+        const tiposDependencia = form.querySelectorAll<HTMLInputElement>(
+            'input[name="tiposDependencia"]'
+        );
+
+        tiposDependencia.forEach((campo, index) => {
+            campo.checked = index < 3;
+            campo.dispatchEvent(new Event("change", { bubbles: true }));
+        });
+
+
+        const primeiraDrogaLicita = form.elements.namedItem("primeiraDrogaLicita");
+
+        if (primeiraDrogaLicita instanceof HTMLSelectElement && primeiraDrogaLicita.options.length > 1) {
+
+            primeiraDrogaLicita.value = primeiraDrogaLicita.options[1].value;
+            primeiraDrogaLicita.dispatchEvent(new Event("change", { bubbles: true }));
+        }
+
+
+        const primeiraDrogaIlicita = form.elements.namedItem("primeiraDrogaIlicita");
+
+        if (primeiraDrogaIlicita instanceof HTMLSelectElement && primeiraDrogaIlicita.options.length > 1) {
+
+            primeiraDrogaIlicita.value = primeiraDrogaIlicita.options[1].value;
+            primeiraDrogaIlicita.dispatchEvent(new Event("change", { bubbles: true }));
+        }
+    }
+
+
     return (
         <button type="button" onClick={preencherDados} className="cursor-pointer rounded-xl p-2 text-sm">
             Preencher dados de teste

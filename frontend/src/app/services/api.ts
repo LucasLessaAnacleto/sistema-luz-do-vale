@@ -26,31 +26,20 @@ api.interceptors.response.use((response) => response, (error) => {
 
     if (status === 401) {
 
-      const isLogin = error.config?.url?.includes("/auth/login");
+        const isLogin = error.config?.url?.includes("/auth/login");
+        
+        if (!isLogin) {
+            store.dispatch(logout());
+            // window.location.replace("/login");
+            return Promise.reject(new Error("Sua sessão expirou. Entre novamente."));
+        }
 
-      if (!isLogin) {
-        store.dispatch(logout());
-
-        return Promise.reject(new Error("Sua sessão expirou. Entre novamente.")
-        );
-      }
-
-      return Promise.reject(new Error("E-mail ou senha inválidos."));
-    }
-
-
-    if (status === 403) {
-
-      return Promise.reject(new Error("Você não tem permissão para realizar esta ação."));
+        return Promise.reject(new Error("E-mail ou senha inválidos."));
     }
 
     if (status === 403) {
 
-        return Promise.reject(
-            new Error(
-                mensagemBackend || "Você não tem permissão para realizar esta ação."
-            )
-        );
+        return Promise.reject(new Error( mensagemBackend || "Você não tem permissão para realizar esta ação." ));
     }
 
 

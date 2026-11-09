@@ -17,6 +17,14 @@ export async function actionCadastrarPaciente(_estado: EstadoFormulario, form: F
         valores[chave] = String(valor).trim();
     }
 
+    valores.tiposDependencia = form.getAll("tiposDependencia")
+        .map((tipo) => String(tipo))
+        .join(",");
+
+    const tiposDependencia = form.getAll("tiposDependencia")
+        .map((tipo) => String(tipo));
+
+
     const valorTexto = (campo: string): string | null => {
         const valor = String(form.get(campo) ?? "").trim();
 
@@ -36,10 +44,6 @@ export async function actionCadastrarPaciente(_estado: EstadoFormulario, form: F
     };
 
     const filhos = valorTexto("filhos");
-    const tiposDependencia = String(form.get("tiposDependencia") ?? "")
-        .split(",")
-        .map((tipo) => tipo.trim())
-        .filter(Boolean);
 
     const dados: PacienteRequest = {
 
