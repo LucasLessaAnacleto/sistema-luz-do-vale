@@ -44,6 +44,10 @@ export default function PacienteLayout({ children, params }: Props) {
     const pathname = usePathname();
     const [paciente, setPaciente] = useState<PacienteDetalhes | null>(null);
 
+    const [carregando, setCarregando] = useState(true);
+    const [erro, setErro] = useState("");
+    const [naoEncontrado, setNaoEncontrado] = useState(false);
+
 
     useEffect(() => {
         carregarPaciente();
@@ -52,20 +56,78 @@ export default function PacienteLayout({ children, params }: Props) {
 
     async function carregarPaciente() {
         try {
+            setCarregando(true);
+            setErro("");
+            setNaoEncontrado(false);
+
             const dados = await buscarPaciente(Number(id));
             setPaciente(dados);
 
         } catch (error) {
 
-            if (error instanceof Error) {
-                alert(error.message);
+            const erroRequisicao = error as Error & { status?: number };
+
+            if (erroRequisicao.status === 404) {
+
+                setNaoEncontrado(true);
+
+            } else {
+
+                setErro(error instanceof Error ? error.message : "Erro ao carregar o paciente.");
+
             }
 
+        }finally{
+            setCarregando(false);
         }
     }
 
     const historicoAtivo = pathname.endsWith("/historico");
     const idade = paciente ? calcularIdade(paciente.dtNasc) : null;
+
+    if (carregando) {
+
+        return (
+            <p className="px-5 py-12 text-center text-sm text-muted-foreground">
+                Carregando paciente...
+            </p>
+        );
+    }
+
+
+    if (naoEncontrado) {
+
+        return (
+            <div className="mx-auto max-w-6xl px-5 py-12 text-center sm:px-8">
+                <h1 className="text-xl font-semibold">Paciente não encontrado</h1>
+
+                <p className="mt-2 text-sm text-muted-foreground">
+                    Não foi encontrado um paciente com este identificador.
+                </p>
+
+                <Link href="/pacientes"
+                    className="mt-5 inline-flex rounded-xl bg-primary px-4 py-2 text-sm font-medium text-white"
+                >
+                    Voltar para pacientes
+                </Link>
+            </div>
+        );
+    }
+
+
+    if (erro) {
+
+        return (
+            <div className="mx-auto max-w-6xl px-5 py-12 text-center sm:px-8">
+                <p className="text-sm text-red-600">{erro}</p>
+
+                <button type="button" onClick={carregarPaciente} 
+                className="mt-4 cursor-pointer rounded-xl bg-primary px-4 py-2 text-sm font-medium text-white">
+                    Tentar novamente
+                </button>
+            </div>
+        );
+    }
 
     return (
         <>

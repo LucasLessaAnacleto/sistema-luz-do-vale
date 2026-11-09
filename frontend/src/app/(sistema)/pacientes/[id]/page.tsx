@@ -76,9 +76,15 @@ export default function PacientePage({ params }: { params: Promise<{ id: string 
 
             setPaciente(dadosPaciente);
 
-            setDependencias(await buscarLista("TIPO_DEPENDENCIA"));
-            setDependenciasLicitas(await buscarLista("TIPO_DEPENDENCIA_LICITA"));
-            setDependenciasIlicitas(await buscarLista("TIPO_DEPENDENCIA_ILICITA"));
+            const [listaDependencias, listaLicitas, listaIlicitas] = await Promise.all([
+                buscarLista("TIPO_DEPENDENCIA"),
+                buscarLista("TIPO_DEPENDENCIA_LICITA"),
+                buscarLista("TIPO_DEPENDENCIA_ILICITA"),
+            ]);
+
+            setDependencias(listaDependencias);
+            setDependenciasLicitas(listaLicitas);
+            setDependenciasIlicitas(listaIlicitas);
 
         } catch (error) {
 

@@ -42,12 +42,17 @@ api.interceptors.response.use((response) => response, (error) => {
         return Promise.reject(new Error( mensagemBackend || "Você não tem permissão para realizar esta ação." ));
     }
 
+    if (status === 404) {
+
+        const erroNaoEncontrado = new Error(mensagemBackend || "Registro não encontrado.") as Error & { status?: number };
+        erroNaoEncontrado.status = 404;
+        return Promise.reject(erroNaoEncontrado);
+    }
+
 
     if (mensagemBackend) {
 
-        return Promise.reject(
-            new Error(mensagemBackend)
-        );
+        return Promise.reject(new Error(mensagemBackend));
     }
 
 
