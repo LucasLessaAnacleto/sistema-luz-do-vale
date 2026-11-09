@@ -1,6 +1,7 @@
 import type { Paciente, PacienteDetalhes, PacienteRequest } from "@/app/types/pacientes";
 import { buscarListaPacientesMock } from "./mocks/pacienteMock";
 import api from "./api";
+import { HistoricoDocumento } from "../types/documentos";
 
 export async function buscarListaPacientes(ativo?: boolean): Promise<Paciente[]> {
 
@@ -17,6 +18,14 @@ export async function buscarPaciente(id: number): Promise<PacienteDetalhes> {
 
     return response.data;
 }
+
+export async function buscarHistoricoPaciente(id: number): Promise<HistoricoDocumento[]> {
+
+    const response = await api.get<HistoricoDocumento[]>(`/pacientes/${id}/historico`);
+
+    return response.data;
+}
+
 
 export async function criarPaciente(dados: PacienteRequest): Promise<Paciente> {
 

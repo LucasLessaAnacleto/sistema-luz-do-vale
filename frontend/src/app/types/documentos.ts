@@ -62,6 +62,17 @@ export interface DocumentoDetalhes {
   dtAssinatura: string | null;
 }
 
+export interface HistoricoDocumento {
+    id: number;
+    documentoId: number | null;
+    tipoDocumento: string | null;
+    acao: string;
+    usuarioId: number;
+    usuario: string;
+    observacao: string | null;
+    dtCriacao: string;
+}
+
 // documentos dinamicos
 
 export type TipoCampoDocumento =

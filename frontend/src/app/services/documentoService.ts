@@ -26,3 +26,20 @@ export async function buscarDocumento(id: number): Promise<DocumentoDetalhes> {
 
   return response.data;
 }
+
+export async function buscarHtmlDocumento(id: number): Promise<string> {
+
+    const response = await api.get<string>(`/documentos/${id}/html`);
+
+    return response.data;
+}
+
+
+export async function buscarPdfDocumento(id: number): Promise<Blob> {
+
+    const response = await api.get<Blob>(`/documentos/${id}/pdf`, {
+        responseType: "blob",
+    });
+
+    return response.data;
+}
