@@ -1,10 +1,13 @@
 package com.luzdovale.reabilitah.backend.application.services;
 
+import com.luzdovale.reabilitah.backend.application.DTO.documento.DocumentoDetalhesResponse;
 import com.luzdovale.reabilitah.backend.application.DTO.paciente.PacienteRequest;
 import com.luzdovale.reabilitah.backend.application.DTO.paciente.PacienteResponse;
 import com.luzdovale.reabilitah.backend.application.DTO.responsavel.ResponsavelResponse;
 import com.luzdovale.reabilitah.backend.application.exceptions.PacienteNaoEncontradoException;
 import com.luzdovale.reabilitah.backend.application.exceptions.UsuarioSemAutorizacao;
+import com.luzdovale.reabilitah.backend.application.DTO.documento.DocumentoDetalhesResponse;
+import com.luzdovale.reabilitah.backend.application.DTO.paciente.PacienteDetalhesResponse;
 import com.luzdovale.reabilitah.backend.domain.entities.Documento;
 import com.luzdovale.reabilitah.backend.domain.entities.Paciente;
 import com.luzdovale.reabilitah.backend.domain.entities.Responsavel;
@@ -41,10 +44,23 @@ public class PacienteService {
             .toList();
     }
 
-    public PacienteResponse buscar(Long id) {
-        var paciente    = buscarPaciente(id);
+    public PacienteDetalhesResponse buscar(Long id) {
+        var paciente = buscarPaciente(id);
         var responsavel = responsavelService.buscarPorPaciente(paciente);
-        return mapeiaParaDTO(paciente,responsavel);
+
+        DocumentoDetalhesResponse fichaAcolhimento = null;
+
+        if (paciente.getFichaDocumento() != null) {
+            fichaAcolhimento = documentoService.buscar(
+                    paciente.getFichaDocumento().getId()
+            );
+        }
+
+        return mapeiaParaDetalhesDTO(
+                paciente,
+                responsavel,
+                fichaAcolhimento
+        );
     }
 
     @Transactional
@@ -158,35 +174,73 @@ public class PacienteService {
         }
     }
 
+    private PacienteDetalhesResponse mapeiaParaDetalhesDTO(
+        Paciente paciente,
+        Responsavel responsavel,
+        DocumentoDetalhesResponse fichaAcolhimento
+    ) {
+
+        var responsavelResponse = new ResponsavelResponse(
+            responsavel.getId(),
+            responsavel.getNome(),
+            responsavel.getParentesco(),
+            responsavel.getCpf() != null
+                ? responsavel.getCpf().toString()
+                : "",
+            responsavel.getRg(),
+            responsavel.getTelefone(),
+            responsavel.getEndereco(),
+            responsavel.getDtNasc()
+        );
+
+        return new PacienteDetalhesResponse(
+            paciente.getId(),
+            paciente.getNome(),
+            paciente.getApelido(),
+            paciente.getCpf() != null
+                ? paciente.getCpf().toString()
+                : "",
+            paciente.getRg(),
+            paciente.getTelefone(),
+            paciente.getEndereco(),
+            paciente.getDtNasc(),
+            paciente.isAtivo(),
+            paciente.getDtCriacao(),
+            paciente.getDtDesativado(),
+            responsavelResponse,
+            fichaAcolhimento
+        );
+    }
+
     private PacienteResponse mapeiaParaDTO(Paciente paciente, Responsavel responsavel) {
         var responsavelResponse = new ResponsavelResponse(
-                responsavel.getId(),
-                responsavel.getNome(),
-                responsavel.getParentesco(),
-                responsavel.getCpf() != null
-                        ? responsavel.getCpf().toString()
-                        : "",
-                responsavel.getRg(),
-                responsavel.getTelefone(),
-                responsavel.getEndereco(),
-                responsavel.getDtNasc()
+            responsavel.getId(),
+            responsavel.getNome(),
+            responsavel.getParentesco(),
+            responsavel.getCpf() != null
+                ? responsavel.getCpf().toString()
+                : "",
+            responsavel.getRg(),
+            responsavel.getTelefone(),
+            responsavel.getEndereco(),
+            responsavel.getDtNasc()
         );
 
         return new PacienteResponse(
-                paciente.getId(),
-                paciente.getNome(),
-                paciente.getApelido(),
-                paciente.getCpf() != null
-                        ? paciente.getCpf().toString()
-                        : "",
-                paciente.getRg(),
-                paciente.getTelefone(),
-                paciente.getEndereco(),
-                paciente.getDtNasc(),
-                paciente.isAtivo(),
-                paciente.getDtCriacao(),
-                paciente.getDtDesativado(),
-                responsavelResponse
+            paciente.getId(),
+            paciente.getNome(),
+            paciente.getApelido(),
+            paciente.getCpf() != null
+                ? paciente.getCpf().toString()
+                : "",
+            paciente.getRg(),
+            paciente.getTelefone(),
+            paciente.getEndereco(),
+            paciente.getDtNasc(),
+            paciente.isAtivo(),
+            paciente.getDtCriacao(),
+            paciente.getDtDesativado(),
+            responsavelResponse
         );
     }
 

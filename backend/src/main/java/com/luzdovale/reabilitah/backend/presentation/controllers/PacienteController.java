@@ -1,6 +1,7 @@
 package com.luzdovale.reabilitah.backend.presentation.controllers;
 
 import com.luzdovale.reabilitah.backend.application.DTO.documento.HistDocumentoResponse;
+import com.luzdovale.reabilitah.backend.application.DTO.paciente.PacienteDetalhesResponse;
 import com.luzdovale.reabilitah.backend.application.DTO.paciente.PacienteRequest;
 import com.luzdovale.reabilitah.backend.application.DTO.paciente.PacienteResponse;
 import com.luzdovale.reabilitah.backend.application.services.HistDocumentoService;
@@ -30,10 +31,9 @@ public class PacienteController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<PacienteResponse> buscar(@PathVariable Long id) {
-        return ResponseEntity.ok(
-            pacienteService.buscar(id)
-        );
+    public ResponseEntity<PacienteDetalhesResponse> buscar(@PathVariable Long id) {
+
+        return ResponseEntity.ok(pacienteService.buscar(id));
     }
 
     @PostMapping

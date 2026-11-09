@@ -1,3 +1,4 @@
+import { DocumentoDetalhes } from "./documentos";
 import type { Endereco } from "./endereco";
 
 export interface Responsavel {
@@ -24,6 +25,10 @@ export interface Paciente {
     dtCriacao: string;
     dtDesativado: string | null;
     responsavel: Responsavel | null;
+}
+
+export interface PacienteDetalhes extends Paciente {
+    fichaAcolhimento: DocumentoDetalhes | null;
 }
 
 export interface ResponsavelRequest {
