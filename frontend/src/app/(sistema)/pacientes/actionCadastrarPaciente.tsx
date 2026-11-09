@@ -1,5 +1,3 @@
-"use server";
-
 import { redirect } from "next/navigation";
 
 import type { PacienteRequest } from "@/app/types/pacientes";
@@ -7,9 +5,17 @@ import { criarPaciente } from "@/app/services/pacienteService";
 
 export type EstadoFormulario = {
     erro: string;
+    valores?: Record<string, string>;
 };
 
 export async function actionCadastrarPaciente(_estado: EstadoFormulario, form: FormData): Promise<EstadoFormulario> {
+
+    const valores: Record<string, string> = {};
+    for (const campo of form.entries()) {
+        const chave = campo[0];
+        const valor = campo[1] ?? "";
+        valores[chave] = String(valor).trim();
+    }
 
     const valorTexto = (campo: string): string | null => {
         const valor = String(form.get(campo) ?? "").trim();
@@ -104,7 +110,10 @@ export async function actionCadastrarPaciente(_estado: EstadoFormulario, form: F
     } catch (error) {
         
         console.error("Erro ao cadastrar paciente:", error);
-        return { erro: error instanceof Error ? error.message : "Erro ao cadastrar paciente."};
+        return { 
+            erro: error instanceof Error ? error.message : "Erro ao cadastrar paciente.",
+            valores
+        };
     }
 
     redirect(`/pacientes/${paciente.id}`);

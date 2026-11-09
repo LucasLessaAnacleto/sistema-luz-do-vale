@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState } from "react";
+import { useActionState, useEffect } from "react";
 
 import { actionCadastrarPaciente } from "../actionCadastrarPaciente";
 
@@ -15,11 +15,18 @@ import BotaoPreencherTeste from "../components/BotaoPreencherTeste";
 
 const estadoInicial = {
     erro: "",
+    valores: {},
 };
 
 export default function FormularioPaciente() {
 
     const [estado, action, pending] = useActionState(actionCadastrarPaciente, estadoInicial);
+
+    useEffect(() => {
+        if (estado.erro) {
+            alert(estado.erro);
+        }
+    }, [estado.erro]);
 
     return (
         <>
@@ -44,9 +51,9 @@ export default function FormularioPaciente() {
                 <div className="flex justify-end">
                     <BotaoPreencherTeste />
                 </div>
-                <DadosPaciente />
-                <DadosResponsavel />
-                <FichaAcolhimento />
+                <DadosPaciente valores={estado.valores} />
+                <DadosResponsavel valores={estado.valores} />
+                <FichaAcolhimento valores={estado.valores} />
 
 
                 {estado.erro && (

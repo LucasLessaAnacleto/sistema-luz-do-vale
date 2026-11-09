@@ -22,6 +22,7 @@ api.interceptors.request.use((config) => {
 api.interceptors.response.use((response) => response, (error) => {
 
     const status = error.response?.status;
+    const mensagemBackend = error.response?.data?.message;
 
     if (status === 401) {
 
@@ -41,6 +42,23 @@ api.interceptors.response.use((response) => response, (error) => {
     if (status === 403) {
 
       return Promise.reject(new Error("Você não tem permissão para realizar esta ação."));
+    }
+
+    if (status === 403) {
+
+        return Promise.reject(
+            new Error(
+                mensagemBackend || "Você não tem permissão para realizar esta ação."
+            )
+        );
+    }
+
+
+    if (mensagemBackend) {
+
+        return Promise.reject(
+            new Error(mensagemBackend)
+        );
     }
 
 

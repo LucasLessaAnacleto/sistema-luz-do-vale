@@ -64,7 +64,7 @@ export default function BotaoPreencherTeste() {
     };
     
     return (
-        <button onClick={preencherDados} className="cursor-pointer rounded-xl p-2 text-sm">
+        <button type="button" onClick={preencherDados} className="cursor-pointer rounded-xl p-2 text-sm">
             Preencher dados de teste
         </button>
     );
