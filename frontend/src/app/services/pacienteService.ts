@@ -1,17 +1,19 @@
-import type { Paciente } from "@/app/types/pacientes";
+import type { Paciente, PacienteRequest } from "@/app/types/pacientes";
 import { buscarListaPacientesMock } from "./mocks/pacienteMock";
 import api from "./api";
 
-export async function buscarListaPacientes(): Promise<Paciente[]> {
-  if (process.env.NEXT_PUBLIC_USE_MOCK === "true") {
-    return buscarListaPacientesMock();
-  }
+export async function buscarListaPacientes(ativo?: boolean): Promise<Paciente[]> {
 
-  const dados = await api.get<Paciente[]>("/pacientes");
+  const response = await api.get<Paciente[]>("/pacientes", {
+    params: ativo !== undefined ? { ativo } : {},
+  });
 
-  if (dados.status === 200) {
-    return dados.data;
-  }
+  return response.data;
+}
 
-  return [];
+export async function criarPaciente(dados: PacienteRequest): Promise<Paciente> {
+
+    const response = await api.post<Paciente>("/pacientes", dados);
+
+    return response.data;
 }
