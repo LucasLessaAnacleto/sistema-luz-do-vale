@@ -1,43 +1,48 @@
-import Card from "@/app/components/ui/Card";
 import Input from "@/app/components/ui/Input";
+import SecaoFormulario from "@/app/components/SecaoFormulario";
 
 export default function DadosPaciente() {
 
     return (
-        <Card>
+        <SecaoFormulario titulo="Dados do acolhido">
 
-            <h2 className="mb-5 text-lg font-semibold">
-                Dados do paciente
-            </h2>
+            <div className="sm:col-span-2">
+                <Input label="Nome completo" name="nome" placeholder="Nome completo" required />
+            </div>
 
-            <div className="grid gap-4 sm:grid-cols-2">
+            <div className="sm:col-span-2">
+                <Input label="Apelido" name="apelido" placeholder="Apelido ou nome social" />
+            </div>
 
-                <div className="sm:col-span-2">
-                    <Input label="Nome completo" name="nome" required />
-                </div>
+            <Input label="CPF" name="cpf" placeholder="000.000.000-00" required />
+            <Input label="RG" name="rg" placeholder="00.000.000-0" required />
 
-                <Input label="Apelido" name="apelido" />
+            <div className="sm:col-span-2">
                 <Input label="Data de nascimento" name="dtNasc" type="date" />
-                <Input label="CPF" name="cpf" required />
-                <Input label="RG" name="rg" required />
-                <Input label="Telefone" name="telefone" />
+            </div>
+
+            <div className="sm:col-span-2">
+                <Input label="Telefone" name="telefone" placeholder="Telefone" />
+            </div>
+
+            <div className="sm:col-span-2 pt-2">
+
+                <h3 className="text-sm font-semibold text-primary-dark">
+                    Endereço
+                </h3>
 
             </div>
 
-            <h3 className="mt-6 mb-4 text-sm font-medium">
-                Endereço
-            </h3>
+            <Input label="Rua" name="rua" placeholder="Rua" />
+            <Input label="Número" name="numero" placeholder="Número" />
 
-            <div className="grid gap-4 sm:grid-cols-2">
+            <Input label="Bairro" name="bairro" placeholder="Bairro" />
+            <Input label="Município" name="municipio" placeholder="Município" />
 
-                <Input label="Rua" name="rua" />
-                <Input label="Número" name="numero" />
-                <Input label="Bairro" name="bairro" />
-                <Input label="Município" name="municipio" />
-                <Input label="Estado" name="estado" />
-
+            <div className="sm:col-span-2">
+                <Input label="Estado" name="estado" placeholder="Estado" />
             </div>
 
-        </Card>
+        </SecaoFormulario>
     );
 }

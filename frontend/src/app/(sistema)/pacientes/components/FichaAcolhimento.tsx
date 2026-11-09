@@ -1,63 +1,65 @@
-import Card from "@/app/components/ui/Card";
 import Input from "@/app/components/ui/Input";
 import Selecao from "@/app/components/ui/Selecao";
+import SecaoFormulario from "@/app/components/SecaoFormulario";
 
 export default function FichaAcolhimento() {
 
     return (
-        <Card>
+        <SecaoFormulario titulo="Ficha de acolhimento">
 
-            <h2 className="mb-5 text-lg font-semibold">
-                Ficha de acolhimento
-            </h2>
+            <Input label="Nacionalidade" name="nacionalidade" placeholder="Brasileira" />
+            <Input label="Naturalidade" name="naturalidade" placeholder="Cidade natal" />
 
-            <div className="grid gap-4 sm:grid-cols-2">
+            <div className="sm:col-span-2">
+                <Input label="Nome do pai" name="nomePai" placeholder="Nome do pai" />
+            </div>
 
-                <Input label="Nacionalidade" name="nacionalidade" />
-                <Input label="Naturalidade" name="naturalidade" />
-                <Input label="Nome do pai" name="nomePai" />
-                <Input label="Nome da mãe" name="nomeMae" />
-                <Input label="Escolaridade" name="escolaridade" />
-                <Input label="Profissão" name="profissao" />
-                <Input label="Cor" name="cor" />
-                <Input label="Estado civil" name="estadoCivil" />
+            <div className="sm:col-span-2">
+                <Input label="Nome da mãe" name="nomeMae" placeholder="Nome da mãe" />
+            </div>
 
-                <Selecao label="Possui filhos?" name="filhos" defaultValue="">
-                    <option value="">Não informado</option>
-                    <option value="true">Sim</option>
-                    <option value="false">Não</option>
-                </Selecao>
+            <Input label="Escolaridade" name="escolaridade" placeholder="Escolaridade" />
+            <Input label="Profissão" name="profissao" placeholder="Profissão" />
+
+            <Input label="Cor" name="cor" placeholder="Cor" />
+            <Input label="Estado civil" name="estadoCivil" placeholder="Estado civil" />
+
+            <Selecao label="Possui filhos?" name="filhos" defaultValue="">
+
+                <option value="">Não informado</option>
+                <option value="true">Sim</option>
+                <option value="false">Não</option>
+
+            </Selecao>
+
+            <div className="sm:col-span-2 pt-2">
+
+                <h3 className="text-sm font-semibold text-primary-dark">
+                    Dependência
+                </h3>
 
             </div>
 
-            <h3 className="mt-6 mb-4 text-sm font-medium">
-                Dependência
-            </h3>
+            <div className="sm:col-span-2">
 
-            <div className="grid gap-4 sm:grid-cols-2">
+                <Input
+                    label="Tipos de dependência"
+                    name="tiposDependencia"
+                    placeholder="Ex: Álcool, Cocaína, Tabaco"
+                />
 
-                <div className="sm:col-span-2">
-
-                    <Input
-                        label="Tipos de dependência"
-                        name="tiposDependencia"
-                        placeholder="Ex: Álcool, Cocaína, Tabaco"
-                    />
-
-                    <p className="mt-1 text-xs text-muted-foreground">
-                        Separe os tipos por vírgula.
-                    </p>
-
-                </div>
-
-                <Input label="Primeira droga lícita" name="primeiraDrogaLicita" />
-                <Input label="Idade" name="idadePrimeiraDrogaLicita" type="number" min="0" />
-
-                <Input label="Primeira droga ilícita" name="primeiraDrogaIlicita" />
-                <Input label="Idade" name="idadePrimeiraDrogaIlicita" type="number" min="0" />
+                <p className="mt-1 text-xs text-muted-foreground">
+                    Separe os tipos por vírgula.
+                </p>
 
             </div>
 
-        </Card>
+            <Input label="Primeira droga lícita" name="primeiraDrogaLicita" />
+            <Input label="Idade" name="idadePrimeiraDrogaLicita" type="number" min="0" />
+
+            <Input label="Primeira droga ilícita" name="primeiraDrogaIlicita" />
+            <Input label="Idade" name="idadePrimeiraDrogaIlicita" type="number" min="0" />
+
+        </SecaoFormulario>
     );
 }
