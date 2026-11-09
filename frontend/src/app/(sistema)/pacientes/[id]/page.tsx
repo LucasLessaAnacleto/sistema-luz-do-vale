@@ -10,6 +10,7 @@ import { buscarPaciente } from "@/app/services/pacienteService";
 import { buscarLista } from "@/app/services/listaService";
 
 import Card from "@/app/components/ui/Card";
+import ListaDetalhes from "@/app/components/ListaDetalhes";
 
 function formatarDataNascimento(data: string | null) {
 
@@ -169,38 +170,16 @@ export default function PacientePage({ params }: { params: Promise<{ id: string 
         <div className="space-y-5">
 
             <Card>
-
                 <h2 className="mb-4 flex items-center gap-2 text-lg font-semibold">
                     <UserRound className="h-5 w-5 shrink-0 text-primary" />
                     Dados do Acolhido
                 </h2>
 
-                <dl className="divide-y divide-border">
-
-                    {dadosAcolhido.map((campo) => (
-
-                        <div
-                            key={campo.label}
-                            className="grid grid-cols-[minmax(0,120px)_minmax(0,1fr)] items-start gap-3 py-2 sm:grid-cols-[160px_minmax(0,1fr)]"
-                        >
-                            <dt className="text-xs leading-5 text-muted-foreground">
-                                {campo.label}
-                            </dt>
-
-                            <dd className="break-words text-sm">
-                                {campo.value}
-                            </dd>
-                        </div>
-
-                    ))}
-
-                </dl>
-
+                <ListaDetalhes campos={dadosAcolhido} />
             </Card>
 
 
             <Card>
-
                 <h2 className="mb-4 flex items-center gap-2 text-lg font-semibold">
                     <ClipboardList className="h-5 w-5 shrink-0 text-primary" />
                     Tipos de Dependência
@@ -209,44 +188,20 @@ export default function PacientePage({ params }: { params: Promise<{ id: string 
                 {tiposDependencia.length ? (
 
                     <div className="mb-4 flex flex-wrap gap-2">
-
                         {tiposDependencia.map((tipo) => (
-
                             <span key={tipo} className="rounded-full bg-accent px-3 py-1 text-sm text-primary-dark">
                                 {rotuloLista(dependencias, tipo)}
                             </span>
-
                         ))}
-
                     </div>
 
                 ) : (
-
                     <p className="mb-4 text-sm text-muted-foreground">
                         Nenhum tipo de dependência informado.
                     </p>
-
                 )}
 
-
-                <dl className="divide-y divide-border">
-
-                    {dadosDependencia.map((campo) => (
-
-                        <div key={campo.label} className="grid grid-cols-[minmax(0,140px)_minmax(0,1fr)] items-start gap-3 py-2 sm:grid-cols-[220px_minmax(0,1fr)]">
-                            <dt className="text-xs leading-5 text-muted-foreground">
-                                {campo.label}
-                            </dt>
-
-                            <dd className="break-words text-sm">
-                                {campo.value}
-                            </dd>
-                        </div>
-
-                    ))}
-
-                </dl>
-
+                <ListaDetalhes campos={dadosDependencia} />
             </Card>
 
 
@@ -259,26 +214,7 @@ export default function PacientePage({ params }: { params: Promise<{ id: string 
 
                 {responsavel ? (
 
-                    <dl className="divide-y divide-border">
-
-                        {dadosResponsavel.map((campo) => (
-
-                            <div
-                                key={campo.label}
-                                className="grid grid-cols-[minmax(0,120px)_minmax(0,1fr)] items-start gap-3 py-2 sm:grid-cols-[160px_minmax(0,1fr)]"
-                            >
-                                <dt className="text-xs leading-5 text-muted-foreground">
-                                    {campo.label}
-                                </dt>
-
-                                <dd className="break-words text-sm">
-                                    {campo.value}
-                                </dd>
-                            </div>
-
-                        ))}
-
-                    </dl>
+                    <ListaDetalhes campos={dadosResponsavel} />
 
                 ) : (
 

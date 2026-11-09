@@ -10,6 +10,8 @@ import { formatarData } from "@/app/util";
 
 import Card from "@/app/components/ui/Card";
 import ItemsVazio from "@/app/components/ItemsVazio";
+import BotaoNovo from "@/app/components/ui/BotaoNovo";
+import BadgeStatus from "@/app/components/ui/BudgeStatus";
 
 export default function HistoricoPacientePage({ params }: { params: Promise<{ id: string }> }) {
 
@@ -52,14 +54,7 @@ export default function HistoricoPacientePage({ params }: { params: Promise<{ id
             <div className="mb-4 flex items-center justify-between gap-3">
 
                 <h2 className="text-lg font-semibold">Histórico do paciente</h2>
-
-                <Link
-                    href={`/documentos/novo?paciente=${id}`}
-                    className="flex items-center gap-1.5 rounded-full bg-primary px-4 py-2 text-sm font-medium text-white hover:bg-primary-dark"
-                >
-                    <Plus className="h-4 w-4" />
-                    Novo documento
-                </Link>
+                <BotaoNovo href={`/documentos/novo?paciente=${id}`} texto="Novo documento" />
 
             </div>
 
@@ -98,9 +93,7 @@ export default function HistoricoPacientePage({ params }: { params: Promise<{ id
 
                                             </div>
 
-                                            <span className="rounded-full bg-primary/10 px-3 py-1 text-xs font-medium text-primary-dark">
-                                                {historico.acao}
-                                            </span>
+                                            <BadgeStatus texto={historico.acao} tipo="sucesso" />
 
                                         </div>
 

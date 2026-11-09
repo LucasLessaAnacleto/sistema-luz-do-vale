@@ -11,6 +11,7 @@ import { formatarData } from "@/app/util";
 
 import AvatarIniciais from "@/app/components/ui/AvatarIniciais";
 import BotaoVoltar from "@/app/components/ui/BotaoVoltar";
+import BotaoNovo from "@/app/components/ui/BotaoNovo";
 
 interface Props {
     children: ReactNode;
