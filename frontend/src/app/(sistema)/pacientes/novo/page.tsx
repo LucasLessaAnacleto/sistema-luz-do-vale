@@ -11,6 +11,7 @@ import DadosPaciente from "../components/DadosPaciente";
 import DadosResponsavel from "../components/DadosResponsavel";
 import FichaAcolhimento from "../components/FichaAcolhimento";
 import CabecalhoPagina from "@/app/components/CabecalhoPagina";
+import BotaoPreencherTeste from "../components/BotaoPreencherTeste";
 
 const estadoInicial = {
     erro: "",
@@ -40,7 +41,9 @@ export default function FormularioPaciente() {
 
 
             <form action={action} className="mx-auto max-w-6xl space-y-8 px-5 pt-6 pb-32 sm:px-8">
-
+                <div className="flex justify-end">
+                    <BotaoPreencherTeste />
+                </div>
                 <DadosPaciente />
                 <DadosResponsavel />
                 <FichaAcolhimento />
