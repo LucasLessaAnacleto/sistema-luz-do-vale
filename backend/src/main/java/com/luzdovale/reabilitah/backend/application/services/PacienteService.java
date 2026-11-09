@@ -6,7 +6,6 @@ import com.luzdovale.reabilitah.backend.application.DTO.paciente.PacienteRespons
 import com.luzdovale.reabilitah.backend.application.DTO.responsavel.ResponsavelResponse;
 import com.luzdovale.reabilitah.backend.application.exceptions.PacienteNaoEncontradoException;
 import com.luzdovale.reabilitah.backend.application.exceptions.UsuarioSemAutorizacao;
-import com.luzdovale.reabilitah.backend.application.DTO.documento.DocumentoDetalhesResponse;
 import com.luzdovale.reabilitah.backend.application.DTO.paciente.PacienteDetalhesResponse;
 import com.luzdovale.reabilitah.backend.domain.entities.Documento;
 import com.luzdovale.reabilitah.backend.domain.entities.Paciente;
