@@ -16,6 +16,7 @@ import Link from "next/link";
 export default function NovoDocumentoPage() {
     const searchParams = useSearchParams();
     const pacienteId = searchParams.get("paciente");
+
     const voltarHref = pacienteId ? `/pacientes/${pacienteId}` : "/documentos";
 
     const [tiposDocumento, setTiposDocumento] = useState<TipoDocumento[]>([]);
@@ -36,7 +37,6 @@ export default function NovoDocumentoPage() {
             setCarregando(false);
         }
     }
-
 
     useEffect(() => {
         carregarTiposDocumento();

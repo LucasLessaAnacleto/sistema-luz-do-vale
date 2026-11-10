@@ -17,10 +17,13 @@ import {
 import BotaoVoltar from "@/app/components/ui/BotaoVoltar";
 import CabecalhoPagina from "@/app/components/CabecalhoPagina";
 import Input from "@/app/components/ui/Input";
+import Selecao from "@/app/components/ui/Selecao";
 import TextoLongo from "@/app/components/ui/TextoLongo";
 import RodapeFormulario from "@/app/components/RodapeFormulario";
 import CarregandoConteudo from "@/app/components/CarregandoConteudo";
 import ErroCarregamento from "@/app/components/ErroCarregamento";
+import { Paciente } from "@/app/types/pacientes";
+import { buscarListaPacientes } from "@/app/services/pacienteService";
 
 const estadoInicial = {
     erro: "",
@@ -37,7 +40,10 @@ export default function NovoDocumentoFormularioPage() {
     const router = useRouter();
     const searchParams = useSearchParams();
 
-    const pacienteId = searchParams.get("paciente");
+    const pacienteIdUrl = searchParams.get("paciente");
+
+    const [pacienteId, setPacienteId] = useState(pacienteIdUrl || "");
+    const [pacientes, setPacientes] = useState<Paciente[]>([]);
 
     const [formulario, setFormulario] = useState<FormularioDocumento | null>(null);
 
@@ -59,6 +65,12 @@ export default function NovoDocumentoFormularioPage() {
 
     }, [estado.documentoId]);
 
+    useEffect(() => {
+        if (!pacienteIdUrl) {
+            carregarPacientes();
+        }
+    }, []);
+
 
     async function carregarFormulario() {
         if (!pacienteId) {
@@ -66,8 +78,22 @@ export default function NovoDocumentoFormularioPage() {
         }
 
         try {
+            setFormulario(null);
+
             const dados = await buscarFormularioDocumento(Number(tipoDocumento), Number(pacienteId));
             setFormulario(dados);
+
+        } catch (error) {
+            if (error instanceof Error) {
+                alert(error.message);
+            }
+        }
+    }
+
+    async function carregarPacientes() {
+        try {
+            const dados = await buscarListaPacientes(true);
+            setPacientes(dados);
         } catch (error) {
             if (error instanceof Error) {
                 alert(error.message);
@@ -163,14 +189,6 @@ export default function NovoDocumentoFormularioPage() {
         : "/documentos";
 
 
-    if (!pacienteId) {
-
-        return (
-            <ErroCarregamento mensagem="Paciente não informado." />
-        );
-    }
-
-
     if (!formulario) {
 
         return (
@@ -183,6 +201,24 @@ export default function NovoDocumentoFormularioPage() {
         <>
 
             <CabecalhoPagina>
+
+                {!pacienteIdUrl && (
+                    <div className="mx-auto max-w-3xl px-5 pt-6 sm:px-8">
+                        <Selecao label="Paciente" value={pacienteId} onChange={(event) => setPacienteId(event.target.value) }>
+
+                            <option value="">Selecione o paciente</option>
+                            {pacientes.map((paciente) => (
+
+                                <option key={paciente.id} value={paciente.id}>
+                                    {paciente.nome}
+                                    {paciente.apelido ? ` (${paciente.apelido})` : ""}
+                                </option>
+
+                            ))}
+
+                        </Selecao>
+                    </div>
+                )}
 
                 <div className="flex items-center gap-3">
 
@@ -204,36 +240,42 @@ export default function NovoDocumentoFormularioPage() {
 
             </CabecalhoPagina>
 
+            {!pacienteId ? (
+                <p className="mx-auto max-w-3xl px-5 py-8 text-center text-sm text-muted-foreground sm:px-8">
+                    Selecione um paciente para preencher o documento.
+                </p>
+            ) : !formulario ? (
+                <CarregandoConteudo mensagem="Carregando formulário..." />
+            ) : (
+                <form action={action} className="mx-auto max-w-3xl space-y-6 px-5 pt-6 pb-32 sm:px-8">
 
-            <form action={action} className="mx-auto max-w-3xl space-y-6 px-5 pt-6 pb-32 sm:px-8">
+                    <input type="hidden" name="tipoDocumentoVersaoId" value={formulario.versaoId}/>
 
-                <input type="hidden" name="tipoDocumentoVersaoId" value={formulario.versaoId}/>
-
-                <input type="hidden" name="pacienteId" value={pacienteId}/>
+                    <input type="hidden" name="pacienteId" value={pacienteId}/>
 
 
-                <div className="grid gap-4 sm:grid-cols-2">
+                    <div className="grid gap-4 sm:grid-cols-2">
 
-                    {formulario.campos.map((campo) =>
-                        renderizarCampo(campo)
+                        {formulario.campos.map((campo) =>
+                            renderizarCampo(campo)
+                        )}
+
+                    </div>
+
+
+                    {estado.erro && (
+                        <ErroCarregamento mensagem={estado.erro} />
                     )}
 
-                </div>
 
+                    <RodapeFormulario
+                        cancelarHref={voltarHref}
+                        loading={pending}
+                        textoSalvar="Salvar documento"
+                    />
 
-                {estado.erro && (
-                    <ErroCarregamento mensagem={estado.erro} />
-                )}
-
-
-                <RodapeFormulario
-                    cancelarHref={voltarHref}
-                    loading={pending}
-                    textoSalvar="Salvar documento"
-                />
-
-            </form>
-
+                </form>
+            )}
         </>
     );
 }
