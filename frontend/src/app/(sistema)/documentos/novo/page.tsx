@@ -77,35 +77,41 @@ export default function NovoDocumentoPage() {
                     <p className="py-10 text-center text-sm text-muted-foreground">Carregando tipos de documento...</p>
                 ) : tiposDocumento.length ? (
 
-                    tiposDocumento.map((tipo) => (
-                        <Link key={tipo.id} href={`/documentos/novo/${tipo.id}?paciente=${pacienteId}`} className="block">
-                            <Card className="flex items-center gap-4 transition-colors hover:border-primary/40">
-                                <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary">
+                    tiposDocumento.map((tipo) => {
+                        const href = pacienteId
+                            ? `/documentos/novo/${tipo.id}?paciente=${pacienteId}`
+                            : `/documentos/novo/${tipo.id}`;
+                    
+                        return(
+                            <Link key={tipo.id} href={href} className="block">
+                                <Card className="flex items-center gap-4 transition-colors hover:border-primary/40">
+                                    <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary">
 
-                                    <FileText className="h-5 w-5" />
+                                        <FileText className="h-5 w-5" />
 
-                                </span>
-
-
-                                <div className="min-w-0 flex-1">
-
-                                    <h2 className="text-sm font-medium">{tipo.nome}</h2>
-
-                                    <p className="mt-0.5 text-xs text-muted-foreground">{tipo.descricao}</p>
+                                    </span>
 
 
-                                    {tipo.exigeAssinatura && (
+                                    <div className="min-w-0 flex-1">
 
-                                        <p className="mt-1 text-xs text-warning">
-                                            Exige assinatura
-                                        </p>
+                                        <h2 className="text-sm font-medium">{tipo.nome}</h2>
 
-                                    )}
+                                        <p className="mt-0.5 text-xs text-muted-foreground">{tipo.descricao}</p>
 
-                                </div>
-                            </Card>
-                        </Link>            
-                    ))
+
+                                        {tipo.exigeAssinatura && (
+
+                                            <p className="mt-1 text-xs text-warning">
+                                                Exige assinatura
+                                            </p>
+
+                                        )}
+
+                                    </div>
+                                </Card>
+                            </Link>            
+                        )   
+                    })
 
                 ) : (
                     <ItemsVazio

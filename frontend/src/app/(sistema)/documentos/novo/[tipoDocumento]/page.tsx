@@ -1,6 +1,6 @@
 "use client";
 
-import { use, useActionState, useEffect, useState } from "react";
+import { useActionState, useEffect, useState } from "react";
 import { useParams, useRouter, useSearchParams } from "next/navigation";
 
 import type {
@@ -40,9 +40,8 @@ export default function NovoDocumentoFormularioPage() {
     const router = useRouter();
     const searchParams = useSearchParams();
 
-    const pacienteIdUrl = searchParams.get("paciente");
-
-    const [pacienteId, setPacienteId] = useState(pacienteIdUrl || "");
+    const pacienteIdUrl = searchParams.get("paciente") ?? "";
+    const [pacienteId, setPacienteId] = useState(pacienteIdUrl);
     const [pacientes, setPacientes] = useState<Paciente[]>([]);
 
     const [formulario, setFormulario] = useState<FormularioDocumento | null>(null);
@@ -183,42 +182,12 @@ export default function NovoDocumentoFormularioPage() {
         );
     }
 
-
-    const voltarHref = pacienteId
-        ? `/documentos/novo?paciente=${pacienteId}`
-        : "/documentos";
-
-
-    if (!formulario) {
-
-        return (
-            <CarregandoConteudo mensagem="Carregando formulário..." />
-        );
-    }
-
+    const voltarHref = pacienteIdUrl ? `/documentos/novo?paciente=${pacienteIdUrl}` : "/documentos/novo";
 
     return (
         <>
 
             <CabecalhoPagina>
-
-                {!pacienteIdUrl && (
-                    <div className="mx-auto max-w-3xl px-5 pt-6 sm:px-8">
-                        <Selecao label="Paciente" value={pacienteId} onChange={(event) => setPacienteId(event.target.value) }>
-
-                            <option value="">Selecione o paciente</option>
-                            {pacientes.map((paciente) => (
-
-                                <option key={paciente.id} value={paciente.id}>
-                                    {paciente.nome}
-                                    {paciente.apelido ? ` (${paciente.apelido})` : ""}
-                                </option>
-
-                            ))}
-
-                        </Selecao>
-                    </div>
-                )}
 
                 <div className="flex items-center gap-3">
 
@@ -227,11 +196,11 @@ export default function NovoDocumentoFormularioPage() {
                     <div>
 
                         <h1 className="text-2xl font-semibold">
-                            {formulario.nome}
+                            {formulario?.nome || "Novo documento"}
                         </h1>
 
                         <p className="mt-0.5 text-xs text-muted-foreground">
-                            {formulario.descricao}
+                            {formulario?.descricao || "Selecione o paciente"}
                         </p>
 
                     </div>
@@ -239,6 +208,24 @@ export default function NovoDocumentoFormularioPage() {
                 </div>
 
             </CabecalhoPagina>
+
+            {!pacienteIdUrl && (
+                <div className="mx-auto max-w-3xl px-5 pt-6 sm:px-8">
+                    <Selecao label="Paciente" value={pacienteId} onChange={(event) => setPacienteId(event.target.value) }>
+
+                        <option value="">Selecione o paciente</option>
+                        {pacientes.map((paciente) => (
+
+                            <option key={paciente.id} value={paciente.id}>
+                                {paciente.nome}
+                                {paciente.apelido ? ` (${paciente.apelido})` : ""}
+                            </option>
+
+                        ))}
+
+                    </Selecao>
+                </div>
+            )}
 
             {!pacienteId ? (
                 <p className="mx-auto max-w-3xl px-5 py-8 text-center text-sm text-muted-foreground sm:px-8">
