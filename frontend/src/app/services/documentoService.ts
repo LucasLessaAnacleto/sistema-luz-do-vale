@@ -1,8 +1,15 @@
 import { Pagina } from "../types/pagina";
 import api from "./api";
 
-import type { Documento, DocumentoDetalhes, DocumentoLista } from "@/app/types/documentos";
+import type { CriarDocumentoRequest, Documento, DocumentoDetalhes, DocumentoLista } from "@/app/types/documentos";
 
+
+export async function criarDocumento(dados: CriarDocumentoRequest): Promise<Documento> {
+
+    const response = await api.post<Documento>("/documentos", dados);
+
+    return response.data;
+}
 
 export async function listarDocumentos(pagina = 0): Promise<Pagina<DocumentoLista>> {
 

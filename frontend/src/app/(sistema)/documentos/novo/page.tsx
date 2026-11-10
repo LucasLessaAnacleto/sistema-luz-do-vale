@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { FileText, Search } from "lucide-react";
+import { useSearchParams } from "next/navigation";
 
 import type { TipoDocumento } from "@/app/types/documentos";
 import { listarTiposDocumento } from "@/app/services/tipoDocumentoService";
@@ -9,9 +10,13 @@ import { listarTiposDocumento } from "@/app/services/tipoDocumentoService";
 import BotaoVoltar from "@/app/components/ui/BotaoVoltar";
 import Card from "@/app/components/ui/Card";
 import ItemsVazio from "@/app/components/ItemsVazio";
+import Link from "next/link";
 
 
 export default function NovoDocumentoPage() {
+    const searchParams = useSearchParams();
+    const pacienteId = searchParams.get("paciente");
+    const voltarHref = pacienteId ? `/pacientes/${pacienteId}` : "/documentos";
 
     const [tiposDocumento, setTiposDocumento] = useState<TipoDocumento[]>([]);
     const [carregando, setCarregando] = useState(true);
@@ -19,7 +24,7 @@ export default function NovoDocumentoPage() {
     async function carregarTiposDocumento() {
         try {
             const dados = await listarTiposDocumento();
-            setTiposDocumento(dados);
+            setTiposDocumento(dados.filter((tipo) => tipo.nome !== "Ficha de Acolhimento"));
 
         } catch (error) {
 
@@ -47,7 +52,7 @@ export default function NovoDocumentoPage() {
 
                 <div className="flex items-center gap-3">
 
-                    <BotaoVoltar href="/documentos" />
+                    <BotaoVoltar href={voltarHref} />
 
                     <div>
                         <h1 className="text-2xl font-semibold">
@@ -73,33 +78,33 @@ export default function NovoDocumentoPage() {
                 ) : tiposDocumento.length ? (
 
                     tiposDocumento.map((tipo) => (
+                        <Link key={tipo.id} href={`/documentos/novo/${tipo.id}?paciente=${pacienteId}`} className="block">
+                            <Card className="flex items-center gap-4 transition-colors hover:border-primary/40">
+                                <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary">
 
-                        <Card key={tipo.id} className="flex items-center gap-4">
-                            <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary">
+                                    <FileText className="h-5 w-5" />
 
-                                <FileText className="h-5 w-5" />
-
-                            </span>
-
-
-                            <div className="min-w-0 flex-1">
-
-                                <h2 className="text-sm font-medium">{tipo.nome}</h2>
-
-                                <p className="mt-0.5 text-xs text-muted-foreground">{tipo.descricao}</p>
+                                </span>
 
 
-                                {tipo.exigeAssinatura && (
+                                <div className="min-w-0 flex-1">
 
-                                    <p className="mt-1 text-xs text-warning">
-                                        Exige assinatura
-                                    </p>
+                                    <h2 className="text-sm font-medium">{tipo.nome}</h2>
 
-                                )}
+                                    <p className="mt-0.5 text-xs text-muted-foreground">{tipo.descricao}</p>
 
-                            </div>
-                        </Card>
 
+                                    {tipo.exigeAssinatura && (
+
+                                        <p className="mt-1 text-xs text-warning">
+                                            Exige assinatura
+                                        </p>
+
+                                    )}
+
+                                </div>
+                            </Card>
+                        </Link>            
                     ))
 
                 ) : (

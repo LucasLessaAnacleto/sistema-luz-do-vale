@@ -73,6 +73,13 @@ export interface HistoricoDocumento {
     dtCriacao: string;
 }
 
+export interface CriarDocumentoRequest {
+    tipoDocumentoVersaoId: number;
+    pacienteId: number;
+    observacao: string | null;
+    dados: Record<string, unknown>;
+}
+
 // documentos dinamicos
 
 export type TipoCampoDocumento =
@@ -81,6 +88,7 @@ export type TipoCampoDocumento =
   | "INTEIRO"
   | "DECIMAL"
   | "DATA"
+  | "HORA"
   | "BOOLEANO"
   | "SELECAO"
   | "MULTIPLA_SELECAO"

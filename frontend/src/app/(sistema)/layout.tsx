@@ -38,7 +38,7 @@ export default function SistemaLayout({  children, }: { children: ReactNode; }) 
       <Header />
 
       <main id="conteudo" tabIndex={-1}
-        className="min-h-0 flex-1 overflow-y-auto overscroll-contain pb-6 [scrollbar-gutter:stable_both-edges]"
+        className="min-h-0 flex-1 overflow-y-auto overscroll-contain pb-6"
       >
         {children}
       </main>

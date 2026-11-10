@@ -15,6 +15,8 @@ import BudgetStatus from "@/app/components/ui/BudgeStatus";
 import AvatarIniciais from "@/app/components/ui/AvatarIniciais";
 import Card from "@/app/components/ui/Card";
 import ItemsVazio from "@/app/components/ItemsVazio";
+import ErroCarregamento from "@/app/components/ErroCarregamento";
+import CarregandoConteudo from "@/app/components/CarregandoConteudo";
 
 export default function DocumentosPage() {
 
@@ -22,6 +24,9 @@ export default function DocumentosPage() {
   const [pagina, setPagina] = useState(0);
   const [totalPaginas, setTotalPaginas] = useState(0);
   const [totalDocumentos, setTotalDocumentos] = useState(0);
+
+  const [carregando, setCarregando] = useState(true);
+  const [erro, setErro] = useState("");   
 
   const [search, setSearch] = useState("");
   const [filtro, setFiltro] = useState("todos");
@@ -33,19 +38,21 @@ export default function DocumentosPage() {
   async function carregarDocumentos() {
 
     try {
+        setCarregando(true);
+        setErro("");
+        const dados = await listarDocumentos(pagina);
 
-      const dados = await listarDocumentos(pagina);
-
-      setDocumentos(dados.content);
-      setTotalPaginas(dados.totalPages);
-      setTotalDocumentos(dados.totalElements);
+        setDocumentos(dados.content);
+        setTotalPaginas(dados.totalPages);
+        setTotalDocumentos(dados.totalElements);
 
     } catch (error) {
 
-      if (error instanceof Error) {
-        alert(error.message);
-      }
+      setErro("Erro ao carregar os documentos!");
+      console.error(error);
 
+    } finally {
+        setCarregando(false);
     }
   }
 
@@ -122,7 +129,11 @@ export default function DocumentosPage() {
 
       <section className="mx-auto max-w-6xl space-y-3 px-5 py-4 sm:px-8">
 
-        {documentosFiltrados.length ? (
+        {carregando ? (
+          <CarregandoConteudo mensagem="Carregando documentos..." />
+        ) : erro ? (
+          <ErroCarregamento mensagem={erro} />
+        ) : documentosFiltrados.length ? (
 
           documentosFiltrados.map((documento) => (
 
@@ -163,8 +174,7 @@ export default function DocumentosPage() {
                 </div>
 
 
-                <Link
-                  href={`/pacientes/${documento.pacienteId}`}
+                <Link href={`/pacientes/${documento.pacienteId}`}
                   className="relative z-10 mt-3 flex w-fit max-w-full items-center gap-2"
                 >
 

@@ -11,6 +11,8 @@ import BarraPesquisa from "@/app/components/ui/BarraPesquisa";
 import BotaoNovo from "@/app/components/ui/BotaoNovo";
 import AvatarIniciais from "@/app/components/ui/AvatarIniciais";
 import BadgeStatus from "@/app/components/ui/BudgeStatus";
+import ErroCarregamento from "@/app/components/ErroCarregamento";
+import CarregandoConteudo from "@/app/components/CarregandoConteudo";
 
 export default function PacientesPage() {
   const [search, setSearch] = useState("");
@@ -62,18 +64,9 @@ export default function PacientesPage() {
       <section className="mx-auto max-w-6xl space-y-3 px-5 py-4 sm:px-8">
         
         {carregando ? (
-            <p className="py-8 text-center text-sm text-muted-foreground">
-                Carregando pacientes...
-            </p>
+            <CarregandoConteudo mensagem="Carregando pacientes..." />
         ) : erro ? (
-
-            <div className="rounded-2xl border border-red-200 bg-red-50 p-5 text-sm text-red-800">
-                <p>{erro}</p>
-                <button type="button" onClick={carregarDados} className="mt-3 cursor-pointer font-medium underline">
-                    Tentar novamente
-                </button>
-            </div>
-
+            <ErroCarregamento mensagem={erro} />
         ) : filtroPacientes.length ? (filtroPacientes.map((paciente) => (
             <Link
                 key={paciente.id}

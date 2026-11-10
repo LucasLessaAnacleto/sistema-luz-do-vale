@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8" />
+
+    <style>
+
+        @page {
+            size: A4;
+            margin: 20mm;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            font-size: 12px;
+            color: #222;
+        }
+
+        .cabecalho {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        .cabecalho h1 {
+            margin: 5px 0;
+            font-size: 18px;
+        }
+
+        .cabecalho h2 {
+            margin: 0;
+            font-size: 13px;
+        }
+
+        .paciente {
+            margin-bottom: 20px;
+            border: 1px solid #bbb;
+            padding: 10px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th,
+        td {
+            border: 1px solid #555;
+            padding: 10px;
+            vertical-align: top;
+        }
+
+        th {
+            background: #f2f2f2;
+            font-size: 11px;
+            text-align: left;
+        }
+
+        td {
+            font-size: 12px;
+        }
+
+        th:nth-child(1),
+        td:nth-child(1) {
+            width: 15%;
+        }
+
+        th:nth-child(2),
+        td:nth-child(2) {
+            width: 15%;
+        }
+
+        th:nth-child(3),
+        td:nth-child(3) {
+            width: 70%;
+        }
+
+        .texto-longo {
+            min-height: 160px;
+            white-space: pre-wrap;
+        }
+
+        .assinatura {
+            width: 250px;
+            margin: 60px auto 0;
+            text-align: center;
+        }
+
+        .assinatura .linha {
+            border-top: 1px solid #000;
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+
+    <div class="cabecalho">
+        <h2>INSTITUIÇÃO LUZ DO VALE</h2>
+        <h1 th:text="${tipoDocumento.nome}">DOCUMENTO</h1>
+    </div>
+
+
+    <div class="paciente">
+        <strong>Paciente:</strong>
+        <span th:text="${paciente.nome}"></span>
+    </div>
+
+
+    <table>
+        <thead>
+            <tr>
+                <th th:each="campo : ${campos}" th:text="${campo.rotulo}">
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td th:each="campo : ${campos}">
+                    <div th:class="${campo.tipo.name() == 'TEXTO_LONGO' ? 'texto-longo' : ''}" th:text="${dados[campo.nome]}">
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+
+
+    <div class="assinatura" th:if="${documento.dtAssinatura != null}">
+
+        <div class="linha"></div>
+        <span th:text="${usuario.profissional != null ? usuario.profissional.nome : usuario.email}"></span>
+
+    </div>
+
+
+</body>
+
+</html>

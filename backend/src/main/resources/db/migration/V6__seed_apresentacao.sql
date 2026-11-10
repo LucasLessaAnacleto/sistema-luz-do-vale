@@ -5,7 +5,7 @@ VALUES ('admin@teste.com','$2a$10$J69EcfOpTkhuha4sEcl36u1qkOyZc7ILRV9ATBVqDhiowU
 INSERT INTO tipo_documento (id, nome, descricao, exige_assinatura, ativo)
 VALUES
 (1, 'Ficha de Acolhimento', 'Dados do acolhido, tipos de dependência e responsável', false, true),
-(2, 'Evolução de Atendimento', 'Registro da evolução e acompanhamento do paciente', true, true),
+(2, 'Evolução de Enfermagem', 'Registro da evolução de enfermagem do paciente', true, true),
 (3, 'Controle de Saída', 'Registro de saída do paciente', false, true),
 (4, 'Relatório de Acompanhamento', 'Relatório de acompanhamento do paciente durante o tratamento', true, true);
 
@@ -298,33 +298,42 @@ VALUES (1,1,
 );
 
 
-INSERT INTO tipo_documento_versao (tipo_documento_id, versao, campos, dt_criacao)
-VALUES (2,1,
-        '[
-        {
-            "nome": "dataAtendimento",
-            "rotulo": "Data do atendimento",
-            "tipo": "DATA",
-            "obrigatorio": true,
-            "largura": 4
-        },
-        {
-            "nome": "evolucao",
-            "rotulo": "Evolução",
-            "tipo": "TEXTO_LONGO",
-            "obrigatorio": true,
-            "largura": 12
-        },
-        {
-            "nome": "conduta",
-            "rotulo": "Conduta",
-            "tipo": "TEXTO_LONGO",
-            "obrigatorio": false,
-            "largura": 12
-        }
-    ]'::jsonb,
-    CURRENT_TIMESTAMP
-);
+INSERT INTO tipo_documento_versao (
+    tipo_documento_id,
+    versao,
+    campos,
+    dt_criacao,
+    template
+)
+VALUES (
+           2,
+           1,
+           '[
+             {
+               "nome": "data",
+               "rotulo": "Data",
+               "tipo": "DATA",
+               "obrigatorio": true,
+               "largura": 6
+             },
+             {
+               "nome": "hora",
+               "rotulo": "Hora",
+               "tipo": "HORA",
+               "obrigatorio": true,
+               "largura": 6
+             },
+             {
+               "nome": "evolucao",
+               "rotulo": "Evolução de enfermagem",
+               "tipo": "TEXTO_LONGO",
+               "obrigatorio": true,
+               "largura": 12
+             }
+           ]'::jsonb,
+           CURRENT_TIMESTAMP,
+           'generico-tabela'
+       );
 
 INSERT INTO tipo_documento_versao (tipo_documento_id, versao, campos, dt_criacao)
 VALUES (3, 1,

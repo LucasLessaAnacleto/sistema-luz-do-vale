@@ -20,6 +20,7 @@ import org.springframework.stereotype.Service;
 
 import java.lang.reflect.Type;
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -260,6 +261,10 @@ public class DocumentoCamposService {
 
             return validarData(campo, input);
 
+        } else if (tipo == EnumTipoCampo.HORA) {
+
+            return validarHora(campo, input);
+
         } else if (tipo == EnumTipoCampo.SELECAO) {
 
             return validarSelecao(campo, input);
@@ -353,6 +358,16 @@ public class DocumentoCamposService {
                 "deve ser uma data válida no formato YYYY-MM-DD"
             )
         );
+    }
+
+    private String validarHora(CampoDocumento campo, Object input) {
+        if (input instanceof String) {
+            try {
+                return LocalTime.parse((String) input).toString();
+            } catch (DateTimeParseException ex) {}
+        }
+
+        throw new DadosDocumentoInvalidosException("Campo \"%s\" deve ser uma hora válida no formato HH:mm.".formatted(campo.getRotulo()));
     }
 
     private String validarSelecao(CampoDocumento campo, Object input) {

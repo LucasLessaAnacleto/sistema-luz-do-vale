@@ -6,6 +6,7 @@ public enum EnumTipoCampo {
     INTEIRO,
     DECIMAL,
     DATA,
+    HORA,
     BOOLEANO,
     SELECAO,
     MULTIPLA_SELECAO,
