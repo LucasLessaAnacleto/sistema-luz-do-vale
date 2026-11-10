@@ -332,7 +332,7 @@ VALUES (
              }
            ]'::jsonb,
            CURRENT_TIMESTAMP,
-           'generico-tabela'
+           'evolucao-enfermagem'
        );
 
 INSERT INTO tipo_documento_versao (tipo_documento_id, versao, campos, dt_criacao)

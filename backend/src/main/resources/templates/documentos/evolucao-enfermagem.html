@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+
+    <style>
+        @page {
+            size: A4;
+            margin: 18mm 16mm 18mm 16mm;
+        }
+
+        body {
+            font-family: "Times New Roman", serif;
+            font-size: 12px;
+            color: #000;
+        }
+
+        .pagina {
+            width: 100%;
+        }
+
+        .cabecalho {
+            text-align: center;
+            margin-bottom: 10px;
+        }
+
+        .cabecalho .logo {
+            font-size: 22px;
+            font-weight: bold;
+            margin-bottom: 2px;
+        }
+
+        .cabecalho .linha-topo {
+            font-size: 11px;
+            margin-bottom: 2px;
+        }
+
+        .cabecalho .linha-topo-2 {
+            font-size: 10px;
+            margin-bottom: 6px;
+        }
+
+        .cabecalho .divisoria {
+            border-top: 1px solid #000;
+            margin-top: 3px;
+            margin-bottom: 18px;
+        }
+
+        .titulo {
+            text-align: center;
+            font-size: 16px;
+            font-weight: normal;
+            letter-spacing: 0.5px;
+            margin-bottom: 18px;
+        }
+
+        .campo-nome {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 14px;
+        }
+
+        .campo-nome td {
+            border: 1px solid #000;
+            padding: 3px 6px;
+            font-size: 12px;
+        }
+
+        .campo-nome .label {
+            width: 60px;
+            font-weight: bold;
+            text-align: left;
+            padding: 2px 6px;
+        }
+
+        .campo-nome .valor {
+            height: 22px;
+            vertical-align: middle;
+        }
+
+        .tabela-evolucao {
+            width: 100%;
+            border-collapse: collapse;
+            table-layout: fixed;
+        }
+
+        .tabela-evolucao th,
+        .tabela-evolucao td {
+            border: 1px solid #000;
+            padding: 4px 6px;
+            vertical-align: top;
+        }
+
+        .tabela-evolucao th {
+            font-size: 12px;
+            font-weight: bold;
+            text-align: center;
+        }
+
+        .coluna-data {
+            width: 12%;
+        }
+
+        .coluna-evolucao {
+            width: 68%;
+        }
+
+        .coluna-assinatura {
+            width: 20%;
+        }
+
+        .linha-preenchida td {
+            height: 44px;
+        }
+
+        .linha-vazia td {
+            height: 18px;
+            padding: 0;
+        }
+
+        .texto-evolucao {
+            white-space: pre-line;
+            line-height: 1.35;
+        }
+
+        .data-hora {
+            font-size: 11px;
+            line-height: 1.3;
+        }
+    </style>
+</head>
+
+<body>
+<div class="pagina">
+
+    <div class="cabecalho">
+        <div class="logo">LUZ NO VALE</div>
+
+        <div class="linha-topo">
+            Rua Angelino Destro, 508 – Picadão – CEP: 88.865-000 – Nova Veneza/SC
+        </div>
+
+        <div class="linha-topo-2">
+            Presidente: Sérgio Antonio Elias – 48. 9603-1606 | Vice-presidente: Valter Silva – 48. 9603-1498
+        </div>
+
+        <div class="divisoria"></div>
+    </div>
+
+    <div class="titulo">EVOLUÇÃO DE ENFERMAGEM</div>
+
+    <table class="campo-nome">
+        <tr>
+            <td class="label">NOME</td>
+            <td class="valor" th:text="${paciente.nome}"></td>
+        </tr>
+    </table>
+
+    <table class="tabela-evolucao">
+        <thead>
+        <tr>
+            <th class="coluna-data">DATA</th>
+            <th class="coluna-evolucao">EVOLUÇÃO</th>
+            <th class="coluna-assinatura">ASSINATURA ENFERMEIRO</th>
+        </tr>
+        </thead>
+
+        <tbody>
+        <tr class="linha-preenchida">
+            <td class="data-hora">
+                <span th:text="${fmt.data(dados['data'])}"></span><br />
+                <span th:text="${dados['hora']}"></span>
+            </td>
+
+            <td class="texto-evolucao" th:text="${dados['evolucao']}"></td>
+
+            <td></td>
+        </tr>
+
+        <tr class="linha-vazia"><td></td><td></td><td></td></tr>
+        <tr class="linha-vazia"><td></td><td></td><td></td></tr>
+        <tr class="linha-vazia"><td></td><td></td><td></td></tr>
+        <tr class="linha-vazia"><td></td><td></td><td></td></tr>
+        <tr class="linha-vazia"><td></td><td></td><td></td></tr>
+        <tr class="linha-vazia"><td></td><td></td><td></td></tr>
+        <tr class="linha-vazia"><td></td><td></td><td></td></tr>
+        <tr class="linha-vazia"><td></td><td></td><td></td></tr>
+        <tr class="linha-vazia"><td></td><td></td><td></td></tr>
+        <tr class="linha-vazia"><td></td><td></td><td></td></tr>
+        <tr class="linha-vazia"><td></td><td></td><td></td></tr>
+        <tr class="linha-vazia"><td></td><td></td><td></td></tr>
+        <tr class="linha-vazia"><td></td><td></td><td></td></tr>
+        <tr class="linha-vazia"><td></td><td></td><td></td></tr>
+        <tr class="linha-vazia"><td></td><td></td><td></td></tr>
+        <tr class="linha-vazia"><td></td><td></td><td></td></tr>
+        <tr class="linha-vazia"><td></td><td></td><td></td></tr>
+        <tr class="linha-vazia"><td></td><td></td><td></td></tr>
+        <tr class="linha-vazia"><td></td><td></td><td></td></tr>
+        <tr class="linha-vazia"><td></td><td></td><td></td></tr>
+        </tbody>
+    </table>
+
+</div>
+</body>
+</html>
