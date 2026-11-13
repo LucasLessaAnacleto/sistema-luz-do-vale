@@ -24,6 +24,7 @@ import CarregandoConteudo from "@/app/components/CarregandoConteudo";
 import ErroCarregamento from "@/app/components/ErroCarregamento";
 import { Paciente } from "@/app/types/pacientes";
 import { buscarListaPacientes } from "@/app/services/pacienteService";
+import BotaoVoltarHistorico from "@/app/components/ui/BotaoVoltarHistorico";
 
 const estadoInicial = {
     erro: "",
@@ -100,18 +101,11 @@ export default function NovoDocumentoFormularioPage() {
         }
     }
 
-
     function renderizarCampo(campo: CampoDocumento) {
-
-        const largura = campo.largura === 12
-            ? "sm:col-span-2"
-            : "sm:col-span-1";
-
+        const largura = campo.largura === 12 ? "sm:col-span-2" : "sm:col-span-1";
         const valor = estado.valores[campo.nome] ?? String(formulario?.dadosPadrao[campo.nome] ?? "");
 
-
         if (campo.tipo === "TEXTO_LONGO") {
-
             return (
                 <div key={campo.nome} className={largura}>
 
@@ -127,7 +121,6 @@ export default function NovoDocumentoFormularioPage() {
                 </div>
             );
         }
-
 
         if (campo.tipo === "DATA") {
 
@@ -147,7 +140,6 @@ export default function NovoDocumentoFormularioPage() {
             );
         }
 
-
         if (campo.tipo === "HORA") {
 
             return (
@@ -166,7 +158,6 @@ export default function NovoDocumentoFormularioPage() {
             );
         }
 
-
         return (
             <div key={campo.nome} className={largura}>
 
@@ -182,19 +173,13 @@ export default function NovoDocumentoFormularioPage() {
         );
     }
 
-    const voltarHref = pacienteIdUrl ? `/documentos/novo?paciente=${pacienteIdUrl}` : "/documentos/novo";
-
     return (
         <>
-
             <CabecalhoPagina>
-
                 <div className="flex items-center gap-3">
-
-                    <BotaoVoltar href={voltarHref} />
+                    <BotaoVoltarHistorico />
 
                     <div>
-
                         <h1 className="text-2xl font-semibold">
                             {formulario?.nome || "Novo documento"}
                         </h1>
@@ -256,7 +241,6 @@ export default function NovoDocumentoFormularioPage() {
 
 
                     <RodapeFormulario
-                        cancelarHref={voltarHref}
                         loading={pending}
                         textoSalvar="Salvar documento"
                     />

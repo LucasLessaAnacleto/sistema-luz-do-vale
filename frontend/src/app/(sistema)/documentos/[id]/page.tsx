@@ -1,9 +1,9 @@
 "use client";
 
 import Link from "next/link";
-import { use, useEffect, useState } from "react";
+import { useParams } from "next/navigation";
+import { useEffect, useState } from "react";
 import { Download } from "lucide-react";
-import { useSearchParams } from "next/navigation";
 
 import type { DocumentoDetalhes } from "@/app/types/documentos";
 import type { PacienteDetalhes } from "@/app/types/pacientes";
@@ -13,30 +13,25 @@ import { buscarPaciente } from "@/app/services/pacienteService";
 
 import AvatarIniciais from "@/app/components/ui/AvatarIniciais";
 import BadgeStatus from "@/app/components/ui/BudgeStatus";
-import BotaoVoltar from "@/app/components/ui/BotaoVoltar";
 import CabecalhoPagina from "@/app/components/CabecalhoPagina";
 import Card from "@/app/components/ui/Card";
+import BotaoVoltarHistorico from "@/app/components/ui/BotaoVoltarHistorico";
 
-export default function DocumentoDetalhesPage({ params }: { params: Promise<{ id: string }> }) {
-
-    const { id } = use(params);
-    const searchParams = useSearchParams();
+export default function DocumentoDetalhesPage() {
+    const params = useParams<{id: string}>();
+    const { id } = params;
 
     const [documento, setDocumento] = useState<DocumentoDetalhes | null>(null);
     const [paciente, setPaciente] = useState<PacienteDetalhes | null>(null);
     const [html, setHtml] = useState("");
     const [baixando, setBaixando] = useState(false);
 
-
     useEffect(() => {
         carregarDocumento();
     }, [id]);
 
-
     async function carregarDocumento() {
-
         try {
-
             const dadosDocumento = await buscarDocumento(Number(id));
             setDocumento(dadosDocumento);
             const dadosPaciente = await buscarPaciente(dadosDocumento.pacienteId);
@@ -44,17 +39,13 @@ export default function DocumentoDetalhesPage({ params }: { params: Promise<{ id
             const conteudoHtml = await buscarHtmlDocumento(Number(id));
             setHtml(conteudoHtml);
         } catch (error) {
-
             if (error instanceof Error) {
                 alert(error.message);
             }
-
         }
     }
 
-
     async function baixarPdf() {
-
         try {
             setBaixando(true);
 
@@ -69,7 +60,6 @@ export default function DocumentoDetalhesPage({ params }: { params: Promise<{ id
 
             link.click();
             link.remove();
-
             URL.revokeObjectURL(url);
         } catch (error) {
 
@@ -91,19 +81,15 @@ export default function DocumentoDetalhesPage({ params }: { params: Promise<{ id
         );
     }
 
-    const pacienteIdOrigem = searchParams.get("pacienteId");
-    const voltarHref = pacienteIdOrigem ? `/pacientes/${pacienteIdOrigem}/historico` : "/documentos";
-
     return (
         <>
-
             <CabecalhoPagina>
-
                 <div className="flex items-start justify-between gap-4">
 
                     <div className="flex items-center gap-3">
 
-                        <BotaoVoltar href={voltarHref} />
+                        {/* <BotaoVoltar href={voltarHref} /> */}
+                        <BotaoVoltarHistorico />
 
                         <div>
 
@@ -155,11 +141,9 @@ export default function DocumentoDetalhesPage({ params }: { params: Promise<{ id
 
             </CabecalhoPagina>
 
-
             <section className="mx-auto max-w-6xl px-5 py-5 sm:px-8">
 
                 <div className="mb-4 flex flex-wrap gap-2">
-
                     <button
                         type="button"
                         onClick={baixarPdf}
@@ -170,9 +154,7 @@ export default function DocumentoDetalhesPage({ params }: { params: Promise<{ id
 
                         {baixando ? "Baixando..." : "Baixar PDF"}
                     </button>
-
                 </div>
-
 
                 {html ? (
 
