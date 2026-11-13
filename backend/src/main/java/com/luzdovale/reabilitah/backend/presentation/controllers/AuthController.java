@@ -4,6 +4,7 @@ import com.luzdovale.reabilitah.backend.application.DTO.auth.LoginRequest;
 import com.luzdovale.reabilitah.backend.application.DTO.auth.LoginResponse;
 import com.luzdovale.reabilitah.backend.application.services.TokenService;
 import com.luzdovale.reabilitah.backend.domain.entities.Usuario;
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -28,6 +29,7 @@ public class AuthController {
     private TokenService tokenService;
 
     @PostMapping("/login")
+    @Operation(summary = "Autenticar usuário", description = "Valida o e-mail e a senha informados e retorna um token JWT quando as credenciais são válidas.")
     public ResponseEntity<?> login(@RequestBody LoginRequest loginRequest){
         try{
             var authenticationToken =
