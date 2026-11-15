@@ -1,9 +1,7 @@
 package com.luzdovale.reabilitah.backend.application.services;
 
-import com.luzdovale.reabilitah.backend.application.DTO.aviso.AlterarAvisoRequest;
 import com.luzdovale.reabilitah.backend.application.DTO.aviso.AvisoResponse;
 import com.luzdovale.reabilitah.backend.application.DTO.aviso.CriarAvisoRequest;
-import com.luzdovale.reabilitah.backend.application.exceptions.AvisoJaDesativadoException;
 import com.luzdovale.reabilitah.backend.application.exceptions.AvisoNaoEncontradoException;
 import com.luzdovale.reabilitah.backend.domain.entities.Aviso;
 import com.luzdovale.reabilitah.backend.domain.entities.Usuario;
@@ -11,6 +9,7 @@ import com.luzdovale.reabilitah.backend.domain.repository.AvisoRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
@@ -23,28 +22,37 @@ public class AvisoService {
     private AvisoRepository avisoRepository;
 
     @Transactional
-    public Page<AvisoResponse> listarTodos(Pageable pageable) {
+    public Page<AvisoResponse> listarTodos(Boolean ativo, int pagina) {
         desativarAvisosExpirados();
-        return avisoRepository.findAll(pageable)
+
+        var pageable = PageRequest.of(pagina, 10);
+        if(ativo == null){
+            return avisoRepository.findAll(pageable).map(this::mapeiaParaDTO);
+        }
+        return listarPorStatus(ativo, pageable);
+    }
+
+    private Page<AvisoResponse> listarPorStatus(boolean status, Pageable pageable) {
+
+        return avisoRepository.findByAtivo(status, pageable)
                 .map(this::mapeiaParaDTO);
     }
+
 
     @Transactional
-    public Page<AvisoResponse> listarAtivos(Pageable pageable) {
-        desativarAvisosExpirados();
-        return avisoRepository.findByAtivo(true, pageable)
-                .map(this::mapeiaParaDTO);
-    }
-
     public AvisoResponse buscarPorId(Long id) {
+        desativarAvisosExpirados();
+
         return avisoRepository.findById(id)
                 .map(this::mapeiaParaDTO)
                 .orElseThrow(AvisoNaoEncontradoException::new);
     }
 
     public Aviso criar(CriarAvisoRequest dto, Usuario usuarioLogado) {
+        if (dto.mensagem() == null || dto.mensagem().isBlank()) {
+            throw new IllegalArgumentException("Informe a mensagem do aviso.");
+        }
         Aviso aviso = new Aviso();
-
         aviso.setCriadoPor(usuarioLogado);
         aviso.setMensagem(dto.mensagem());
         aviso.setDtFinalizacao(dto.dtFinalizacao());
