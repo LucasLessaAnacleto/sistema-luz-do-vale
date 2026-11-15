@@ -16,9 +16,9 @@ export default function RodapeFormulario({ cancelarHref, loading = false, textoS
     const router = useRouter();
 
     return (
-        <div className="fixed right-0 bottom-20 left-0 z-30 border-t border-border bg-card px-5 py-3 sm:px-8">
+        <div className="fixed right-0 bottom-20 left-0 z-30 border-t border-border bg-card">
 
-            <div className="grid gap-3 sm:grid-cols-2">
+            <div className="mx-auto grid max-w-6xl gap-3 px-5 py-3 sm:grid-cols-2 sm:px-8">
 
                 {cancelarHref ? (
                     <Link href={cancelarHref} className={estiloBotaoCancelar}>

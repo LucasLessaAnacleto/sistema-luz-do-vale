@@ -219,7 +219,7 @@ export default function NovoDocumentoFormularioPage() {
             ) : !formulario ? (
                 <CarregandoConteudo mensagem="Carregando formulário..." />
             ) : (
-                <form action={action} className="mx-auto max-w-3xl space-y-6 px-5 pt-6 pb-32 sm:px-8">
+                <form action={action} className="mx-auto max-w-6xl space-y-6 px-5 pt-6 pb-32 sm:px-8">
 
                     <input type="hidden" name="tipoDocumentoVersaoId" value={formulario.versaoId}/>
 
