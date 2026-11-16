@@ -30,16 +30,15 @@ public class AvisoController {
     }
 
     @PostMapping
-    public ResponseEntity<Aviso> criar(@RequestBody CriarAvisoRequest dto, Authentication auth) {
+    public ResponseEntity<AvisoResponse> criar(@RequestBody CriarAvisoRequest dto, Authentication auth) {
 
-        avisoService.criar(dto, (Usuario) auth.getPrincipal());
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok(avisoService.criar(dto, (Usuario) auth.getPrincipal()));
     }
 
     @PatchMapping("/{id}/desativar")
-    public ResponseEntity<Void> desativar(@PathVariable Long id) {
+    public ResponseEntity<Void> desativar(@PathVariable Long id, Authentication auth) {
 
-        avisoService.desativar(id);
+        avisoService.desativar(id, (Usuario) auth.getPrincipal());
         return ResponseEntity.ok().build();
     }
 }

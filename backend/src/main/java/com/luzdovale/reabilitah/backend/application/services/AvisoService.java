@@ -3,6 +3,7 @@ package com.luzdovale.reabilitah.backend.application.services;
 import com.luzdovale.reabilitah.backend.application.DTO.aviso.AvisoResponse;
 import com.luzdovale.reabilitah.backend.application.DTO.aviso.CriarAvisoRequest;
 import com.luzdovale.reabilitah.backend.application.exceptions.AvisoNaoEncontradoException;
+import com.luzdovale.reabilitah.backend.application.exceptions.UsuarioSemAutorizacao;
 import com.luzdovale.reabilitah.backend.domain.entities.Aviso;
 import com.luzdovale.reabilitah.backend.domain.entities.Usuario;
 import com.luzdovale.reabilitah.backend.domain.repository.AvisoRepository;
@@ -11,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -25,7 +27,7 @@ public class AvisoService {
     public Page<AvisoResponse> listarTodos(Boolean ativo, int pagina) {
         desativarAvisosExpirados();
 
-        var pageable = PageRequest.of(pagina, 10);
+        var pageable = PageRequest.of(pagina, 10, Sort.by("dtCriacao", "id").descending());
         if(ativo == null){
             return avisoRepository.findAll(pageable).map(this::mapeiaParaDTO);
         }
@@ -48,7 +50,7 @@ public class AvisoService {
                 .orElseThrow(AvisoNaoEncontradoException::new);
     }
 
-    public Aviso criar(CriarAvisoRequest dto, Usuario usuarioLogado) {
+    public AvisoResponse criar(CriarAvisoRequest dto, Usuario usuarioLogado) {
         if (dto.mensagem() == null || dto.mensagem().isBlank()) {
             throw new IllegalArgumentException("Informe a mensagem do aviso.");
         }
@@ -57,17 +59,24 @@ public class AvisoService {
         aviso.setMensagem(dto.mensagem());
         aviso.setDtFinalizacao(dto.dtFinalizacao());
 
-        return avisoRepository.save(aviso);
+        return mapeiaParaDTO(avisoRepository.save(aviso));
     }
 
-    public void desativar(Long id) {
+    public void desativar(Long id, Usuario usuarioLogado) {
         var aviso = avisoRepository.findById(id).orElseThrow(AvisoNaoEncontradoException::new);
+
+        if(!aviso.getCriadoPor().getId().equals(usuarioLogado.getId()) && !usuarioLogado.isAdmin()){
+            throw new UsuarioSemAutorizacao();
+        }
+
+        if(!aviso.isAtivo()) return;
+
         aviso.setAtivo(false);
         aviso.setDtDesativado(LocalDateTime.now());
         avisoRepository.save(aviso);
     }
 
-    public void desativarAvisosExpirados() {
+    private void desativarAvisosExpirados() {
         LocalDateTime agora = LocalDateTime.now();
         var avisos = avisoRepository.findByAtivoTrueAndDtFinalizacaoLessThanEqual(agora);
 

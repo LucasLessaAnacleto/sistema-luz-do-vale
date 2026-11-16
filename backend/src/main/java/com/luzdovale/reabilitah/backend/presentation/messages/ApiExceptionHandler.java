@@ -41,15 +41,11 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
     
     @ExceptionHandler({
             IllegalArgumentException.class,
-            DadosDocumentoInvalidosException.class
+            DadosDocumentoInvalidosException.class,
+            EmailJaCadastradoException.class,
+            AvisoDtFinalizacaoFuturaException.class
     })
     public ResponseEntity<ApiErrorMessage> handleIllegalArgument(RuntimeException ex) {
-
-        return buildResponse(HttpStatus.BAD_REQUEST, ex.getMessage());
-    }
-
-    @ExceptionHandler(EmailJaCadastradoException.class)
-    public ResponseEntity<ApiErrorMessage> handleEmailJaCadastrado(EmailJaCadastradoException ex) {
 
         return buildResponse(HttpStatus.BAD_REQUEST, ex.getMessage());
     }
@@ -72,7 +68,8 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
         UsuarioNaoEncontradoException.class,
         PacienteNaoEncontradoException.class,
         TipoDocumentoNaoEncontradoException.class,
-        DocumentoNaoEncontradoException.class
+        DocumentoNaoEncontradoException.class,
+        AvisoNaoEncontradoException.class
     })
     public ResponseEntity<ApiErrorMessage> handleNaoEncontrado(RuntimeException ex) {
 
