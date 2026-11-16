@@ -6,6 +6,7 @@ import { Cake, ChevronLeft, ChevronRight, CircleAlert, Clock3, FileText, PenLine
 import { useAppSelector } from "@/app/redux/hook";
 import { dashboardMock } from "@/app/services/mocks/dashboardMock";
 import { cn } from "@/app/util";
+import QuadroAvisos from "../avisos/components/QuadroAvisos";
 
 const indicators = [
   {
@@ -116,20 +117,7 @@ export default function HomePage() {
       </section>
 
       <div className="mx-auto max-w-6xl space-y-6 px-5 py-6 sm:px-8">
-        <section aria-labelledby="avisos-titulo">
-          <h2 id="avisos-titulo" className="mb-3 flex min-h-9 items-center gap-2 text-base font-semibold sm:text-lg">
-            <CircleAlert className="h-5 w-5 shrink-0 text-warning" aria-hidden="true" />
-            Quadro de avisos
-          </h2>
-          <div className="space-y-3">
-            {dashboardMock.avisos.map((aviso) => (
-              <article key={aviso.id} className="rounded-2xl border border-border border-l-4 border-l-amber-500 bg-[#f8f5eb] p-4 shadow-sm">
-                <p className="text-sm leading-relaxed">{aviso.mensagem}</p>
-                <p className="mt-1 text-xs text-muted-foreground">Por {aviso.autor}</p>
-              </article>
-            ))}
-          </div>
-        </section>
+        <QuadroAvisos />
 
         <section aria-labelledby="documentos-titulo">
           <div className="mb-3 flex min-h-9 items-center justify-between gap-3">
