@@ -55,10 +55,8 @@ export default function AvisosPage() {
     }
 
     function alterarFiltro(valor: string) {
-
         setPagina(0);
         setFiltro(valor);
-
     }
 
     return (
@@ -104,7 +102,7 @@ export default function AvisosPage() {
                 ) : avisos.length ? (
 
                     avisos.map(aviso => (
-                        <CardAviso key={aviso.id} aviso={aviso} exibirStatus/>
+                        <CardAviso key={aviso.id} aviso={aviso} />
                     ))
 
                 ) : (
