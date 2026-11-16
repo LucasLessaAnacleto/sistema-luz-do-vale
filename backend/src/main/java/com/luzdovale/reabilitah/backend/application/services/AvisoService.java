@@ -24,14 +24,30 @@ public class AvisoService {
     private AvisoRepository avisoRepository;
 
     @Transactional
-    public Page<AvisoResponse> listarTodos(Boolean ativo, int pagina) {
+    public Page<AvisoResponse> listarTodos(Boolean ativo, int pagina, Usuario usuarioLogado) {
         desativarAvisosExpirados();
 
         var pageable = PageRequest.of(pagina, 10, Sort.by("dtCriacao", "id").descending());
-        if(ativo == null){
-            return avisoRepository.findAll(pageable).map(this::mapeiaParaDTO);
+        if(usuarioLogado.isAdmin()){
+            if(ativo == null){
+                return avisoRepository
+                    .findAll(pageable)
+                    .map(this::mapeiaParaDTO);
+            }
+            return listarPorStatus(ativo, pageable);
         }
-        return listarPorStatus(ativo, pageable);
+        if(ativo == null){
+            return avisoRepository
+                .findByAtivoTrueOrCriadoPor_Id(usuarioLogado.getId(), pageable)
+                .map(this::mapeiaParaDTO);
+        }
+        if(ativo){
+            return listarPorStatus(true, pageable);
+        }
+
+        return avisoRepository
+            .findByAtivoFalseAndCriadoPor_Id(usuarioLogado.getId(), pageable)
+            .map(this::mapeiaParaDTO);
     }
 
     private Page<AvisoResponse> listarPorStatus(boolean status, Pageable pageable) {
@@ -42,12 +58,20 @@ public class AvisoService {
 
 
     @Transactional
-    public AvisoResponse buscarPorId(Long id) {
+    public AvisoResponse buscarPorId(Long id, Usuario usuarioLogado) {
         desativarAvisosExpirados();
 
-        return avisoRepository.findById(id)
-                .map(this::mapeiaParaDTO)
+        var aviso = avisoRepository.findById(id)
                 .orElseThrow(AvisoNaoEncontradoException::new);
+
+        if(!aviso.isAtivo() && !usuarioLogado.isAdmin() && (
+                aviso.getCriadoPor() == null || !aviso.getCriadoPor().getId().equals(usuarioLogado.getId())
+        )){
+
+            throw new UsuarioSemAutorizacao();
+        }
+
+        return mapeiaParaDTO(aviso);
     }
 
     public AvisoResponse criar(CriarAvisoRequest dto, Usuario usuarioLogado) {

@@ -14,5 +14,8 @@ import java.util.List;
 public interface AvisoRepository extends JpaRepository<Aviso, Long> {
 
     Page<Aviso> findByAtivo(boolean ativo, Pageable pageable);
+    Page<Aviso> findByAtivoFalseAndCriadoPor_Id(Long usuarioId, Pageable pageable);
+    Page<Aviso> findByAtivoTrueOrCriadoPor_Id(Long usuarioId, Pageable pageable);
     List<Aviso> findByAtivoTrueAndDtFinalizacaoLessThanEqual(LocalDateTime dtFinalizacao);
+
 }

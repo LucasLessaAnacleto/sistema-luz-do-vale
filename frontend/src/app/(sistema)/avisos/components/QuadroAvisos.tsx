@@ -74,7 +74,7 @@ export default function QuadroAvisos() {
                     ))}
 
                     {avisos.length > 9 && (
-                        <Link href="/avisos?ativo=true"
+                        <Link href="/avisos"
                             className="block rounded-xl border border-border p-3 text-center text-sm font-medium text-primary-dark hover:bg-primary/5"
                         >
                             Ver mais avisos

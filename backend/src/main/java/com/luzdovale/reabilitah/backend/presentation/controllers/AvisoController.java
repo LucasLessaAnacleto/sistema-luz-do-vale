@@ -18,15 +18,21 @@ public class AvisoController {
     private AvisoService avisoService;
 
     @GetMapping
-    public ResponseEntity<Page<AvisoResponse>> listarTodos(@RequestParam(required = false) Boolean ativo, @RequestParam(defaultValue = "0") int pagina) {
+    public ResponseEntity<Page<AvisoResponse>> listarTodos(
+        @RequestParam(required = false) Boolean ativo,
+        @RequestParam(defaultValue = "0") int pagina,
+        Authentication auth
+    ) {
 
-        return ResponseEntity.ok(avisoService.listarTodos(ativo, pagina));
+        return ResponseEntity.ok(avisoService.listarTodos(
+            ativo, pagina, (Usuario) auth.getPrincipal()
+        ));
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<AvisoResponse> buscarPorId(@PathVariable Long id) {
+    public ResponseEntity<AvisoResponse> buscarPorId(@PathVariable Long id, Authentication auth) {
 
-        return ResponseEntity.ok(avisoService.buscarPorId(id));
+        return ResponseEntity.ok(avisoService.buscarPorId(id, (Usuario) auth.getPrincipal()));
     }
 
     @PostMapping
