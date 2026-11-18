@@ -36,7 +36,7 @@ export default function NovoAvisoPage() {
 
     return (
         <>
-            <CabecalhoPagina largura="3xl">
+            <CabecalhoPagina largura="5xl">
                 <div className="flex items-center gap-3">
 
                     <BotaoVoltarHistorico />
@@ -52,7 +52,7 @@ export default function NovoAvisoPage() {
             </CabecalhoPagina>
 
 
-            <form action={action} className="mx-auto max-w-3xl space-y-6 px-5 pt-6 pb-40 sm:px-8">
+            <form action={action} className="mx-auto max-w-5xl space-y-6 px-5 pt-6 pb-40 sm:px-8">
 
                 <Card className="space-y-6">
 
@@ -78,12 +78,12 @@ export default function NovoAvisoPage() {
                             defaultValue={(estado.valores as CriarAvisoRequest).dtFinalizacao ?? ""}
                         />
 
-                        <div className="flex items-start gap-2 text-xs text-muted-foreground">
+                        {/*<div className="flex items-start gap-2 text-xs text-muted-foreground">
 
                             <Info className="h-4 w-4 shrink-0" />
                             <p>Se nenhuma data for informada, o aviso permanecerá ativo até ser desativado manualmente.</p>
 
-                        </div>
+                        </div>*/}
                     </div>
                 </Card>
 

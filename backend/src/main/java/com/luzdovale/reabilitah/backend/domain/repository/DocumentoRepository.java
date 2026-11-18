@@ -6,6 +6,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import javax.print.Doc;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -14,7 +15,10 @@ import java.util.List;
 public interface DocumentoRepository extends JpaRepository<Documento, Long> {
     List<Documento> findByDocumentoOrigem(Documento documentoOrigem);
 
+    List<Documento> findAllByAtivoTrue();
     Page<Documento> findByAtivoTrueOrderByDtCriacaoDesc(Pageable pageable);
+    long countDistinctByAtivoTrue();
+    long countDistinctByAtivoTrueAndDtAssinaturaIsEmpty();
 
     List<Documento> findTop10ByAtivoTrueAndDtCriacaoGreaterThanEqualOrderByDtCriacaoDesc(LocalDateTime data);
 }
