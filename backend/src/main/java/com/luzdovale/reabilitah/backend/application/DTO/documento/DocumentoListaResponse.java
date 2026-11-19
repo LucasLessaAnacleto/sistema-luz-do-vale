@@ -1,5 +1,7 @@
 package com.luzdovale.reabilitah.backend.application.DTO.documento;
 
+import com.luzdovale.reabilitah.backend.domain.enuns.EnumStatusDocumento;
+
 import java.time.LocalDateTime;
 
 public record DocumentoListaResponse(
@@ -17,8 +19,10 @@ public record DocumentoListaResponse(
     String criadoPor,
 
     boolean ativo,
+    EnumStatusDocumento status,
 
     LocalDateTime dtCriacao,
-    LocalDateTime dtAssinatura
+    LocalDateTime dtAssinatura,
+    LocalDateTime dtFinalizacao
 ) {
 }

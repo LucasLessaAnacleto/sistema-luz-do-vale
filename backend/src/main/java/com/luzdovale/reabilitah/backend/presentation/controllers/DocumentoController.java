@@ -5,6 +5,7 @@ import com.luzdovale.reabilitah.backend.application.services.DocumentoPdfService
 import com.luzdovale.reabilitah.backend.application.services.DocumentoService;
 import com.luzdovale.reabilitah.backend.application.services.DocumentoTemplateService;
 import com.luzdovale.reabilitah.backend.domain.entities.Usuario;
+import com.luzdovale.reabilitah.backend.domain.enuns.EnumStatusDocumento;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.MediaType;
@@ -39,9 +40,11 @@ public class DocumentoController {
     }
 
     @GetMapping
-    public ResponseEntity<Page<DocumentoListaResponse>> listar(@RequestParam(defaultValue = "0") int pagina) {
+    public ResponseEntity<Page<DocumentoListaResponse>> listar(
+            @RequestParam(defaultValue = "0") int pagina,
+            @RequestParam(required = false) EnumStatusDocumento status) {
 
-        return ResponseEntity.ok(documentoService.listar(pagina));
+        return ResponseEntity.ok(documentoService.listar(pagina, status));
     }
 
     @GetMapping("/recentes")
@@ -59,6 +62,13 @@ public class DocumentoController {
     public ResponseEntity<List<HistDocumentoResponse>> listarHistorico(@PathVariable Long id) {
 
         return ResponseEntity.ok(documentoService.listarHistorico(id));
+    }
+
+    @PatchMapping("/{id}/finalizar")
+    public ResponseEntity<Void> finalizar(@PathVariable Long id, Authentication auth){
+
+        documentoService.finalizar(id, (Usuario) auth.getPrincipal());
+        return ResponseEntity.ok().build();
     }
 
     @GetMapping(value = "/{id}/html", produces = MediaType.TEXT_HTML_VALUE)

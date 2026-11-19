@@ -3,9 +3,12 @@ package com.luzdovale.reabilitah.backend.application.services;
 
 import com.luzdovale.reabilitah.backend.application.DTO.documento.*;
 import com.luzdovale.reabilitah.backend.application.DTO.paciente.FichaAcolhimentoRequest;
+import com.luzdovale.reabilitah.backend.application.exceptions.DocumentoDesativadoException;
 import com.luzdovale.reabilitah.backend.application.exceptions.DocumentoNaoEncontradoException;
 import com.luzdovale.reabilitah.backend.application.exceptions.PacienteNaoEncontradoException;
+import com.luzdovale.reabilitah.backend.application.exceptions.UsuarioSemAutorizacao;
 import com.luzdovale.reabilitah.backend.domain.entities.*;
+import com.luzdovale.reabilitah.backend.domain.enuns.EnumStatusDocumento;
 import com.luzdovale.reabilitah.backend.domain.repository.*;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -115,13 +118,18 @@ public class DocumentoService {
         return documento;
     }
 
-    public Page<DocumentoListaResponse> listar(int pagina) {
+    public Page<DocumentoListaResponse> listar(int pagina, EnumStatusDocumento status) {
 
         var pageable = PageRequest.of(pagina, 50);
-
-        return documentoRepository
+        if(status == null){
+            return documentoRepository
                 .findByAtivoTrueOrderByDtCriacaoDesc(pageable)
                 .map(this::mapeiaParaListaDTO);
+        }
+
+        return documentoRepository
+            .findByAtivoTrueAndStatusOrderByDtCriacaoDesc(status, pageable)
+            .map(this::mapeiaParaListaDTO);
     }
 
     public List<DocumentoListaResponse> listarRecentes() {
@@ -198,6 +206,41 @@ public class DocumentoService {
                 documento.getDtAtualizacao(),
                 documento.getDtAssinatura()
         );
+    }
+
+    @Transactional
+    public void finalizar(Long id, Usuario usuarioLogado){
+        Documento documento = buscarDocumento(id);
+
+        if(!usuarioLogado.isAdmin() &&
+                (documento.getCriadoPor() == null || !documento.getCriadoPor().getId().equals(usuarioLogado.getId()))){
+            throw new UsuarioSemAutorizacao();
+        }
+
+        if(!documento.isAtivo()){
+            throw new DocumentoDesativadoException();
+        }
+
+        if(documento.getStatus() == EnumStatusDocumento.FINALIZADO){
+            return;
+        }
+
+        documento.finalizar();
+        documentoRepository.save(documento);
+        histDocumentoService.registrarHistorico(
+            documento,
+            documento.getPaciente(),
+            usuarioLogado,
+            "FINALIZADO"
+        );
+    }
+
+    public long contarDocumentos(){
+        return documentoRepository.countByAtivoTrue();
+    }
+
+    public long contarDocumentosPendentes(){
+        return documentoRepository.countByAtivoTrueAndStatus( EnumStatusDocumento.PENDENTE );
     }
 
     private void completarDadosFicha(Map<String, Object> dados, FichaAcolhimentoRequest ficha) {
