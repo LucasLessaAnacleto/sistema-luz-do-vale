@@ -85,14 +85,12 @@ export default function DocumentoDetalhesPage() {
         <>
             <CabecalhoPagina>
                 <div className="flex items-start justify-between gap-4">
-
                     <div className="flex items-center gap-3">
 
                         {/* <BotaoVoltar href={voltarHref} /> */}
                         <BotaoVoltarHistorico />
 
                         <div>
-
                             <h1 className="text-xl font-semibold">
                                 {documento.tipoDocumento}
                             </h1>
@@ -100,31 +98,23 @@ export default function DocumentoDetalhesPage() {
                             <p className="mt-0.5 text-xs text-muted-foreground">
                                 Documento #{documento.id} · v{documento.versao}
                             </p>
-
                         </div>
-
                     </div>
-
 
                     <BadgeStatus
                         texto={documento.dtAssinatura ? "Assinado" : "Pendente"}
                         tipo={documento.dtAssinatura ? "sucesso" : "alerta"}
                     />
-
                 </div>
 
-
                 {paciente && (
-
                     <Link
                         href={`/pacientes/${paciente.id}`}
                         className="mt-4 flex items-center gap-2 rounded-xl bg-primary/15 px-3 py-2 transition-colors hover:bg-primary/20"
                     >
-
                         <AvatarIniciais nome={paciente.nome} tamanho="sm" />
 
                         <span className="text-sm">
-
                             {paciente.nome}
 
                             {paciente.apelido && (
@@ -132,17 +122,12 @@ export default function DocumentoDetalhesPage() {
                                     {" "}({paciente.apelido})
                                 </span>
                             )}
-
                         </span>
-
                     </Link>
-
                 )}
-
             </CabecalhoPagina>
 
             <section className="mx-auto max-w-6xl px-5 py-5 sm:px-8">
-
                 <div className="mb-4 flex flex-wrap gap-2">
                     <button
                         type="button"
@@ -151,33 +136,24 @@ export default function DocumentoDetalhesPage() {
                         className="flex min-h-10 items-center gap-2 rounded-full bg-primary/15 px-4 text-sm font-medium text-primary-dark transition-colors enabled:cursor-pointer enabled:hover:bg-primary/25 disabled:opacity-60"
                     >
                         <Download className="h-4 w-4" />
-
                         {baixando ? "Baixando..." : "Baixar PDF"}
                     </button>
                 </div>
 
                 {html ? (
-
                     <iframe
                         srcDoc={html}
                         title={documento.tipoDocumento}
                         className="h-[750px] w-full rounded-2xl border border-border bg-white"
                     />
-
                 ) : (
-
                     <Card>
-
                         <p className="text-sm text-muted-foreground">
                             Carregando visualização do documento...
                         </p>
-
                     </Card>
-
                 )}
-
             </section>
-
         </>
     );
 }

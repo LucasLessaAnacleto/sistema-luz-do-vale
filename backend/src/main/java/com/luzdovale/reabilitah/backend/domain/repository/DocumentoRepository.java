@@ -27,4 +27,8 @@ public interface DocumentoRepository extends JpaRepository<Documento, Long> {
     List<Documento> findTop10ByAtivoTrueAndDtCriacaoGreaterThanEqualOrderByDtCriacaoDesc(
         LocalDateTime data
     );
+    long countByAtivoTrueAndDtCriacaoGreaterThanEqualAndDtCriacaoLessThan(
+        LocalDateTime inicio,
+        LocalDateTime fim
+    );
 }

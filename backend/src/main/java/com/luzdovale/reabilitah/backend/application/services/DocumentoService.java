@@ -173,7 +173,6 @@ public class DocumentoService {
     }
 
     public DocumentoDetalhesResponse buscar(Long id) {
-
         Documento documento = buscarDocumento(id);
 
         var versao = documento.getTipoDocumentoVersao();
@@ -191,20 +190,22 @@ public class DocumentoService {
         }
 
         return new DocumentoDetalhesResponse(
-                documento.getId(),
-                versao.getTipoDocumento().getId(),
-                versao.getTipoDocumento().getNome(),
-                versao.getVersao(),
-                documento.getPaciente().getId(),
-                usuario.getId(),
-                nomeUsuario,
-                documento.getObservacao(),
-                campos,
-                dados,
-                documento.isAtivo(),
-                documento.getDtCriacao(),
-                documento.getDtAtualizacao(),
-                documento.getDtAssinatura()
+            documento.getId(),
+            versao.getTipoDocumento().getId(),
+            versao.getTipoDocumento().getNome(),
+            versao.getVersao(),
+            documento.getPaciente().getId(),
+            usuario.getId(),
+            nomeUsuario,
+            documento.getObservacao(),
+            campos,
+            dados,
+            documento.isAtivo(),
+            documento.getStatus(),
+            documento.getDtCriacao(),
+            documento.getDtAtualizacao(),
+            documento.getDtAssinatura(),
+            documento.getDtFinalizacao()
         );
     }
 
@@ -276,17 +277,19 @@ public class DocumentoService {
 
         var versao = documento.getTipoDocumentoVersao();
         return new DocumentoResponse(
-                documento.getId(),
-                versao.getTipoDocumento().getId(),
-                versao.getTipoDocumento().getNome(),
-                versao.getVersao(),
-                documento.getPaciente().getId(),
-                documento.getCriadoPor().getId(),
-                documento.getObservacao(),
-                documento.getDados(),
-                documento.isAtivo(),
-                documento.getDtCriacao(),
-                documento.getDtAssinatura()
+            documento.getId(),
+            versao.getTipoDocumento().getId(),
+            versao.getTipoDocumento().getNome(),
+            versao.getVersao(),
+            documento.getPaciente().getId(),
+            documento.getCriadoPor().getId(),
+            documento.getObservacao(),
+            documento.getDados(),
+            documento.isAtivo(),
+            documento.getStatus(),
+            documento.getDtCriacao(),
+            documento.getDtAssinatura(),
+            documento.getDtFinalizacao()
         );
     }
 
@@ -303,32 +306,33 @@ public class DocumentoService {
         }
 
         return new DocumentoListaResponse(
-                documento.getId(),
-                versao.getTipoDocumento().getId(),
-                versao.getTipoDocumento().getNome(),
-                versao.getVersao(),
-                paciente.getId(),
-                paciente.getNome(),
-                paciente.getApelido(),
-                usuario.getId(),
-                nomeUsuario,
-                documento.isAtivo(),
-                documento.getDtCriacao(),
-                documento.getDtAssinatura()
+            documento.getId(),
+            versao.getTipoDocumento().getId(),
+            versao.getTipoDocumento().getNome(),
+            versao.getVersao(),
+            paciente.getId(),
+            paciente.getNome(),
+            paciente.getApelido(),
+            usuario.getId(),
+            nomeUsuario,
+            documento.isAtivo(),
+            documento.getStatus(),
+            documento.getDtCriacao(),
+            documento.getDtAssinatura(),
+            documento.getDtFinalizacao()
         );
     }
 
     private DocumentoRelacionadoResponse mapeiaRelacionado(Documento documento, String relacao) {
-
         return new DocumentoRelacionadoResponse(
-                documento.getId(),
-                documento.getTipoDocumentoVersao()
-                        .getTipoDocumento()
-                        .getNome(),
-                relacao,
-                documento.getDtCriacao(),
-                documento.getDtAssinatura(),
-                documento.isAtivo()
+            documento.getId(),
+            documento.getTipoDocumentoVersao().getTipoDocumento().getNome(),
+            relacao,
+            documento.isAtivo(),
+            documento.getStatus(),
+            documento.getDtFinalizacao(),
+            documento.getDtAssinatura(),
+            documento.getDtCriacao()
         );
     }
 }
