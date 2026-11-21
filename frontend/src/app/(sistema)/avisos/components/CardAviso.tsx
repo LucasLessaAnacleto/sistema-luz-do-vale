@@ -17,13 +17,13 @@ export default function CardAviso({ aviso }: Props) {
                 ${aviso.ativo ? "border-l-amber-500 bg-[#f8f5eb]" : "border-l-muted-foreground/40 bg-secondary/10"}
             `}
         >
-            <p className="min-w-0 whitespace-pre-wrap break-words text-base leading-relaxed">
+            <div className="min-w-0 whitespace-pre-wrap break-words text-base leading-relaxed">
                 <div className="flex flex-wrap items-center justify-between gap-2">
                     {aviso.mensagem}
 
                     {!aviso.ativo && (<BadgeStatus texto="Desativado" tipo="neutro"/>)}
                 </div>
-            </p>
+            </div>
 
             <div className="mt-5 space-y-2 text-xs text-muted-foreground">
                 <div className="flex flex-wrap items-center justify-between gap-2">

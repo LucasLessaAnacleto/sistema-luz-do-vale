@@ -109,6 +109,8 @@ export default function DocumentosPage() {
 
         <DocumentosRecentes />
 
+        <ProximosAniversariantes />
+
 {/* 
         {totalPaginas > 1 && (
 
