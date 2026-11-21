@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { ChevronLeft, ChevronRight, TrendingUp } from "lucide-react";
 
 import { contarDocumentosMes } from "@/app/services/dashService";
+import MiniLoader from "./MiniLoader";
 
 const monthFormat = new Intl.DateTimeFormat("pt-BR", {
     month: "short",
@@ -93,12 +94,7 @@ export default function IndicadorDocumentosMes() {
                     </button>
 
                     <span className="ml-2 inline-flex h-6 min-w-6 items-center justify-end text-right text-xl font-bold tabular-nums">
-                        {carregando ? (
-                            // <span className="inline-block h-5 w-6 animate-pulse rounded bg-zinc-300" />
-                            <span className="inline-block h-4 w-4 shrink-0 animate-spin rounded-full border-2 border-primary/30 border-t-primary" />
-                        ) : (
-                            erro ? "—" : quantidade ?? "—"
-                        )}
+                        {carregando ? <MiniLoader /> : (erro ? "—" : quantidade ?? "—")}
                     </span>
                 </div>
             </div>
@@ -108,7 +104,6 @@ export default function IndicadorDocumentosMes() {
                     {erro}
                 </p>
             )}
-
         </>
     );
 }

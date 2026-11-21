@@ -4,6 +4,7 @@ import { DashResponse } from "@/app/types/dash";
 import { cn } from "@/app/util";
 import { Clock3, FileText, PenLine, Users } from "lucide-react";
 import { useEffect, useState } from "react";
+import MiniLoader from "./MiniLoader";
 
 export default function IndicadoresGerais() {
     const [indicadores, setIndicadores] = useState<DashResponse | null>(null);
@@ -67,7 +68,9 @@ export default function IndicadoresGerais() {
                     >
                         <Icon className={cn("mb-2 h-4 w-4", warning ? "text-amber-700" : "text-primary")} />
                         <dt className="order-2 text-xs leading-relaxed text-zinc-600">{label}</dt>
-                        <dd className="mb-1 text-2xl font-bold leading-tight tabular-nums">{value}</dd>
+                        <dd className="mb-1 flex h-8 items-center text-2xl font-bold leading-tight tabular-nums">
+                            {carregando ?  <MiniLoader />  : (value ?? "—")}
+                        </dd>
                     </div>
                 ))}
             </dl>
