@@ -8,7 +8,7 @@ import { Download } from "lucide-react";
 import type { DocumentoDetalhes } from "@/app/types/documentos";
 import type { PacienteDetalhes } from "@/app/types/pacientes";
 
-import { buscarDocumento, buscarHtmlDocumento, buscarPdfDocumento } from "@/app/services/documentoService";
+import { buscarDocumento, buscarHtmlDocumento, buscarPdfDocumento, finalizarDocumento } from "@/app/services/documentoService";
 import { buscarPaciente } from "@/app/services/pacienteService";
 
 import AvatarIniciais from "@/app/components/ui/AvatarIniciais";
@@ -16,6 +16,8 @@ import BadgeStatus from "@/app/components/ui/BudgeStatus";
 import CabecalhoPagina from "@/app/components/CabecalhoPagina";
 import Card from "@/app/components/ui/Card";
 import BotaoVoltarHistorico from "@/app/components/ui/BotaoVoltarHistorico";
+import { useAppSelector } from "@/app/redux/hook";
+import { formatarData } from "@/app/util";
 
 export default function DocumentoDetalhesPage() {
     const params = useParams<{id: string}>();
@@ -25,6 +27,14 @@ export default function DocumentoDetalhesPage() {
     const [paciente, setPaciente] = useState<PacienteDetalhes | null>(null);
     const [html, setHtml] = useState("");
     const [baixando, setBaixando] = useState(false);
+
+    const usuario = useAppSelector(state => state.auth.usuario);
+
+    const [finalizando, setFinalizando] = useState(false);
+    const [confirmarFinalizacao, setConfirmarFinalizacao] = useState(false);
+
+    const podeFinalizar = documento?.ativo && documento.status === "PENDENTE" && 
+        ( usuario?.role === "ROLE_ADMIN" || usuario?.id === documento.criadoPorId );
 
     useEffect(() => {
         carregarDocumento();
@@ -69,6 +79,24 @@ export default function DocumentoDetalhesPage() {
 
         } finally {
             setBaixando(false);
+        }
+    }
+
+    async function finalizarStatusDoc() {
+        if (!documento) return;
+
+        try {
+            setFinalizando(true);
+
+            await finalizarDocumento(documento.id);
+
+            const atualizado = await buscarDocumento(documento.id);
+            setDocumento(atualizado);
+            setConfirmarFinalizacao(false);
+        } catch (error) {
+            alert(error instanceof Error ? error.message : "Erro ao finalizar documento.");
+        } finally {
+            setFinalizando(false);
         }
     }
 
@@ -129,16 +157,54 @@ export default function DocumentoDetalhesPage() {
 
             <section className="mx-auto max-w-6xl px-5 py-5 sm:px-8">
                 <div className="mb-4 flex flex-wrap gap-2">
-                    <button
-                        type="button"
-                        onClick={baixarPdf}
-                        disabled={baixando}
+                    <button type="button" onClick={baixarPdf} disabled={baixando}
                         className="flex min-h-10 items-center gap-2 rounded-full bg-primary/15 px-4 text-sm font-medium text-primary-dark transition-colors enabled:cursor-pointer enabled:hover:bg-primary/25 disabled:opacity-60"
                     >
                         <Download className="h-4 w-4" />
                         {baixando ? "Baixando..." : "Baixar PDF"}
                     </button>
+
+                    {podeFinalizar && (
+                        <button type="button" onClick={() => setConfirmarFinalizacao(true)}
+                            className="flex min-h-10 items-center rounded-full bg-primary px-4 text-sm font-medium text-white hover:bg-primary-dark"
+                        >
+                            Finalizar documento
+                        </button>
+                    )}
                 </div>
+
+                {confirmarFinalizacao && (
+                    <Card>
+                        <p className="text-sm font-medium">
+                            Deseja finalizar este documento?
+                        </p>
+
+                        <p className="mt-2 text-xs text-muted-foreground">
+                            O documento deixará de ser considerado pendente.
+                            Essa ação não registra uma assinatura.
+                        </p>
+
+                        {documento.status === "FINALIZADO" && documento.dtFinalizacao && (
+                            <p className="mb-4 text-xs text-muted-foreground">
+                                Finalizado em {formatarData(documento.dtFinalizacao)}
+                            </p>
+                        )}
+
+                        <div className="mt-4 flex gap-2">
+                            <button type="button" onClick={() => setConfirmarFinalizacao(false)}
+                                className="rounded-lg border px-4 py-2 text-sm"
+                            >
+                                Cancelar
+                            </button>
+
+                            <button type="button" onClick={finalizarStatusDoc} disabled={finalizando}
+                                className="rounded-lg bg-primary px-4 py-2 text-sm text-white disabled:opacity-60"
+                            >
+                                {finalizando ? "Finalizando..." : "Confirmar finalização"}
+                            </button>
+                        </div>
+                    </Card>
+                )}
 
                 {html ? (
                     <iframe

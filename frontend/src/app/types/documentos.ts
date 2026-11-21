@@ -1,65 +1,74 @@
 export interface Documento {
-  id: number;
+    id: number;
 
-  tipoDocumentoId: number;
-  tipoDocumento: string;
-  versao: number;
+    tipoDocumentoId: number;
+    tipoDocumento: string;
+    versao: number;
 
-  pacienteId: number;
+    pacienteId: number;
 
-  criadoPorId: number;
+    criadoPorId: number;
 
-  observacao: string | null;
-  dados: string;
+    observacao: string | null;
+    dados: string;
 
-  ativo: boolean;
+    ativo: boolean;
 
-  dtCriacao: string;
-  dtAssinatura: string | null;
+    status: StatusDocumento;
+    dtFinalizacao: string | null;
+
+    dtCriacao: string;
+    dtAssinatura: string | null;
 }
 
 export interface DocumentoLista {
-  id: number;
+    id: number;
 
-  tipoDocumentoId: number;
-  tipoDocumento: string;
-  versao: number;
+    tipoDocumentoId: number;
+    tipoDocumento: string;
+    versao: number;
 
-  pacienteId: number;
-  paciente: string;
-  apelido: string | null;
+    pacienteId: number;
+    paciente: string;
+    apelido: string | null;
 
-  criadoPorId: number;
-  criadoPor: string;
+    criadoPorId: number;
+    criadoPor: string;
 
-  ativo: boolean;
+    ativo: boolean;
 
-  dtCriacao: string;
-  dtAssinatura: string | null;
+    status: StatusDocumento;
+    dtFinalizacao: string | null;
+
+    dtCriacao: string;
+    dtAssinatura: string | null;
 }
 
 export interface DocumentoDetalhes {
-  id: number;
+    id: number;
 
-  tipoDocumentoId: number;
-  tipoDocumento: string;
-  versao: number;
+    tipoDocumentoId: number;
+    tipoDocumento: string;
+    versao: number;
 
-  pacienteId: number;
+    pacienteId: number;
 
-  criadoPorId: number;
-  criadoPor: string;
+    criadoPorId: number;
+    criadoPor: string;
 
-  observacao: string | null;
+    observacao: string | null;
 
-  campos: CampoDocumento[];
-  dados: Record<string, unknown>;
+    campos: CampoDocumento[];
+    dados: Record<string, unknown>;
 
-  ativo: boolean;
+    ativo: boolean;
+    
+    status: StatusDocumento;
+    dtFinalizacao: string | null;
 
-  dtCriacao: string;
-  dtAtualizacao: string | null;
-  dtAssinatura: string | null;
+    dtCriacao: string;
+    dtAtualizacao: string | null;
+    dtAssinatura: string | null;
 }
 
 export interface HistoricoDocumento {
@@ -80,70 +89,72 @@ export interface CriarDocumentoRequest {
     dados: Record<string, unknown>;
 }
 
+export type StatusDocumento = "PENDENTE" | "FINALIZADO";
+
 // documentos dinamicos
 
 export type TipoCampoDocumento =
-  | "TEXTO"
-  | "TEXTO_LONGO"
-  | "INTEIRO"
-  | "DECIMAL"
-  | "DATA"
-  | "HORA"
-  | "BOOLEANO"
-  | "SELECAO"
-  | "MULTIPLA_SELECAO"
-  | "GRUPO";
+    | "TEXTO"
+    | "TEXTO_LONGO"
+    | "INTEIRO"
+    | "DECIMAL"
+    | "DATA"
+    | "HORA"
+    | "BOOLEANO"
+    | "SELECAO"
+    | "MULTIPLA_SELECAO"
+    | "GRUPO";
 
 
 export interface CampoDocumento {
-  nome: string;
-  rotulo: string;
-  tipo: TipoCampoDocumento;
+    nome: string;
+    rotulo: string;
+    tipo: TipoCampoDocumento;
 
-  obrigatorio: boolean;
+    obrigatorio: boolean;
 
-  opcoes: string[] | null;
-  tabelaLista: string | null;
+    opcoes: string[] | null;
+    tabelaLista: string | null;
 
-  campos: CampoDocumento[] | null;
+    campos: CampoDocumento[] | null;
 
-  largura: number | null;
+    largura: number | null;
 
-  origem: string | null;
+    origem: string | null;
 
-  somenteLeitura: boolean;
+    somenteLeitura: boolean;
 }
 
 
 export interface OpcaoLista {
-  valor: string;
-  rotulo: string;
+    valor: string;
+    rotulo: string;
 }
 
 
 export interface TipoDocumento {
-  id: number;
-  nome: string;
-  descricao: string;
-  exigeAssinatura: boolean;
+    id: number;
+    nome: string;
+    descricao: string;
+    exigeAssinatura: boolean;
 }
 
 
 export interface FormularioDocumento {
-  tipoDocumentoId: number;
+    tipoDocumentoId: number;
 
-  nome: string;
-  descricao: string;
+    nome: string;
+    descricao: string;
 
-  exigeAssinatura: boolean;
+    exigeAssinatura: boolean;
 
-  versaoId: number;
-  versao: number;
+    versaoId: number;
+    versao: number;
 
-  campos: CampoDocumento[];
+    campos: CampoDocumento[];
 
-  listas: Record<string, OpcaoLista[]>;
+    listas: Record<string, OpcaoLista[]>;
 
-  dadosPadrao: Record<string, unknown>;
+    dadosPadrao: Record<string, unknown>;
 }
 
