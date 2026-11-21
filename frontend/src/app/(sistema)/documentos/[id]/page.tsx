@@ -18,6 +18,7 @@ import Card from "@/app/components/ui/Card";
 import BotaoVoltarHistorico from "@/app/components/ui/BotaoVoltarHistorico";
 import { useAppSelector } from "@/app/redux/hook";
 import { formatarData } from "@/app/util";
+import ModalConfirmacao from "@/app/components/ModalConfirmacao";
 
 export default function DocumentoDetalhesPage() {
     const params = useParams<{id: string}>();
@@ -166,45 +167,12 @@ export default function DocumentoDetalhesPage() {
 
                     {podeFinalizar && (
                         <button type="button" onClick={() => setConfirmarFinalizacao(true)}
-                            className="flex min-h-10 items-center rounded-full bg-primary px-4 text-sm font-medium text-white hover:bg-primary-dark"
+                            className="flex min-h-10 items-center rounded-full bg-primary px-4 text-sm font-medium text-white hover:bg-primary-dark cursor-pointer"
                         >
                             Finalizar documento
                         </button>
                     )}
                 </div>
-
-                {confirmarFinalizacao && (
-                    <Card>
-                        <p className="text-sm font-medium">
-                            Deseja finalizar este documento?
-                        </p>
-
-                        <p className="mt-2 text-xs text-muted-foreground">
-                            O documento deixará de ser considerado pendente.
-                            Essa ação não registra uma assinatura.
-                        </p>
-
-                        <div className="mt-4 flex gap-2">
-                            <button type="button" onClick={() => setConfirmarFinalizacao(false)}
-                                className="rounded-lg border px-4 py-2 text-sm"
-                            >
-                                Cancelar
-                            </button>
-
-                            <button type="button" onClick={finalizarStatusDoc} disabled={finalizando}
-                                className="rounded-lg bg-primary px-4 py-2 text-sm text-white disabled:opacity-60"
-                            >
-                                {finalizando ? "Finalizando..." : "Confirmar finalização"}
-                            </button>
-                        </div>
-
-                        {documento.status === "FINALIZADO" && documento.dtFinalizacao && (
-                            <p className="mb-4 text-xs text-muted-foreground">
-                                Finalizado em {formatarData(documento.dtFinalizacao)}
-                            </p>
-                        )}
-                    </Card>
-                )}
 
                 {html ? (
                     <iframe
@@ -220,6 +188,17 @@ export default function DocumentoDetalhesPage() {
                     </Card>
                 )}
             </section>
+              
+            <ModalConfirmacao
+                aberto={confirmarFinalizacao}
+                titulo="Finalizar documento?"
+                descricao="O documento deixará de ser considerado pendente. Essa ação não registra uma assinatura."
+                variante="confirmacao"
+                textoConfirmar="Finalizar"
+                carregando={finalizando}
+                onConfirmar={finalizarStatusDoc}
+                onFechar={() => setConfirmarFinalizacao(false)}
+            />
         </>
     );
 }

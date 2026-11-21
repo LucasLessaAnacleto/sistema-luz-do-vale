@@ -15,6 +15,7 @@ import BadgeStatus from "@/app/components/ui/BudgeStatus";
 import Card from "@/app/components/ui/Card";
 import CarregandoConteudo from "@/app/components/CarregandoConteudo";
 import ErroCarregamento from "@/app/components/ErroCarregamento";
+import ModalConfirmacao from "@/app/components/ModalConfirmacao";
 
 export default function AvisoDetalhesPage() {
     const { id } = useParams<{ id: string }>();
@@ -53,7 +54,7 @@ export default function AvisoDetalhesPage() {
         carregarAviso();
     }, [id]);
 
-    async function handleDesativar() {
+    async function desativacaoDoAviso() {
         if (!aviso || !podeDesativar) return;
 
         try {
@@ -66,11 +67,7 @@ export default function AvisoDetalhesPage() {
             setAviso(atualizado);
             setConfirmarDesativacao(false);
         } catch (error) {
-            setErroDesativacao(
-                error instanceof Error
-                    ? error.message
-                    : "Erro ao desativar aviso."
-            );
+            setErroDesativacao( error instanceof Error ? error.message : "Erro ao desativar aviso.");
         } finally {
             setDesativando(false);
         }
@@ -178,45 +175,20 @@ export default function AvisoDetalhesPage() {
                             </div>
                         )}
 
-                        {confirmarDesativacao && (
-                            <Card className="space-y-4">
-                                <div>
-                                    <h2 className="text-sm font-semibold">
-                                        Confirmar desativação
-                                    </h2>
-
-                                    <p className="mt-2 text-sm text-muted-foreground">
-                                        O aviso deixará de aparecer no quadro de avisos ativos,
-                                        mas continuará disponível no histórico.
-                                    </p>
-                                </div>
-
-                                {erroDesativacao && (
-                                    <p role="alert" className="text-sm text-red-600">
-                                        {erroDesativacao}
-                                    </p>
-                                )}
-
-                                <div className="flex justify-end gap-2">
-                                    <button type="button" disabled={desativando} className="rounded-lg border border-border px-4 py-2 text-sm"
-                                        onClick={() => {
-                                            setConfirmarDesativacao(false);
-                                            setErroDesativacao("");
-                                        }}
-                                    >
-                                        Cancelar
-                                    </button>
-
-                                    <button type="button" disabled={desativando} onClick={handleDesativar}
-                                        className="rounded-lg bg-red-600 px-4 py-2 text-sm font-medium text-white disabled:opacity-60"
-                                    >
-                                        {desativando ? "Desativando..." : "Confirmar desativação"}
-                                    </button>
-                                </div>
-                            </Card>
-                        )}
+                        <ModalConfirmacao
+                            aberto={confirmarDesativacao}
+                            titulo="Desativar aviso?"
+                            descricao="O aviso deixará de aparecer no quadro de avisos ativos, mas continuará disponível no histórico."
+                            variante="perigo"
+                            textoConfirmar="Desativar"
+                            carregando={desativando}
+                            erro={erroDesativacao}
+                            onConfirmar={desativacaoDoAviso}
+                            onFechar={() => {setConfirmarDesativacao(false); setErroDesativacao("");}}
+                        />
                     </>
                 )}
+                
             </section>
         </>
     );
