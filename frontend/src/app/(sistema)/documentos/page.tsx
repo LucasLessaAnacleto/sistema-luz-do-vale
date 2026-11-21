@@ -107,21 +107,81 @@ export default function DocumentosPage() {
             </div>
         </section>
 
-        <DocumentosRecentes />
+        <section className="mx-auto max-w-6xl space-y-3 px-5 py-4 sm:px-8">
 
-        <ProximosAniversariantes />
+            {carregando ? (
+                <CarregandoConteudo mensagem="Carregando documentos..." />
 
-{/* 
+            ) : erro ? (
+                <ErroCarregamento mensagem={erro} />
+
+            ) : documentosFiltrados.length ? (
+
+                documentosFiltrados.map(documento => (
+                    <Card key={documento.id} className="relative flex items-start gap-3 transition-colors hover:border-primary/40">
+
+                        <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary">
+                            <FileText className="h-5 w-5" />
+                        </span>
+
+                        <div className="min-w-0 flex-1">
+                            <div className="flex flex-wrap items-start justify-between gap-2">
+                                <div className="min-w-0">
+                                    <h2 className="break-words text-sm font-medium">
+                                        <Link href={`/documentos/${documento.id}`} className="after:absolute after:inset-0 after:rounded-2xl hover:text-primary-dark">
+                                            {documento.tipoDocumento}
+                                        </Link>
+                                    </h2>
+
+                                    <p className="mt-0.5 text-xs text-muted-foreground">
+                                        Documento #{documento.id} · Versão {documento.versao}
+                                    </p>
+                                </div>
+
+                                <BudgetStatus
+                                    texto={documento.status === "FINALIZADO" ? "Finalizado" : "Pendente"}
+                                    tipo={documento.status === "FINALIZADO" ? "sucesso" : "alerta"}
+                                />
+                            </div>
+
+                            <Link href={`/pacientes/${documento.pacienteId}`} className="relative z-10 mt-3 flex w-fit max-w-full items-center gap-2">
+                                <AvatarIniciais nome={documento.paciente} tamanho="sm" />
+
+                                <span className="text-xs">
+                                    {documento.paciente}
+
+                                    {documento.apelido && (
+                                        <span className="text-muted-foreground">
+                                            {" "}({documento.apelido})
+                                        </span>
+                                    )}
+                                </span>
+                            </Link>
+
+                            <div className="mt-3 flex flex-wrap justify-between gap-2 text-xs text-muted-foreground">
+                                <p>{documento.criadoPor}</p>
+                                <p>{formatarData(documento.dtCriacao)}</p>
+                            </div>
+                        </div>
+                    </Card>
+                ))
+
+            ) : (
+                <ItemsVazio
+                    titulo="Nenhum documento encontrado"
+                    descricao="Tente buscar por outro termo ou altere o filtro."
+                    icon={Search}
+                />
+            )}
+
+        </section>
+
         {totalPaginas > 1 && (
 
           <div className="flex items-center justify-center gap-3 py-4">
 
-            <button
-              type="button"
-              disabled={pagina === 0}
-              onClick={() => setPagina(pagina - 1)}
-              className="rounded-xl border border-border bg-card px-4 py-2 text-sm
-                enabled:cursor-pointer enabled:hover:bg-accent disabled:opacity-50"
+            <button type="button" disabled={pagina === 0} onClick={() => setPagina(pagina - 1)}
+              className="rounded-xl border border-border bg-card px-4 py-2 text-sm enabled:cursor-pointer enabled:hover:bg-accent disabled:opacity-50"
             >
               Anterior
             </button>
@@ -130,20 +190,14 @@ export default function DocumentosPage() {
               Página {pagina + 1} de {totalPaginas}
             </span>
 
-            <button
-              type="button"
-              disabled={pagina + 1 >= totalPaginas}
-              onClick={() => setPagina(pagina + 1)}
-              className="rounded-xl border border-border bg-card px-4 py-2 text-sm
-                enabled:cursor-pointer enabled:hover:bg-accent disabled:opacity-50"
+            <button type="button" disabled={pagina + 1 >= totalPaginas} onClick={() => setPagina(pagina + 1)} 
+                className="rounded-xl border border-border bg-card px-4 py-2 text-sm enabled:cursor-pointer enabled:hover:bg-accent disabled:opacity-50"
             >
               Próxima
             </button>
 
           </div>
-
-        )} */}
-
+        )}
     </>
   );
 }

@@ -1,4 +1,4 @@
-import type { DashResponse } from "@/app/types/dash";
+import type { AniversarioResponse, DashResponse } from "@/app/types/dash";
 import api from "./api";
 
 export async function indicadoresGerais(): Promise<DashResponse> {
@@ -13,5 +13,12 @@ export async function contarDocumentosMes(ano: number, mes: number): Promise<num
         params: { ano, mes }
     });
 
+    return response.data;
+}
+
+export async function buscarProximosAniversariantes(): Promise<AniversarioResponse[]> {
+    
+    const response = await api.get<AniversarioResponse[]>("/dashboard/proximos-aniversariantes");
+    
     return response.data;
 }

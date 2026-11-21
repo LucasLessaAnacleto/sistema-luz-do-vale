@@ -1,5 +1,6 @@
 package com.luzdovale.reabilitah.backend.application.services;
 
+import com.luzdovale.reabilitah.backend.application.DTO.dash.AniversarianteResponse;
 import com.luzdovale.reabilitah.backend.application.DTO.dash.DashResponse;
 import com.luzdovale.reabilitah.backend.domain.enuns.EnumStatusDocumento;
 import com.luzdovale.reabilitah.backend.domain.repository.DocumentoRepository;
@@ -8,8 +9,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.Duration;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.YearMonth;
+import java.util.Comparator;
+import java.util.List;
 
 @Service
 public class DashService {
@@ -49,6 +53,34 @@ public class DashService {
                 inicio,
                 fim
             );
+    }
+
+    public List<AniversarianteResponse> proximosAniversariantes(){
+        var hoje = LocalDateTime.now().withHour(0).withMinute(0).withSecond(0).withNano(0);
+        
+        var aniversariantes = pacienteRepository.findByAtivoTrueAndDtNascIsNotNull().stream().map(p -> {
+            var dtNasc = p.getDtNasc();
+            var proximo = LocalDateTime.of(hoje.getYear(), dtNasc.getMonth(), dtNasc.getDayOfMonth(), 0, 0, 0, 0);
+
+            if( proximo.isBefore(hoje) ){
+                proximo = proximo.plusYears(1);
+            }
+            long diasRestantes = Duration.between(hoje, proximo).toDays();
+            return new AniversarianteResponse(
+                p.getId(),
+                p.getNome(),
+                dtNasc,
+                proximo.toLocalDate(),
+                proximo.getYear() - dtNasc.getYear(),
+                diasRestantes
+            );
+        }).filter(p ->
+                p.diasRestantes() <= 100
+            )
+            .sorted(Comparator.comparing(a -> a.proximoAniversario()))
+            .toList();
+
+        return aniversariantes;
     }
 
     private long mediaAcolhimento(){
