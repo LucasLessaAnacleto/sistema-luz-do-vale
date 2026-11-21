@@ -31,6 +31,7 @@ export default function IndicadorDocumentosMes() {
     useEffect(() => {
         let cancelado = false;
         async function carregarQuantidade(){
+            const inicio = Date.now();
             try {
                 setCarregando(true);
                 setErro("");
@@ -45,12 +46,17 @@ export default function IndicadorDocumentosMes() {
                     setErro( error instanceof Error ? error.message : "Erro ao carregar quantidade de documentos.");
                 }
             } finally {
-                if(!cancelado){
-                    setCarregando(false);
-                }
+                const tempoDecorrido = Date.now() - inicio;
+                let tempoRestante = 200 - tempoDecorrido;
+                if(tempoRestante < 0) tempoRestante = 0;
+
+                setTimeout(() => {
+                    if(!cancelado){
+                        setCarregando(false);
+                    }
+                }, tempoRestante);                
             }
         }
-
         carregarQuantidade();
 
         return () => {
@@ -67,71 +73,40 @@ export default function IndicadorDocumentosMes() {
 
     return (
         <>
-
             <div className="mt-2 flex flex-wrap items-center justify-between gap-x-4 gap-y-1 rounded-xl border border-border bg-primary/5 px-3 py-2 text-primary-dark lg:mt-4">
-
                 <p className="flex items-center gap-2 text-xs">
-
                     <TrendingUp className="h-4 w-4" aria-hidden="true" />
-
                     Documentos no mês
-
                 </p>
 
                 <div className="flex items-center gap-1">
-
-                    <button
-                        type="button"
-                        onClick={() => trocarMes(-1)}
-                        className={buttonClass}
-                        aria-label="Mês anterior"
-                    >
+                    <button type="button" onClick={() => trocarMes(-1)} className={buttonClass}>
                         <ChevronLeft className="h-4 w-4" />
                     </button>
 
-                    <span
-                        className="min-w-24 text-center text-xs font-medium capitalize"
-                        aria-live="polite"
-                    >
+                    <span className="min-w-24 text-center text-xs font-medium capitalize">
                         {monthLabel}
                     </span>
 
-                    <button
-                        type="button"
-                        onClick={() => trocarMes(1)}
-                        className={buttonClass}
-                        aria-label="Próximo mês"
-                    >
+                    <button type="button" onClick={() => trocarMes(1)} className={buttonClass}>
                         <ChevronRight className="h-4 w-4" />
                     </button>
 
-                    <output
-                        aria-label={`Documentos em ${monthLabel}`}
-                        className="ml-2 min-w-6 text-right text-xl font-bold tabular-nums"
-                    >
-
+                    <span className="ml-2 inline-flex h-6 min-w-6 items-center justify-end text-right text-xl font-bold tabular-nums">
                         {carregando ? (
-
-                            <span className="inline-block h-5 w-6 animate-pulse rounded bg-zinc-300" />
-
+                            // <span className="inline-block h-5 w-6 animate-pulse rounded bg-zinc-300" />
+                            <span className="inline-block h-4 w-4 shrink-0 animate-spin rounded-full border-2 border-primary/30 border-t-primary" />
                         ) : (
-
                             erro ? "—" : quantidade ?? "—"
-
                         )}
-
-                    </output>
-
+                    </span>
                 </div>
-
             </div>
 
             {erro && (
-
                 <p role="alert" className="mt-2 text-xs text-red-600">
                     {erro}
                 </p>
-
             )}
 
         </>
