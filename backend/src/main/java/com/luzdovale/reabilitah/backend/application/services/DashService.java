@@ -12,6 +12,7 @@ import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.YearMonth;
+import java.time.temporal.ChronoUnit;
 import java.util.Comparator;
 import java.util.List;
 
@@ -56,21 +57,21 @@ public class DashService {
     }
 
     public List<AniversarianteResponse> proximosAniversariantes(){
-        var hoje = LocalDateTime.now().withHour(0).withMinute(0).withSecond(0).withNano(0);
-        
+        LocalDate hoje = LocalDate.now();
+
         var aniversariantes = pacienteRepository.findByAtivoTrueAndDtNascIsNotNull().stream().map(p -> {
             var dtNasc = p.getDtNasc();
-            var proximo = LocalDateTime.of(hoje.getYear(), dtNasc.getMonth(), dtNasc.getDayOfMonth(), 0, 0, 0, 0);
+            LocalDate proximo = dtNasc.withYear(hoje.getYear());
 
             if( proximo.isBefore(hoje) ){
-                proximo = proximo.plusYears(1);
+                proximo = dtNasc.withYear(hoje.getYear() + 1);
             }
-            long diasRestantes = Duration.between(hoje, proximo).toDays();
+            long diasRestantes = ChronoUnit.DAYS.between(hoje, proximo);
             return new AniversarianteResponse(
                 p.getId(),
                 p.getNome(),
                 dtNasc,
-                proximo.toLocalDate(),
+                proximo,
                 proximo.getYear() - dtNasc.getYear(),
                 diasRestantes
             );

@@ -47,7 +47,7 @@ export default function QuadroAvisos() {
 
                 <div className="flex items-center gap-3">
                     <Link href="/avisos" className="text-xs font-medium text-primary-dark hover:underline sm:text-sm">
-                        Histórico
+                        Ver todos
                     </Link>
 
                     <BotaoNovo href="/avisos/novo" texto="Novo aviso"/>

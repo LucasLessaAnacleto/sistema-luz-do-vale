@@ -18,6 +18,7 @@ import ItemsVazio from "@/app/components/ItemsVazio";
 import ErroCarregamento from "@/app/components/ErroCarregamento";
 import CarregandoConteudo from "@/app/components/CarregandoConteudo";
 import DocumentosRecentes from "../home/components/DocumentosRecentes";
+import BotaoVoltarHistorico from "@/app/components/ui/BotaoVoltarHistorico";
 
 export default function DocumentosPage() {
 
@@ -75,11 +76,15 @@ export default function DocumentosPage() {
             <div className="mx-auto max-w-6xl px-5 py-6 sm:px-8 sm:py-8">
                 <div className="flex items-center justify-between gap-4">
 
-                    <div className="min-w-0">
-                        <h1 className="text-2xl font-semibold">Documentos</h1>
-                        <p className="mt-0.5 text-xs text-muted-foreground">
-                            {totalDocumentos} documentos no total
-                        </p>
+                    <div className="flex items-center gap-3">
+                        <BotaoVoltarHistorico />
+
+                        <div className="min-w-0">
+                            <h1 className="text-2xl font-semibold">Documentos</h1>
+                            <p className="mt-0.5 text-xs text-muted-foreground">
+                                {totalDocumentos} documentos no total
+                            </p>
+                        </div>
                     </div>
 
                     <BotaoNovo href="/documentos/novo" texto="Novo documento" />

@@ -9,8 +9,8 @@ import CarregandoConteudo from "@/app/components/CarregandoConteudo";
 import { buscarProximosAniversariantes } from "@/app/services/dashService";
 import { AniversarioResponse } from "@/app/types/dash";
 
-function formatDiaMes(dtNasc: string): string{
-    const [_, mes, dia] = dtNasc.split("-");
+function formatDiaMes(dt: string): string{
+    const [_, mes, dia] = dt.split("-");
     return dia + "/" + mes;
 }
 
@@ -41,7 +41,6 @@ export default function ProximosAniversariantes() {
 
     return (
         <section>
-
             <h2 className="mb-3 flex min-h-9 items-center gap-2 text-base font-semibold sm:text-lg">
                 <Cake className="h-5 w-5 shrink-0 text-primary" />
                 Próximos aniversariantes
@@ -73,7 +72,7 @@ export default function ProximosAniversariantes() {
                                 </h3>
 
                                 <p className="mt-1 text-xs text-muted-foreground">
-                                    {formatDiaMes(aniversariante.dtNasc)}{" · "}{aniversariante.idade} anos
+                                    {formatDiaMes(aniversariante.proximoAniversario)}{" · "}{aniversariante.idade} anos
                                 </p>
 
                             </div>
@@ -92,7 +91,6 @@ export default function ProximosAniversariantes() {
 
                 </div>
             )}
-
         </section>
     );
 }

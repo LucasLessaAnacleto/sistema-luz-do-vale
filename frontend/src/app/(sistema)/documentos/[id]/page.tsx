@@ -130,8 +130,8 @@ export default function DocumentoDetalhesPage() {
                     </div>
 
                     <BadgeStatus
-                        texto={documento.dtAssinatura ? "Assinado" : "Pendente"}
-                        tipo={documento.dtAssinatura ? "sucesso" : "alerta"}
+                        texto={documento.status === "FINALIZADO" ? "Finalizado" : "Pendente"}
+                        tipo={documento.status === "FINALIZADO" ? "sucesso" : "alerta"}
                     />
                 </div>
 
@@ -184,12 +184,6 @@ export default function DocumentoDetalhesPage() {
                             Essa ação não registra uma assinatura.
                         </p>
 
-                        {documento.status === "FINALIZADO" && documento.dtFinalizacao && (
-                            <p className="mb-4 text-xs text-muted-foreground">
-                                Finalizado em {formatarData(documento.dtFinalizacao)}
-                            </p>
-                        )}
-
                         <div className="mt-4 flex gap-2">
                             <button type="button" onClick={() => setConfirmarFinalizacao(false)}
                                 className="rounded-lg border px-4 py-2 text-sm"
@@ -203,6 +197,12 @@ export default function DocumentoDetalhesPage() {
                                 {finalizando ? "Finalizando..." : "Confirmar finalização"}
                             </button>
                         </div>
+
+                        {documento.status === "FINALIZADO" && documento.dtFinalizacao && (
+                            <p className="mb-4 text-xs text-muted-foreground">
+                                Finalizado em {formatarData(documento.dtFinalizacao)}
+                            </p>
+                        )}
                     </Card>
                 )}
 
