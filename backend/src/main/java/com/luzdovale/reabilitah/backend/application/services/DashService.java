@@ -10,7 +10,6 @@ import org.springframework.stereotype.Service;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.YearMonth;
-import java.util.stream.Collectors;
 
 @Service
 public class DashService {
@@ -65,7 +64,7 @@ public class DashService {
                 ).toDays();
             }).average().orElse(0d);
 
-        return (long) Math.ceil(media);
+        return (long) Math.round(media);
     }
 
 }
