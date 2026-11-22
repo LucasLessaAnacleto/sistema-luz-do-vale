@@ -11,7 +11,7 @@ public class Senha {
     public Senha(String senha) {
         if (senha == null || !isValid(senha)) {
             throw new IllegalArgumentException(
-                "A senha deve ter no mínimo 6 caracteres, uma letra e um número."
+                "A senha deve ter no mínimo 8 caracteres, uma letra maiúscula, uma letra minúscula, um número e um caractere especial."
             );
         }
 
@@ -19,13 +19,15 @@ public class Senha {
     }
 
     private boolean isValid(String senha) {
-        if (senha.length() < 6) {
+        if (senha.codePointCount(0, senha.length()) < 8) {
             return false;
         }
 
-        boolean temLetra = senha.matches(".*[a-zA-Z].*");
-        boolean temNumero = senha.matches(".*[0-9].*");
+        boolean temMaiuscula = senha.matches("(?s).*\\p{Lu}.*");
+        boolean temMinuscula = senha.matches("(?s).*\\p{Ll}.*");
+        boolean temNumero = senha.matches("(?s).*\\p{Nd}.*");
+        boolean temEspecial = senha.matches("(?s).*[\\p{P}\\p{S}].*");
 
-        return temLetra && temNumero;
+        return temMaiuscula && temMinuscula && temNumero && temEspecial;
     }
 }
