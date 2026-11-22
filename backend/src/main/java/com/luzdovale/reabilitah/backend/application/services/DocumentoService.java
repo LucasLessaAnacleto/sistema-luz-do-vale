@@ -135,7 +135,7 @@ public class DocumentoService {
                 documento,
                 paciente,
                 usuarioLogado,
-                "CRIADO"
+                documentoOrigem == null ? "CRIADO" : "ALTERADO"
         );
 
         return documento;
