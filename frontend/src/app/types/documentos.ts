@@ -87,6 +87,7 @@ export interface CriarDocumentoRequest {
     pacienteId: number;
     observacao: string | null;
     dados: Record<string, unknown>;
+    documentoOrigemId?: number | null;
 }
 
 export type StatusDocumento = "PENDENTE" | "FINALIZADO";

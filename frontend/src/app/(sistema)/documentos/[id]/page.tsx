@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
-import { Download } from "lucide-react";
+import { CopyPlus, Download } from "lucide-react";
 
 import type { DocumentoDetalhes } from "@/app/types/documentos";
 import type { PacienteDetalhes } from "@/app/types/pacientes";
@@ -164,6 +164,15 @@ export default function DocumentoDetalhesPage() {
                         <Download className="h-4 w-4" />
                         {baixando ? "Baixando..." : "Baixar PDF"}
                     </button>
+
+                    {documento.ativo && (
+                        <Link href={`/documentos/novo/${documento.tipoDocumentoId}?paciente=${documento.pacienteId}&origem=${documento.id}`}
+                            className="flex min-h-10 items-center gap-2 rounded-full bg-primary/15 px-4 text-sm font-medium text-primary-dark transition-colors hover:bg-primary/25"
+                        >
+                            <CopyPlus className="h-4 w-4" />
+                            Criar com base neste
+                        </Link>
+                    )}
 
                     {podeFinalizar && (
                         <button type="button" onClick={() => setConfirmarFinalizacao(true)}
