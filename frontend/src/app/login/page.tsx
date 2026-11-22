@@ -44,16 +44,13 @@ async function loginAction(
     dispatch(setUsuario({ usuario }));
 
     return initialState;
-  } catch (error) {
+  } catch {
     dispatch(logout());
 
     return {
       email,
       senha,
-      erro:
-        error instanceof Error
-          ? error.message
-          : "Não foi possível entrar. Tente novamente.",
+      erro: "E-mail ou senha incorretos.",
       tentativa: previousState.tentativa + 1,
     };
   }

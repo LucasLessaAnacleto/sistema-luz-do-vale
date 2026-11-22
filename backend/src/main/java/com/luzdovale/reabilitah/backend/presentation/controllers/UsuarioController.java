@@ -1,6 +1,7 @@
 package com.luzdovale.reabilitah.backend.presentation.controllers;
 
 import com.luzdovale.reabilitah.backend.application.DTO.usuario.CriarUsuarioRequest;
+import com.luzdovale.reabilitah.backend.application.DTO.usuario.EditarInformacoesPessoaisRequest;
 import com.luzdovale.reabilitah.backend.application.DTO.usuario.EditarUsuarioRequest;
 import com.luzdovale.reabilitah.backend.application.DTO.usuario.UsuarioResponse;
 import com.luzdovale.reabilitah.backend.application.DTO.usuario.RedefinirSenhaDto;
@@ -71,6 +72,17 @@ public class UsuarioController {
         var usuarioLogado = (Usuario) auth.getPrincipal();
         usuarioService.redefinirSenha( id, dto.senha(), usuarioLogado );
         return ResponseEntity.ok().build();
+    }
+
+    @PatchMapping("/usuariologado")
+    public ResponseEntity<UsuarioResponse> alterarInformacoesPessoais(
+            @RequestBody EditarInformacoesPessoaisRequest dto,
+            Authentication auth
+    ){
+        var usuarioLogado = (Usuario) auth.getPrincipal();
+        return ResponseEntity.ok(
+                usuarioService.alterarInformacoesPessoais(dto, usuarioLogado)
+        );
     }
 
     @GetMapping("/usuariologado")

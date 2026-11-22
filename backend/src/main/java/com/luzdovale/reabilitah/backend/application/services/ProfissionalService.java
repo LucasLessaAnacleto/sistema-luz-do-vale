@@ -5,6 +5,7 @@ import com.luzdovale.reabilitah.backend.domain.entities.Profissional;
 import com.luzdovale.reabilitah.backend.domain.entities.Usuario;
 import com.luzdovale.reabilitah.backend.domain.repository.ProfissionalRepository;
 import com.luzdovale.reabilitah.backend.domain.valueobjects.CPF;
+import com.luzdovale.reabilitah.backend.domain.valueobjects.Telefone;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -36,6 +37,29 @@ public class ProfissionalService {
             profissionalDto,
             usuario.isAdmin()
         );
+    }
+
+    public Profissional salvarInformacoesPessoais(Profissional profissional, String nome, String telefone){
+        if(profissional == null){
+            profissional = new Profissional();
+        }
+
+        if(nome != null){
+            profissional.setNome(nome.trim());
+        }
+        if(profissional.getNome() == null || profissional.getNome().length() < 3 || profissional.getNome().length() > 255){
+            throw new IllegalArgumentException("Informe um nome completo válido.");
+        }
+
+        if(telefone != null){
+            telefone = telefone.trim();
+            if(telefone.length() > 40){
+                throw new IllegalArgumentException("Telefone inválido!");
+            }
+            profissional.setTelefone(telefone.isEmpty() ? null : new Telefone(telefone).toString());
+        }
+
+        return profissionalRepository.save(profissional);
     }
 
     private Profissional salvar(
