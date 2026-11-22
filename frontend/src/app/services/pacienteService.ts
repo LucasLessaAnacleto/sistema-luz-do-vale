@@ -33,3 +33,10 @@ export async function criarPaciente(dados: PacienteRequest): Promise<Paciente> {
 
     return response.data;
 }
+
+export async function editarPaciente(id: number, dados: PacienteRequest): Promise<Paciente> {
+    
+    const response = await api.put<Paciente>(`/pacientes/${id}`, dados);
+
+    return response.data;
+}
