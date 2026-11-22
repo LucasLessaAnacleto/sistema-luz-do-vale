@@ -1,5 +1,4 @@
 import type { Paciente, PacienteDetalhes, PacienteRequest } from "@/app/types/pacientes";
-import { buscarListaPacientesMock } from "./mocks/pacienteMock";
 import api from "./api";
 import { HistoricoDocumento } from "../types/documentos";
 

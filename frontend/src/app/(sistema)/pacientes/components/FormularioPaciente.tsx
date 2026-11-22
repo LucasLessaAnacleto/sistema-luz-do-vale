@@ -9,6 +9,7 @@ import FichaAcolhimento from "./FichaAcolhimento";
 
 import RodapeFormulario from "@/app/components/RodapeFormulario";
 import BotaoPreencherTeste from "./BotaoPreencherTeste";
+import { cn } from "@/app/util";
 
 interface Props {
     action: (form: FormData) => void;
@@ -18,6 +19,7 @@ interface Props {
     modo: "cadastro" | "edicao";
     cancelarHref: string;
     children?: ReactNode;
+    dentroDoLayout?: boolean;
 }
 
 export default function FormularioPaciente({
@@ -27,14 +29,12 @@ export default function FormularioPaciente({
     loading = false,
     modo,
     cancelarHref,
-    children
+    children,
+    dentroDoLayout
 }: Props) {
 
     return (
-        <form
-            action={action}
-            className="mx-auto max-w-6xl space-y-8 px-5 pt-6 pb-32 sm:px-8"
-        >
+        <form action={action} className={cn(dentroDoLayout ? "space-y-8 pb-32" : "mx-auto max-w-6xl space-y-8 px-5 pt-6 pb-32 sm:px-8")}>
             {modo === "cadastro" && (
                 <div className="flex justify-end">
                     <BotaoPreencherTeste />

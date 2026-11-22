@@ -1,6 +1,5 @@
 import { redirect } from "next/navigation";
 
-import type { PacienteRequest } from "@/app/types/pacientes";
 import { criarPaciente } from "@/app/services/pacienteService";
 import { montarPacienteRequest } from "./montarPacienteRequest";
 
@@ -19,7 +18,7 @@ export async function actionCadastrarPaciente(_estado: EstadoFormulario, form: F
     }
 
     valores.tiposDependencia = form.getAll("tiposDependencia").map((tipo) => String(tipo)).join(",");
-    
+
     const dados = montarPacienteRequest(form);
 
     let paciente;

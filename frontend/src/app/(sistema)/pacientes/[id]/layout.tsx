@@ -11,7 +11,6 @@ import { cn, formatarData } from "@/app/util";
 
 import AvatarIniciais from "@/app/components/ui/AvatarIniciais";
 import BotaoVoltar from "@/app/components/ui/BotaoVoltar";
-import BotaoNovo from "@/app/components/ui/BotaoNovo";
 
 interface Props {
     children: ReactNode;
@@ -51,7 +50,7 @@ export default function PacienteLayout({ children, params }: Props) {
 
     useEffect(() => {
         carregarPaciente();
-    }, [id]);
+    }, [id, pathname]);
 
 
     async function carregarPaciente() {
@@ -200,32 +199,32 @@ export default function PacienteLayout({ children, params }: Props) {
 
             </section>
 
+            {!editando && (
+                <div className="border-b border-border bg-card">
 
-            <div className="border-b border-border bg-card">
+                    <div className="mx-auto flex max-w-6xl">
 
-                <div className="mx-auto flex max-w-6xl">
+                        <Link href={`/pacientes/${id}`}
+                            className={cn("flex-1 border-b-2 px-4 py-4 text-center text-sm font-medium transition-colors", 
+                                !historicoAtivo ? "border-primary text-primary-dark" : "border-transparent text-muted-foreground hover:bg-primary/5"
+                            )}
+                        >
+                            Prontuário
+                        </Link>
 
-                    <Link href={`/pacientes/${id}`}
-                        className={cn("flex-1 border-b-2 px-4 py-4 text-center text-sm font-medium transition-colors", 
-                            !historicoAtivo ? "border-primary text-primary-dark" : "border-transparent text-muted-foreground hover:bg-primary/5"
-                        )}
-                    >
-                        Prontuário
-                    </Link>
+                        <Link
+                            href={`/pacientes/${id}/historico`}
+                            className={cn("flex-1 border-b-2 px-4 py-4 text-center text-sm font-medium transition-colors",
+                                historicoAtivo ? "border-primary text-primary-dark" : "border-transparent text-muted-foreground hover:bg-primary/5"
+                            )}
+                        >
+                            Histórico
+                        </Link>
 
-                    <Link
-                        href={`/pacientes/${id}/historico`}
-                        className={cn("flex-1 border-b-2 px-4 py-4 text-center text-sm font-medium transition-colors",
-                            historicoAtivo ? "border-primary text-primary-dark" : "border-transparent text-muted-foreground hover:bg-primary/5"
-                        )}
-                    >
-                        Histórico
-                    </Link>
+                    </div>
 
                 </div>
-
-            </div>
-
+            )}
 
             <div className="mx-auto max-w-6xl px-5 py-6 sm:px-8">
                 {children}

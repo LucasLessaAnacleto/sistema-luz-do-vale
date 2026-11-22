@@ -46,9 +46,9 @@ export default function EditarPacientePage() {
             }
         }
 
-        if (typeof pacienteId == "number" && pacienteId > 0) {
+        if (Number.isInteger(pacienteId) && pacienteId > 0) {
             carregar();
-        } else {
+        }else {
             setErro("Identificador do paciente inválido.");
             setCarregando(false);
         }
@@ -100,6 +100,7 @@ export default function EditarPacientePage() {
                     loading={salvando}
                     modo="edicao"
                     cancelarHref={`/pacientes/${pacienteId}`}
+                    dentroDoLayout
                 />
             </div>
         );
