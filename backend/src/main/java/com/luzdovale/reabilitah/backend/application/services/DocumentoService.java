@@ -46,6 +46,28 @@ public class DocumentoService {
         var paciente = pacienteRepository.findById(request.pacienteId())
                 .orElseThrow(() -> new PacienteNaoEncontradoException());
 
+        Documento documentoOrigem = null;
+
+        if (request.documentoOrigemId() != null) {
+
+            documentoOrigem = buscarDocumento(request.documentoOrigemId());
+
+            if (!documentoOrigem.getPaciente().getId().equals(paciente.getId())) {
+                throw new IllegalArgumentException(
+                        "O documento de origem pertence a outro paciente."
+                );
+            }
+
+            if (!documentoOrigem.getTipoDocumentoVersao()
+                    .getTipoDocumento().getId()
+                    .equals(versao.getTipoDocumento().getId())) {
+
+                throw new IllegalArgumentException(
+                        "O documento de origem possui outro tipo de documento."
+                );
+            }
+        }
+
         var campos = documentoCamposService.lerCampos(versao);
 
         String dadosNormalizados = documentoCamposService
@@ -61,6 +83,7 @@ public class DocumentoService {
         documento.setCriadoPor(usuarioLogado);
         documento.setObservacao(request.observacao());
         documento.setDados(dadosNormalizados);
+        documento.setDocumentoOrigem(documentoOrigem);
 
         documento = documentoRepository.save(documento);
 
