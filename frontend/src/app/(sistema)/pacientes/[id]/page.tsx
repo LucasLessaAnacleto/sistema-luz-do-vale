@@ -1,13 +1,14 @@
 "use client";
 
 import { use, useEffect, useState } from "react";
-import { ClipboardList, UserRound, Users } from "lucide-react";
+import { ClipboardList, Download, UserRound, Users } from "lucide-react";
 
 import type { OpcaoLista } from "@/app/types/documentos";
 import type { PacienteDetalhes } from "@/app/types/pacientes";
 
 import { buscarPaciente } from "@/app/services/pacienteService";
 import { buscarLista } from "@/app/services/listaService";
+import { buscarPdfDocumento } from "@/app/services/documentoService";
 
 import Card from "@/app/components/ui/Card";
 import ListaDetalhes from "@/app/components/ListaDetalhes";
@@ -64,6 +65,7 @@ export default function PacientePage({ params }: { params: Promise<{ id: string 
     const [dependencias, setDependencias] = useState<OpcaoLista[]>([]);
     const [dependenciasLicitas, setDependenciasLicitas] = useState<OpcaoLista[]>([]);
     const [dependenciasIlicitas, setDependenciasIlicitas] = useState<OpcaoLista[]>([]);
+    const [baixandoPdf, setBaixandoPdf] = useState(false);
 
     useEffect(() => {
         carregarDados();
@@ -92,6 +94,36 @@ export default function PacientePage({ params }: { params: Promise<{ id: string 
                 alert(error.message);
             }
 
+        }
+    }
+
+    async function baixarFichaPdf() {
+        if (!paciente?.fichaAcolhimento) {
+            return;
+        }
+
+        try {
+            setBaixandoPdf(true);
+
+            const fichaId = paciente.fichaAcolhimento.id;
+            const pdf = await buscarPdfDocumento(fichaId);
+
+            const url = URL.createObjectURL(pdf);
+            const link = document.createElement("a");
+
+            link.href = url;
+            link.download = `ficha-acolhimento-${paciente.id}.pdf`;
+
+            document.body.appendChild(link);
+            link.click();
+            link.remove();
+
+            URL.revokeObjectURL(url);
+
+        } catch (error) {
+            alert( error instanceof Error ? error.message : "Erro ao baixar ficha de acolhimento.");
+        } finally {
+            setBaixandoPdf(false);
         }
     }
 
@@ -176,10 +208,27 @@ export default function PacientePage({ params }: { params: Promise<{ id: string 
         <div className="space-y-5">
 
             <Card>
-                <h2 className="mb-4 flex items-center gap-2 text-lg font-semibold">
-                    <UserRound className="h-5 w-5 shrink-0 text-primary" />
-                    Dados do Acolhido
-                </h2>
+                <div className="mb-4 flex items-center justify-between gap-3">
+
+                    <h2 className="flex items-center gap-2 text-lg font-semibold">
+                        <UserRound className="h-5 w-5 shrink-0 text-primary" />
+                        Dados do Acolhido
+                    </h2>
+
+                    {ficha && (
+                        <button
+                            type="button"
+                            onClick={baixarFichaPdf}
+                            disabled={baixandoPdf}
+                            title="Baixar ficha de acolhimento"
+                            aria-label="Baixar ficha de acolhimento"
+                            className="flex h-9 w-9 shrink-0 cursor-pointer items-center justify-center rounded-full bg-primary/10 text-primary-dark transition-colors hover:bg-primary/20 disabled:cursor-not-allowed disabled:opacity-50"
+                        >
+                            <Download className="h-4 w-4" />
+                        </button>
+                    )}
+
+                </div>
 
                 <ListaDetalhes campos={dadosAcolhido} />
             </Card>

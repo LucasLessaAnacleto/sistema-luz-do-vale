@@ -165,7 +165,7 @@ export default function DocumentoDetalhesPage() {
                         {baixando ? "Baixando..." : "Baixar PDF"}
                     </button>
 
-                    {documento.ativo && (
+                    {documento.ativo && documento.tipoDocumentoId !== 1 && (
                         <Link href={`/documentos/novo/${documento.tipoDocumentoId}?paciente=${documento.pacienteId}&origem=${documento.id}`}
                             className="flex min-h-10 items-center gap-2 rounded-full bg-primary/15 px-4 text-sm font-medium text-primary-dark transition-colors hover:bg-primary/25"
                         >
