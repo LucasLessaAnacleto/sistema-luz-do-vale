@@ -14,15 +14,12 @@ import com.luzdovale.reabilitah.backend.domain.enuns.EnumRoleUsuario;
 import com.luzdovale.reabilitah.backend.domain.repository.UsuarioRepository;
 import com.luzdovale.reabilitah.backend.domain.valueobjects.Email;
 import com.luzdovale.reabilitah.backend.domain.valueobjects.Senha;
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.LockModeType;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -38,9 +35,6 @@ public class UsuarioService {
     private PerfilService perfilService;
     @Autowired
     private ProfissionalService profissionalService;
-    @Autowired
-    private EntityManager entityManager;
-
 
     public List<UsuarioResponse> listarComDadosProfissional(Usuario usuarioLogado, Boolean ativo) {
 
@@ -106,6 +100,7 @@ public class UsuarioService {
         usuario.setPerfil(perfil);
         usuario.setEmail(email);
 
+        new Senha(senha);
         usuario.setSenha(passwordEncoder.encode(senha));
 
         if(role != null){
@@ -162,16 +157,15 @@ public class UsuarioService {
             Usuario usuarioLogado
     ){
         Usuario usuario = buscarPorId(usuarioLogado.getId());
-        entityManager.refresh(usuario, LockModeType.PESSIMISTIC_WRITE);
 
-        if(dto.senhaAtual() != null || dto.novaSenha() != null){
-            if(dto.senhaAtual() == null || !passwordEncoder.matches(dto.senhaAtual(), usuario.getSenha())){
+        if (dto.senhaAtual() != null || dto.novaSenha() != null) {
+
+            if (dto.senhaAtual() == null ||
+                    !passwordEncoder.matches(dto.senhaAtual(), usuario.getSenha())) {
                 throw new IllegalArgumentException("Senha atual incorreta.");
             }
+
             new Senha(dto.novaSenha());
-            if(dto.novaSenha().getBytes(StandardCharsets.UTF_8).length > 72){
-                throw new IllegalArgumentException("A nova senha é muito longa.");
-            }
             usuario.setSenha(passwordEncoder.encode(dto.novaSenha()));
         }
 
@@ -203,7 +197,10 @@ public class UsuarioService {
         }
 
         Usuario usuario = buscarPorId(usuarioId);
+
+        new Senha(novaSenha);
         usuario.setSenha(passwordEncoder.encode(novaSenha));
+
         usuarioRepository.save(usuario);
     }
 

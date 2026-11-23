@@ -19,14 +19,14 @@ public class Senha {
     }
 
     private boolean isValid(String senha) {
-        if (senha.codePointCount(0, senha.length()) < 8) {
+        if (senha.length() < 8) {
             return false;
         }
 
-        boolean temMaiuscula = senha.matches("(?s).*\\p{Lu}.*");
-        boolean temMinuscula = senha.matches("(?s).*\\p{Ll}.*");
-        boolean temNumero = senha.matches("(?s).*\\p{Nd}.*");
-        boolean temEspecial = senha.matches("(?s).*[\\p{P}\\p{S}].*");
+        boolean temMaiuscula = senha.matches(".*[A-Z].*");
+        boolean temMinuscula = senha.matches(".*[a-z].*");
+        boolean temNumero = senha.matches(".*[0-9].*");
+        boolean temEspecial = senha.matches(".*[^a-zA-Z0-9].*");
 
         return temMaiuscula && temMinuscula && temNumero && temEspecial;
     }

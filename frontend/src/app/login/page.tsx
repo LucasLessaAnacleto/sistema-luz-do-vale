@@ -14,8 +14,6 @@ import { loginService } from "@/app/services/authService";
 import { buscarUsuarioLogado } from "@/app/services/usuarioService";
 
 
-
-
 const initialState: LoginFormState = { email: "", senha: "", erro: "", tentativa: 0 };
 
 export default function LoginPage() {
@@ -27,10 +25,7 @@ export default function LoginPage() {
     if (status === "autenticado") router.replace("/");
   }, [status, router]);
 
-async function loginAction(
-  previousState: LoginFormState,
-  dados: FormData
-): Promise<LoginFormState> {
+async function loginAction(previousState: LoginFormState, dados: FormData): Promise<LoginFormState> {
   const email = String(dados.get("email") ?? "");
   const senha = String(dados.get("senha") ?? "");
 

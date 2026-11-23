@@ -1,6 +1,6 @@
 "use client";
 
-import { Bell, ChevronRight, CircleHelp, LayoutTemplate, LogOut, ShieldCheck, UserRound, Users } from "lucide-react";
+import { LogOut, ShieldCheck, UserRound, Users } from "lucide-react";
 import { useAppDispatch, useAppSelector } from "@/app/redux/hook";
 import { logout } from "@/app/redux/slices/authSlice";
 import ConfiguracaoSecao from "./components/ConfigSecao";
@@ -13,7 +13,6 @@ export default function ConfiguracoesPage() {
   const dispatch = useAppDispatch();
 
   const isAdmin = usuario?.role === "ROLE_ADMIN";
-  console.log("usuario", usuario);
   const resolveNome = usuario?.nome || (isAdmin ? "Administrador" : "Minha conta");
 
   return (
@@ -40,7 +39,7 @@ export default function ConfiguracoesPage() {
         <ConfiguracaoSecao titulo="Conta">
 
           <ConfiguracaoLink
-            href="/configuracoes/informacoespessoais"
+            href="/configuracoes/informacoes-pessoais"
             titulo="Informações Pessoais"
             descricao="Perfil, dados de acesso e senha"
             icon={UserRound}

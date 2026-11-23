@@ -40,8 +40,8 @@ public class ProfissionalService {
     }
 
     public Profissional salvarInformacoesPessoais(Profissional profissional, String nome, String telefone){
-        if(profissional == null){
-            profissional = new Profissional();
+        if (profissional == null) {
+            throw new IllegalArgumentException("O usuário não possui um profissional vinculado.");
         }
 
         if(nome != null){

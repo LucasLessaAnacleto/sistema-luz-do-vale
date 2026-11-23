@@ -50,7 +50,7 @@ public class UsuarioController {
         );
     }
 
-    @PatchMapping("/{id}")
+    @PutMapping("/{id}")
     public ResponseEntity<UsuarioResponse> editar(
             @PathVariable Long id,
             @RequestBody EditarUsuarioRequest usuarioDto,
