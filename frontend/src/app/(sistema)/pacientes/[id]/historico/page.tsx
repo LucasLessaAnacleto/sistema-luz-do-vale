@@ -1,8 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { use, useEffect, useState } from "react";
-import { FileText, Plus } from "lucide-react";
+import { useEffect, useState } from "react";
+import { FileText, Plus, UserRoundCheck, UserRoundX } from "lucide-react";
 
 import type { HistoricoDocumento } from "@/app/types/documentos";
 import { buscarHistoricoPaciente } from "@/app/services/pacienteService";
@@ -12,10 +12,11 @@ import Card from "@/app/components/ui/Card";
 import ItemsVazio from "@/app/components/ItemsVazio";
 import BotaoNovo from "@/app/components/ui/BotaoNovo";
 import BadgeStatus from "@/app/components/ui/BudgeStatus";
+import { useParams } from "next/navigation";
 
-export default function HistoricoPacientePage({ params }: { params: Promise<{ id: string }> }) {
+export default function HistoricoPacientePage() {
 
-    const { id } = use(params);
+    const { id } = useParams<{ id: string }>();
 
     const [historicos, setHistoricos] = useState<HistoricoDocumento[]>([]);
     const [carregando, setCarregando] = useState(true);
@@ -118,18 +119,43 @@ export default function HistoricoPacientePage({ params }: { params: Promise<{ id
 
                         ) : (
 
-                            <Card key={historico.id}>
+                            <Card key={historico.id} className="flex items-start gap-3">
 
-                                <p className="text-sm font-medium">
-                                    {historico.acao}
-                                </p>
+                                <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary">
+                                    {historico.acao === "DESATIVADO" ? <UserRoundX className="h-5 w-5" /> : <UserRoundCheck className="h-5 w-5" />}
+                                </span>
 
-                                <p className="mt-1 text-xs text-muted-foreground">
-                                    {formatarData(historico.dtCriacao)}
-                                </p>
+                                <div className="min-w-0 flex-1">
+                                    <div className="flex flex-wrap items-start justify-between gap-2">
+                                        <h3 className="text-sm font-medium">
+                                            Situação do paciente
+                                        </h3>
 
+                                        <BadgeStatus texto={historico.acao} tipo={historico.acao === "DESATIVADO" ? "alerta" : "sucesso"} />
+                                    </div>
+
+                                    
+                                    <p className="mt-0.5 text-xs text-muted-foreground">
+                                        {historico.observacao ? (
+                                            <>
+                                                <span className="font-medium text-foreground">
+                                                    Motivo:
+                                                </span>
+                                                {" "}{historico.observacao}
+                                            </>
+                                        ) : (
+                                            "Motivo não informado"
+                                        )}
+                                    </p>
+
+
+                                    <div className="mt-3 flex flex-wrap justify-between gap-2 text-xs text-muted-foreground">
+                                        <p>{historico.usuario}</p>
+                                        <p>{formatarData(historico.dtCriacao)}</p>
+                                    </div>
+
+                                </div>
                             </Card>
-
                         )
                     ))}
                 </div>
