@@ -1,6 +1,7 @@
 package com.luzdovale.reabilitah.backend.presentation.controllers;
 
 import com.luzdovale.reabilitah.backend.application.DTO.documento.HistDocumentoResponse;
+import com.luzdovale.reabilitah.backend.application.DTO.paciente.AlterarStatusPacienteRequest;
 import com.luzdovale.reabilitah.backend.application.DTO.paciente.PacienteDetalhesResponse;
 import com.luzdovale.reabilitah.backend.application.DTO.paciente.PacienteRequest;
 import com.luzdovale.reabilitah.backend.application.DTO.paciente.PacienteResponse;
@@ -49,6 +50,24 @@ public class PacienteController {
             pacienteService.editar(id, dto, (Usuario) auth.getPrincipal())
         );
     }
+
+
+    @PatchMapping("/{id}/desativar")
+    public ResponseEntity<PacienteResponse> desativar(@PathVariable Long id, @RequestBody AlterarStatusPacienteRequest dto, Authentication auth) {
+
+        return ResponseEntity.ok(
+            pacienteService.desativar(id, dto, (Usuario) auth.getPrincipal())
+        );
+    }
+
+    @PatchMapping("/{id}/reativar")
+    public ResponseEntity<PacienteResponse> reativar(@PathVariable Long id, @RequestBody AlterarStatusPacienteRequest dto, Authentication auth) {
+
+        return ResponseEntity.ok(
+            pacienteService.reativar(id, dto, (Usuario) auth.getPrincipal())
+        );
+    }
+
 
     @GetMapping("/{id}/historico")
     public ResponseEntity<List<HistDocumentoResponse>> listarHistorico(@PathVariable Long id, @RequestParam(required = false) Long usuarioId) {

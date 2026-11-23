@@ -1,4 +1,4 @@
-import type { Paciente, PacienteDetalhes, PacienteRequest } from "@/app/types/pacientes";
+import type { AlterarStatusPacienteRequest, Paciente, PacienteDetalhes, PacienteRequest } from "@/app/types/pacientes";
 import api from "./api";
 import { HistoricoDocumento } from "../types/documentos";
 
@@ -36,6 +36,21 @@ export async function criarPaciente(dados: PacienteRequest): Promise<Paciente> {
 export async function editarPaciente(id: number, dados: PacienteRequest): Promise<Paciente> {
     
     const response = await api.put<Paciente>(`/pacientes/${id}`, dados);
+
+    return response.data;
+}
+
+
+export async function desativarPaciente(id: number, dados: AlterarStatusPacienteRequest): Promise<Paciente> {
+
+    const response = await api.patch<Paciente>(`/pacientes/${id}/desativar`, dados);
+
+    return response.data;
+}
+
+export async function reativarPaciente(id: number, dados: AlterarStatusPacienteRequest): Promise<Paciente> {
+
+    const response = await api.patch<Paciente>(`/pacientes/${id}/reativar`, dados);
 
     return response.data;
 }
