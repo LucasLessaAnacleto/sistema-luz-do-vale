@@ -75,3 +75,7 @@ export interface PacienteRequest {
     responsavel: ResponsavelRequest;
     fichaAcolhimento: FichaAcolhimentoRequest;
 }
+
+export interface AlterarStatusPacienteRequest {
+    motivo: string | null;
+}

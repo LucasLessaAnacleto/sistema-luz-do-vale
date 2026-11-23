@@ -1,0 +1,3 @@
+- botao de voltar da página de documentos, sempre existe mesmo não chegando de nenhuma página, fica um loop infinito entre "documentos" e "novo documento"
+- quando esta em um documento e clica no atalho para paciente, e depois clica em voltar, ele vai para pacientes ao inves de voltar para o documento
+- atualmente é possivel criar mais de 1 paciente com as mesmas informações

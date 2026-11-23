@@ -1,4 +1,4 @@
-import type { Usuario } from "@/app/types/usuarios";
+import type { EditarInformacoesPessoaisRequest, Usuario } from "@/app/types/usuarios";
 import api from "./api";
 import { buscarUsuarioLogadoMock } from "./mocks/authMock";
 
@@ -10,6 +10,11 @@ export async function buscarUsuarioLogado(): Promise<Usuario> {
   const resultado = await api.get<Usuario>("/usuarios/usuariologado");
 
   return resultado.data;
+}
+
+export async function alterarInformacoesPessoais(dados: EditarInformacoesPessoaisRequest): Promise<Usuario> {
+  const response = await api.patch<Usuario>("/usuarios/usuariologado", dados);
+  return response.data;
 }
 
 export async function buscarListaUsuarios(ativo?: boolean): Promise<Usuario[]> {

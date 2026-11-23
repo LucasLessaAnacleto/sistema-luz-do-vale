@@ -14,6 +14,7 @@ import java.util.List;
 public class CampoDocumento {
     private String nome;
     private String rotulo;
+    private String descricao;
     private EnumTipoCampo tipo;
     private boolean obrigatorio = true;
 

@@ -1,0 +1,3 @@
+ALTER TABLE documento
+    ADD COLUMN status VARCHAR(20) NOT NULL DEFAULT 'PENDENTE',
+    ADD COLUMN dt_finalizacao TIMESTAMP;

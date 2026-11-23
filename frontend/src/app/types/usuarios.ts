@@ -18,6 +18,14 @@ export interface Usuario {
   dtDesativado: string | null;
 }
 
+export interface EditarInformacoesPessoaisRequest {
+  nome?: string;
+  email?: string;
+  telefone?: string;
+  senhaAtual?: string;
+  novaSenha?: string;
+}
+
 export interface AuthContextType {
   usuario: Usuario | null;
   token: string | null;

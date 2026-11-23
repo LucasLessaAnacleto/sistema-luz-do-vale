@@ -1,11 +1,10 @@
 "use client";
 
-import { Bell, ChevronRight, CircleHelp, LayoutTemplate, LogOut, ShieldCheck, UserRound, Users } from "lucide-react";
+import { LogOut, ShieldCheck, UserRound, Users } from "lucide-react";
 import { useAppDispatch, useAppSelector } from "@/app/redux/hook";
 import { logout } from "@/app/redux/slices/authSlice";
 import ConfiguracaoSecao from "./components/ConfigSecao";
 import ConfiguracaoLink from "./components/ConfigLink";
-import ConfigDetalhes from "./components/ConfigDetalhes";
 import Button from "@/app/components/ui/Button";
 import AvatarIniciais from "@/app/components/ui/AvatarIniciais";
 
@@ -14,7 +13,6 @@ export default function ConfiguracoesPage() {
   const dispatch = useAppDispatch();
 
   const isAdmin = usuario?.role === "ROLE_ADMIN";
-  console.log("usuario", usuario);
   const resolveNome = usuario?.nome || (isAdmin ? "Administrador" : "Minha conta");
 
   return (
@@ -40,30 +38,12 @@ export default function ConfiguracoesPage() {
 
         <ConfiguracaoSecao titulo="Conta">
 
-          <ConfigDetalhes
+          <ConfiguracaoLink
+            href="/configuracoes/informacoes-pessoais"
             titulo="Informações Pessoais"
             descricao="Perfil, dados de acesso e senha"
-            icon={UserRound}            
-          >
-             <dl className="space-y-3">
-
-              <div>
-                <dt className="text-xs text-muted-foreground">Nome</dt>
-                <dd className="mt-1 text-sm">{usuario?.nome || (<span className="text-muted-foreground">{isAdmin ? "Conta de administrador" : "Não informado"}</span>)}</dd>
-              </div>
-
-              <div>
-                <dt className="text-xs text-muted-foreground">E-mail</dt>
-                <dd className="mt-1 text-sm">{usuario?.email || (<span className="text-muted-foreground">Não informado</span>)}</dd>
-              </div>
-
-              <div>
-                <dt className="text-xs text-muted-foreground">Perfil</dt>
-                <dd className="mt-1 text-sm">{usuario?.perfil || (<span className="text-muted-foreground">Não informado</span>)}</dd>
-              </div>
-
-            </dl>
-          </ConfigDetalhes>
+            icon={UserRound}
+          />
 
         </ConfiguracaoSecao>
   

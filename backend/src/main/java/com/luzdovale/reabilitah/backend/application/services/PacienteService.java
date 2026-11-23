@@ -1,6 +1,7 @@
 package com.luzdovale.reabilitah.backend.application.services;
 
 import com.luzdovale.reabilitah.backend.application.DTO.documento.DocumentoDetalhesResponse;
+import com.luzdovale.reabilitah.backend.application.DTO.paciente.AlterarStatusPacienteRequest;
 import com.luzdovale.reabilitah.backend.application.DTO.paciente.PacienteRequest;
 import com.luzdovale.reabilitah.backend.application.DTO.paciente.PacienteResponse;
 import com.luzdovale.reabilitah.backend.application.DTO.responsavel.ResponsavelResponse;
@@ -17,6 +18,7 @@ import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -29,6 +31,8 @@ public class PacienteService {
     private ResponsavelService responsavelService;
     @Autowired
     private DocumentoService documentoService;
+    @Autowired
+    private HistDocumentoService histDocumentoService;
 
     public List<PacienteResponse> listarTodos(Boolean ativo) {
         return pacienteRepository.findAll()
@@ -127,6 +131,62 @@ public class PacienteService {
 
         return mapeiaParaDTO(paciente, responsavel);
     }
+
+
+    @Transactional
+    public PacienteResponse desativar(Long id, AlterarStatusPacienteRequest dto, Usuario usuarioLogado) {
+        validarPermissaoCadastro(usuarioLogado);
+
+        Paciente paciente = buscarPaciente(id);
+
+        if (!paciente.isAtivo()) {
+            throw new IllegalArgumentException("O paciente já está desativado.");
+        }
+
+        paciente.setAtivo(false);
+        paciente.setDtDesativado(LocalDateTime.now());
+
+        pacienteRepository.save(paciente);
+
+        histDocumentoService.registrarHistorico(
+            null,
+            paciente,
+            usuarioLogado,
+            "DESATIVADO",
+            dto.motivo()
+        );
+
+        var responsavel = responsavelService.buscarPorPaciente(paciente);
+        return mapeiaParaDTO(paciente, responsavel);
+    }
+
+    @Transactional
+    public PacienteResponse reativar(Long id, AlterarStatusPacienteRequest dto, Usuario usuarioLogado) {
+        validarPermissaoCadastro(usuarioLogado);
+
+        Paciente paciente = buscarPaciente(id);
+
+        if (paciente.isAtivo()) {
+            throw new IllegalArgumentException("O paciente já está ativo.");
+        }
+
+        paciente.setAtivo(true);
+        paciente.setDtDesativado(null);
+
+        pacienteRepository.save(paciente);
+
+        histDocumentoService.registrarHistorico(
+            null,
+            paciente,
+            usuarioLogado,
+            "REATIVADO",
+            dto.motivo()
+        );
+
+        var responsavel = responsavelService.buscarPorPaciente(paciente);
+        return mapeiaParaDTO(paciente, responsavel);
+    }
+
 
     public Paciente buscarPaciente(Long id) {
         if(id == null) throw new PacienteNaoEncontradoException();

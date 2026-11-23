@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+
+    <style>
+        @page {
+            size: A4;
+            margin: 18mm 16mm 18mm 16mm;
+        }
+
+        body {
+            font-family: "Times New Roman", serif;
+            font-size: 13px;
+            color: #000;
+        }
+
+        .cabecalho {
+            text-align: center;
+            margin-bottom: 24px;
+        }
+
+        .logo {
+            font-family: Arial, sans-serif;
+            font-size: 22px;
+            font-weight: bold;
+        }
+
+        .divisoria {
+            border-top: 1px solid #000;
+            margin: 3px 0;
+        }
+
+        .linha-topo {
+            font-size: 10px;
+            font-style: italic;
+        }
+
+        .titulo {
+            font-family: Arial, sans-serif;
+            font-size: 18px;
+            font-weight: bold;
+            text-align: center;
+            margin-bottom: 12px;
+        }
+
+        .introducao {
+            line-height: 1.45;
+            margin: 0 0 12px;
+        }
+
+        .campo-nome {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 8px;
+        }
+
+        .campo-nome .label {
+            width: 75px;
+        }
+
+        .campo-nome .valor {
+            border-bottom: 1px solid #000;
+            padding-left: 4px;
+        }
+
+        .area-registro {
+            position: relative;
+            min-height: 600px;
+        }
+
+        .linhas {
+            position: absolute;
+            top: 0;
+            right: 0;
+            left: 0;
+        }
+
+        .linha-vazia {
+            height: 23px;
+            border-bottom: 1px solid #777;
+        }
+
+        .registro {
+            position: relative;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            line-height: 24px;
+        }
+
+        .rodape {
+            text-align: center;
+            font-size: 10px;
+            line-height: 1.3;
+            margin-top: 8px;
+            page-break-inside: avoid;
+        }
+    </style>
+</head>
+
+<body>
+<div class="pagina">
+    <div class="cabecalho">
+        <div class="logo">LUZ NO VALE</div>
+        <div class="divisoria"></div>
+        <div class="linha-topo">Rua Angelino Destro, 508 – Picadão – CEP: 88.865-000 – Nova Veneza/SC</div>
+        <div class="linha-topo">
+            Presidente: Sérgio Antonio Elias – 48. 9603-1606 | Vice-presidente: Valter Silva – 48. 9603-1498
+        </div>
+    </div>
+
+    <div class="titulo">EVOLUÇÃO GERAL</div>
+
+    <p class="introducao">
+        Nesta evolução consta o registro de forma geral da equipe técnica: coordenador, psicóloga e monitores
+        concernente a evolução do acolhido na instituição:
+    </p>
+
+    <table class="campo-nome">
+        <tr>
+            <td class="label">ACOLHIDO:</td>
+            <td class="valor" th:text="${paciente.nome}"></td>
+        </tr>
+    </table>
+
+    <div class="area-registro">
+        <div class="linhas">
+            <div class="linha-vazia"></div>
+            <div class="linha-vazia"></div>
+            <div class="linha-vazia"></div>
+            <div class="linha-vazia"></div>
+            <div class="linha-vazia"></div>
+            <div class="linha-vazia"></div>
+            <div class="linha-vazia"></div>
+            <div class="linha-vazia"></div>
+            <div class="linha-vazia"></div>
+            <div class="linha-vazia"></div>
+            <div class="linha-vazia"></div>
+            <div class="linha-vazia"></div>
+            <div class="linha-vazia"></div>
+            <div class="linha-vazia"></div>
+            <div class="linha-vazia"></div>
+            <div class="linha-vazia"></div>
+            <div class="linha-vazia"></div>
+            <div class="linha-vazia"></div>
+            <div class="linha-vazia"></div>
+            <div class="linha-vazia"></div>
+            <div class="linha-vazia"></div>
+            <div class="linha-vazia"></div>
+            <div class="linha-vazia"></div>
+            <div class="linha-vazia"></div>
+            <div class="linha-vazia"></div>
+        </div>
+        <div class="registro" th:text="${dados['registro']}"></div>
+    </div>
+
+    <div class="rodape">
+        <div>CENTRO DE RECUPERAÇÃO LUZ NO VALE – CERLUZ</div>
+        <div>Estrada Geral (Angelino Destro) – 508 – Picadão do Sul – Nova Veneza - Santa Catarina</div>
+        <div>CEP: 88.865-000 | e-mail: centroluznovale@gmail.com</div>
+        <div>Tel.: 48 9 9603-1606 | 9 9603-1498</div>
+        <div>www.centroluznovale.com.br</div>
+    </div>
+</div>
+</body>
+</html>

@@ -6,6 +6,7 @@ public record CriarDocumentoRequest(
     Long tipoDocumentoVersaoId,
     Long pacienteId,
     String observacao,
-    Map<String, Object> dados
+    Map<String, Object> dados,
+    Long documentoOrigemId
 ) {
 }

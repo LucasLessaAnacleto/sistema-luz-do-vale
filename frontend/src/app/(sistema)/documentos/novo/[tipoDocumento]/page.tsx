@@ -24,6 +24,8 @@ import CarregandoConteudo from "@/app/components/CarregandoConteudo";
 import ErroCarregamento from "@/app/components/ErroCarregamento";
 import { Paciente } from "@/app/types/pacientes";
 import { buscarListaPacientes } from "@/app/services/pacienteService";
+import BotaoVoltarHistorico from "@/app/components/ui/BotaoVoltarHistorico";
+import { buscarDocumento } from "@/app/services/documentoService";
 
 const estadoInicial = {
     erro: "",
@@ -41,8 +43,11 @@ export default function NovoDocumentoFormularioPage() {
     const searchParams = useSearchParams();
 
     const pacienteIdUrl = searchParams.get("paciente") ?? "";
+    const documentoOrigemId = searchParams.get("origem");
+
     const [pacienteId, setPacienteId] = useState(pacienteIdUrl);
     const [pacientes, setPacientes] = useState<Paciente[]>([]);
+    const [dadosOrigem, setDadosOrigem] = useState<Record<string, unknown> | null>(null);
 
     const [formulario, setFormulario] = useState<FormularioDocumento | null>(null);
 
@@ -53,7 +58,7 @@ export default function NovoDocumentoFormularioPage() {
 
     useEffect(() => {
         carregarFormulario();
-    }, [tipoDocumento, pacienteId]);
+    }, [tipoDocumento, pacienteId, documentoOrigemId]);
 
 
     useEffect(() => {
@@ -70,22 +75,34 @@ export default function NovoDocumentoFormularioPage() {
         }
     }, []);
 
-
     async function carregarFormulario() {
+
         if (!pacienteId) {
             return;
         }
 
         try {
             setFormulario(null);
+            setDadosOrigem(null);
 
             const dados = await buscarFormularioDocumento(Number(tipoDocumento), Number(pacienteId));
-            setFormulario(dados);
 
-        } catch (error) {
-            if (error instanceof Error) {
-                alert(error.message);
+            if (documentoOrigemId) {
+                const origem = await buscarDocumento(Number(documentoOrigemId));
+
+                if ( origem.pacienteId !== Number(pacienteId) || origem.tipoDocumentoId !== Number(tipoDocumento)) {
+                    throw new Error("O documento de origem não corresponde ao paciente ou tipo selecionado.");
+                }
+
+                setDadosOrigem({
+                    ...origem.dados,
+                    observacao: origem.observacao
+                });
             }
+
+            setFormulario(dados);
+        } catch (error) {
+            alert( error instanceof Error ? error.message : "Erro ao carregar formulário.");
         }
     }
 
@@ -100,25 +117,19 @@ export default function NovoDocumentoFormularioPage() {
         }
     }
 
-
     function renderizarCampo(campo: CampoDocumento) {
-
-        const largura = campo.largura === 12
-            ? "sm:col-span-2"
-            : "sm:col-span-1";
-
-        const valor = estado.valores[campo.nome] ?? String(formulario?.dadosPadrao[campo.nome] ?? "");
-
+        const largura = campo.largura === 12 ? "sm:col-span-2" : "sm:col-span-1";
+        const valor = estado.valores[campo.nome] ?? dadosOrigem?.[campo.nome] ?? formulario?.dadosPadrao[campo.nome] ?? "";
 
         if (campo.tipo === "TEXTO_LONGO") {
-
             return (
                 <div key={campo.nome} className={largura}>
 
                     <TextoLongo
                         label={campo.rotulo}
+                        descricao={campo.descricao}
                         name={campo.nome}
-                        defaultValue={valor}
+                        defaultValue={String(valor)}
                         rows={12}
                         required={campo.obrigatorio}
                         readOnly={campo.somenteLeitura}
@@ -127,7 +138,6 @@ export default function NovoDocumentoFormularioPage() {
                 </div>
             );
         }
-
 
         if (campo.tipo === "DATA") {
 
@@ -138,7 +148,7 @@ export default function NovoDocumentoFormularioPage() {
                         label={campo.rotulo}
                         name={campo.nome}
                         type="date"
-                        defaultValue={valor}
+                        defaultValue={String(valor)}
                         required={campo.obrigatorio}
                         readOnly={campo.somenteLeitura}
                     />
@@ -146,7 +156,6 @@ export default function NovoDocumentoFormularioPage() {
                 </div>
             );
         }
-
 
         if (campo.tipo === "HORA") {
 
@@ -157,7 +166,7 @@ export default function NovoDocumentoFormularioPage() {
                         label={campo.rotulo}
                         name={campo.nome}
                         type="time"
-                        defaultValue={valor}
+                        defaultValue={String(valor)}
                         required={campo.obrigatorio}
                         readOnly={campo.somenteLeitura}
                     />
@@ -166,14 +175,13 @@ export default function NovoDocumentoFormularioPage() {
             );
         }
 
-
         return (
             <div key={campo.nome} className={largura}>
 
                 <Input
                     label={campo.rotulo}
                     name={campo.nome}
-                    defaultValue={valor}
+                    defaultValue={String(valor)}
                     required={campo.obrigatorio}
                     readOnly={campo.somenteLeitura}
                 />
@@ -182,19 +190,13 @@ export default function NovoDocumentoFormularioPage() {
         );
     }
 
-    const voltarHref = pacienteIdUrl ? `/documentos/novo?paciente=${pacienteIdUrl}` : "/documentos/novo";
-
     return (
         <>
-
             <CabecalhoPagina>
-
                 <div className="flex items-center gap-3">
-
-                    <BotaoVoltar href={voltarHref} />
+                    <BotaoVoltarHistorico />
 
                     <div>
-
                         <h1 className="text-2xl font-semibold">
                             {formulario?.nome || "Novo documento"}
                         </h1>
@@ -202,6 +204,12 @@ export default function NovoDocumentoFormularioPage() {
                         <p className="mt-0.5 text-xs text-muted-foreground">
                             {formulario?.descricao || "Selecione o paciente"}
                         </p>
+
+                        {documentoOrigemId && (
+                            <p className="mt-2 text-sm text-primary-dark">
+                                Criando com base no documento #{documentoOrigemId}
+                            </p>
+                        )}
 
                     </div>
 
@@ -234,19 +242,19 @@ export default function NovoDocumentoFormularioPage() {
             ) : !formulario ? (
                 <CarregandoConteudo mensagem="Carregando formulário..." />
             ) : (
-                <form action={action} className="mx-auto max-w-3xl space-y-6 px-5 pt-6 pb-32 sm:px-8">
+                <form action={action} className="mx-auto max-w-6xl space-y-6 px-5 pt-6 pb-32 sm:px-8">
 
                     <input type="hidden" name="tipoDocumentoVersaoId" value={formulario.versaoId}/>
 
                     <input type="hidden" name="pacienteId" value={pacienteId}/>
 
+                    {documentoOrigemId && (<input type="hidden" name="documentoOrigemId" value={documentoOrigemId} />)}
+
 
                     <div className="grid gap-4 sm:grid-cols-2">
-
                         {formulario.campos.map((campo) =>
                             renderizarCampo(campo)
                         )}
-
                     </div>
 
 
@@ -256,7 +264,6 @@ export default function NovoDocumentoFormularioPage() {
 
 
                     <RodapeFormulario
-                        cancelarHref={voltarHref}
                         loading={pending}
                         textoSalvar="Salvar documento"
                     />

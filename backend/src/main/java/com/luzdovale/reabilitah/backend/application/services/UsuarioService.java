@@ -1,6 +1,7 @@
 package com.luzdovale.reabilitah.backend.application.services;
 
 import com.luzdovale.reabilitah.backend.application.DTO.usuario.CriarUsuarioRequest;
+import com.luzdovale.reabilitah.backend.application.DTO.usuario.EditarInformacoesPessoaisRequest;
 import com.luzdovale.reabilitah.backend.application.DTO.usuario.EditarUsuarioRequest;
 import com.luzdovale.reabilitah.backend.application.DTO.usuario.UsuarioResponse;
 import com.luzdovale.reabilitah.backend.application.exceptions.EmailJaCadastradoException;
@@ -11,6 +12,8 @@ import com.luzdovale.reabilitah.backend.domain.entities.Profissional;
 import com.luzdovale.reabilitah.backend.domain.entities.Usuario;
 import com.luzdovale.reabilitah.backend.domain.enuns.EnumRoleUsuario;
 import com.luzdovale.reabilitah.backend.domain.repository.UsuarioRepository;
+import com.luzdovale.reabilitah.backend.domain.valueobjects.Email;
+import com.luzdovale.reabilitah.backend.domain.valueobjects.Senha;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -32,7 +35,6 @@ public class UsuarioService {
     private PerfilService perfilService;
     @Autowired
     private ProfissionalService profissionalService;
-
 
     public List<UsuarioResponse> listarComDadosProfissional(Usuario usuarioLogado, Boolean ativo) {
 
@@ -98,6 +100,7 @@ public class UsuarioService {
         usuario.setPerfil(perfil);
         usuario.setEmail(email);
 
+        new Senha(senha);
         usuario.setSenha(passwordEncoder.encode(senha));
 
         if(role != null){
@@ -121,13 +124,7 @@ public class UsuarioService {
         }
 
         Usuario usuario = buscarPorId(usuarioId);
-        if(usuarioDto.email() != null && !usuarioDto.email().equals(usuario.getEmail())){
-
-            if(existeUsuarioComEmail( usuarioDto.email() )){
-                throw new EmailJaCadastradoException( usuarioDto.email() );
-            }
-            usuario.setEmail( usuarioDto.email() );
-        }
+        alterarEmail(usuario, usuarioDto.email());
 
         if(usuarioLogado.isAdmin()){
 
@@ -154,6 +151,42 @@ public class UsuarioService {
         return mapeiaParaDTO(usuario);
     }
 
+    @Transactional
+    public UsuarioResponse alterarInformacoesPessoais(
+            EditarInformacoesPessoaisRequest dto,
+            Usuario usuarioLogado
+    ){
+        Usuario usuario = buscarPorId(usuarioLogado.getId());
+
+        if (dto.senhaAtual() != null || dto.novaSenha() != null) {
+
+            if (dto.senhaAtual() == null ||
+                    !passwordEncoder.matches(dto.senhaAtual(), usuario.getSenha())) {
+                throw new IllegalArgumentException("Senha atual incorreta.");
+            }
+
+            new Senha(dto.novaSenha());
+            usuario.setSenha(passwordEncoder.encode(dto.novaSenha()));
+        }
+
+        if(dto.email() != null){
+            String email = new Email(dto.email().trim()).toString();
+            if(email.length() > 255){
+                throw new IllegalArgumentException("E-mail inválido!");
+            }
+            alterarEmail(usuario, email);
+        }
+
+        if(dto.nome() != null || dto.telefone() != null){
+            var profissional = profissionalService.salvarInformacoesPessoais(
+                    usuario.getProfissional(), dto.nome(), dto.telefone()
+            );
+            usuario.setProfissional(profissional);
+        }
+
+        return mapeiaParaDTO(usuarioRepository.save(usuario));
+    }
+
     public void redefinirSenha(
             Long usuarioId,
             String novaSenha,
@@ -164,7 +197,10 @@ public class UsuarioService {
         }
 
         Usuario usuario = buscarPorId(usuarioId);
+
+        new Senha(novaSenha);
         usuario.setSenha(passwordEncoder.encode(novaSenha));
+
         usuarioRepository.save(usuario);
     }
 
@@ -190,6 +226,15 @@ public class UsuarioService {
         return usuarioRepository.existsByEmail(email);
     }
 
+
+    private void alterarEmail(Usuario usuario, String email){
+        if(email != null && !email.equals(usuario.getEmail())){
+            if(existeUsuarioComEmail(email)){
+                throw new EmailJaCadastradoException(email);
+            }
+            usuario.setEmail(email);
+        }
+    }
 
     private void validarCampos(Usuario usuario) {
         List<String> camposInvalidos = new ArrayList<>();

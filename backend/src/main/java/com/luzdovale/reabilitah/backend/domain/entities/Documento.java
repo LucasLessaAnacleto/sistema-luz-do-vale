@@ -1,5 +1,6 @@
 package com.luzdovale.reabilitah.backend.domain.entities;
 
+import com.luzdovale.reabilitah.backend.domain.enuns.EnumStatusDocumento;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -40,14 +41,25 @@ public class Documento {
     @Column(columnDefinition = "jsonb")
     private String dados = "{}";
 
+    @Enumerated(EnumType.STRING)
+    private EnumStatusDocumento status = EnumStatusDocumento.PENDENTE;
+
     private boolean ativo = true;
     private LocalDateTime dtCriacao = LocalDateTime.now();
     private LocalDateTime dtAtualizacao;
+    private LocalDateTime dtFinalizacao;
     private LocalDateTime dtAssinatura;
     private LocalDateTime dtDesativado;
 
     public boolean permiteEditar(){
-        return this.dtAssinatura == null;
+        return this.ativo
+                && this.status == EnumStatusDocumento.PENDENTE
+                && this.dtAssinatura == null;
+    }
+
+    public void finalizar(){
+        this.status = EnumStatusDocumento.FINALIZADO;
+        this.dtFinalizacao = LocalDateTime.now();
     }
 
 }

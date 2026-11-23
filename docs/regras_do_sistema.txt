@@ -677,7 +677,11 @@ VALUES (2, 2, CURRENT_TIMESTAMP, 'ficha-acolhimento',
   }
 ]'::jsonb);
 
+-- AVISO
 
+INSERT INTO aviso (mensagem,usuario_id,ativo,dt_criacao)
+VALUES('Reunião de equipe quinta-feira às 14h30 no auditório.',(SELECT id FROM usuario WHERE email = 'admin@teste.com'),true,CURRENT_TIMESTAMP),
+    ('Visita de familiares programada para sábado.',(SELECT id FROM usuario WHERE email = 'admin@teste.com' ),true,CURRENT_TIMESTAMP);
 
 ---
 
@@ -736,6 +740,7 @@ POST /pacientes
   }
 }
 ```
+
 
 -------------------------
 

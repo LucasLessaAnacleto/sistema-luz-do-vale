@@ -3,9 +3,12 @@ package com.luzdovale.reabilitah.backend.application.services;
 
 import com.luzdovale.reabilitah.backend.application.DTO.documento.*;
 import com.luzdovale.reabilitah.backend.application.DTO.paciente.FichaAcolhimentoRequest;
+import com.luzdovale.reabilitah.backend.application.exceptions.DocumentoDesativadoException;
 import com.luzdovale.reabilitah.backend.application.exceptions.DocumentoNaoEncontradoException;
 import com.luzdovale.reabilitah.backend.application.exceptions.PacienteNaoEncontradoException;
+import com.luzdovale.reabilitah.backend.application.exceptions.UsuarioSemAutorizacao;
 import com.luzdovale.reabilitah.backend.domain.entities.*;
+import com.luzdovale.reabilitah.backend.domain.enuns.EnumStatusDocumento;
 import com.luzdovale.reabilitah.backend.domain.repository.*;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -43,6 +46,28 @@ public class DocumentoService {
         var paciente = pacienteRepository.findById(request.pacienteId())
                 .orElseThrow(() -> new PacienteNaoEncontradoException());
 
+        Documento documentoOrigem = null;
+
+        if (request.documentoOrigemId() != null) {
+
+            documentoOrigem = buscarDocumento(request.documentoOrigemId());
+
+            if (!documentoOrigem.getPaciente().getId().equals(paciente.getId())) {
+                throw new IllegalArgumentException(
+                        "O documento de origem pertence a outro paciente."
+                );
+            }
+
+            if (!documentoOrigem.getTipoDocumentoVersao()
+                    .getTipoDocumento().getId()
+                    .equals(versao.getTipoDocumento().getId())) {
+
+                throw new IllegalArgumentException(
+                        "O documento de origem possui outro tipo de documento."
+                );
+            }
+        }
+
         var campos = documentoCamposService.lerCampos(versao);
 
         String dadosNormalizados = documentoCamposService
@@ -58,6 +83,7 @@ public class DocumentoService {
         documento.setCriadoPor(usuarioLogado);
         documento.setObservacao(request.observacao());
         documento.setDados(dadosNormalizados);
+        documento.setDocumentoOrigem(documentoOrigem);
 
         documento = documentoRepository.save(documento);
 
@@ -109,19 +135,24 @@ public class DocumentoService {
                 documento,
                 paciente,
                 usuarioLogado,
-                "CRIADO"
+                documentoOrigem == null ? "CRIADO" : "ALTERADO"
         );
 
         return documento;
     }
 
-    public Page<DocumentoListaResponse> listar(int pagina) {
+    public Page<DocumentoListaResponse> listar(int pagina, EnumStatusDocumento status) {
 
         var pageable = PageRequest.of(pagina, 50);
-
-        return documentoRepository
+        if(status == null){
+            return documentoRepository
                 .findByAtivoTrueOrderByDtCriacaoDesc(pageable)
                 .map(this::mapeiaParaListaDTO);
+        }
+
+        return documentoRepository
+            .findByAtivoTrueAndStatusOrderByDtCriacaoDesc(status, pageable)
+            .map(this::mapeiaParaListaDTO);
     }
 
     public List<DocumentoListaResponse> listarRecentes() {
@@ -165,7 +196,6 @@ public class DocumentoService {
     }
 
     public DocumentoDetalhesResponse buscar(Long id) {
-
         Documento documento = buscarDocumento(id);
 
         var versao = documento.getTipoDocumentoVersao();
@@ -183,21 +213,58 @@ public class DocumentoService {
         }
 
         return new DocumentoDetalhesResponse(
-                documento.getId(),
-                versao.getTipoDocumento().getId(),
-                versao.getTipoDocumento().getNome(),
-                versao.getVersao(),
-                documento.getPaciente().getId(),
-                usuario.getId(),
-                nomeUsuario,
-                documento.getObservacao(),
-                campos,
-                dados,
-                documento.isAtivo(),
-                documento.getDtCriacao(),
-                documento.getDtAtualizacao(),
-                documento.getDtAssinatura()
+            documento.getId(),
+            versao.getTipoDocumento().getId(),
+            versao.getTipoDocumento().getNome(),
+            versao.getVersao(),
+            documento.getPaciente().getId(),
+            usuario.getId(),
+            nomeUsuario,
+            documento.getObservacao(),
+            campos,
+            dados,
+            documento.isAtivo(),
+            documento.getStatus(),
+            documento.getDtCriacao(),
+            documento.getDtAtualizacao(),
+            documento.getDtAssinatura(),
+            documento.getDtFinalizacao()
         );
+    }
+
+    @Transactional
+    public void finalizar(Long id, Usuario usuarioLogado){
+        Documento documento = buscarDocumento(id);
+
+        if(!usuarioLogado.isAdmin() &&
+                (documento.getCriadoPor() == null || !documento.getCriadoPor().getId().equals(usuarioLogado.getId()))){
+            throw new UsuarioSemAutorizacao();
+        }
+
+        if(!documento.isAtivo()){
+            throw new DocumentoDesativadoException();
+        }
+
+        if(documento.getStatus() == EnumStatusDocumento.FINALIZADO){
+            return;
+        }
+
+        documento.finalizar();
+        documentoRepository.save(documento);
+        histDocumentoService.registrarHistorico(
+            documento,
+            documento.getPaciente(),
+            usuarioLogado,
+            "FINALIZADO"
+        );
+    }
+
+    public long contarDocumentos(){
+        return documentoRepository.countByAtivoTrue();
+    }
+
+    public long contarDocumentosPendentes(){
+        return documentoRepository.countByAtivoTrueAndStatus( EnumStatusDocumento.PENDENTE );
     }
 
     private void completarDadosFicha(Map<String, Object> dados, FichaAcolhimentoRequest ficha) {
@@ -233,17 +300,19 @@ public class DocumentoService {
 
         var versao = documento.getTipoDocumentoVersao();
         return new DocumentoResponse(
-                documento.getId(),
-                versao.getTipoDocumento().getId(),
-                versao.getTipoDocumento().getNome(),
-                versao.getVersao(),
-                documento.getPaciente().getId(),
-                documento.getCriadoPor().getId(),
-                documento.getObservacao(),
-                documento.getDados(),
-                documento.isAtivo(),
-                documento.getDtCriacao(),
-                documento.getDtAssinatura()
+            documento.getId(),
+            versao.getTipoDocumento().getId(),
+            versao.getTipoDocumento().getNome(),
+            versao.getVersao(),
+            documento.getPaciente().getId(),
+            documento.getCriadoPor().getId(),
+            documento.getObservacao(),
+            documento.getDados(),
+            documento.isAtivo(),
+            documento.getStatus(),
+            documento.getDtCriacao(),
+            documento.getDtAssinatura(),
+            documento.getDtFinalizacao()
         );
     }
 
@@ -260,32 +329,33 @@ public class DocumentoService {
         }
 
         return new DocumentoListaResponse(
-                documento.getId(),
-                versao.getTipoDocumento().getId(),
-                versao.getTipoDocumento().getNome(),
-                versao.getVersao(),
-                paciente.getId(),
-                paciente.getNome(),
-                paciente.getApelido(),
-                usuario.getId(),
-                nomeUsuario,
-                documento.isAtivo(),
-                documento.getDtCriacao(),
-                documento.getDtAssinatura()
+            documento.getId(),
+            versao.getTipoDocumento().getId(),
+            versao.getTipoDocumento().getNome(),
+            versao.getVersao(),
+            paciente.getId(),
+            paciente.getNome(),
+            paciente.getApelido(),
+            usuario.getId(),
+            nomeUsuario,
+            documento.isAtivo(),
+            documento.getStatus(),
+            documento.getDtCriacao(),
+            documento.getDtAssinatura(),
+            documento.getDtFinalizacao()
         );
     }
 
     private DocumentoRelacionadoResponse mapeiaRelacionado(Documento documento, String relacao) {
-
         return new DocumentoRelacionadoResponse(
-                documento.getId(),
-                documento.getTipoDocumentoVersao()
-                        .getTipoDocumento()
-                        .getNome(),
-                relacao,
-                documento.getDtCriacao(),
-                documento.getDtAssinatura(),
-                documento.isAtivo()
+            documento.getId(),
+            documento.getTipoDocumentoVersao().getTipoDocumento().getNome(),
+            relacao,
+            documento.isAtivo(),
+            documento.getStatus(),
+            documento.getDtFinalizacao(),
+            documento.getDtAssinatura(),
+            documento.getDtCriacao()
         );
     }
 }
