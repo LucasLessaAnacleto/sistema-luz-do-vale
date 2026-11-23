@@ -110,6 +110,7 @@ export type TipoCampoDocumento =
 export interface CampoDocumento {
     nome: string;
     rotulo: string;
+    descricao?: string | null;
     tipo: TipoCampoDocumento;
 
     obrigatorio: boolean;

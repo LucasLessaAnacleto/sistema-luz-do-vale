@@ -127,6 +127,7 @@ export default function NovoDocumentoFormularioPage() {
 
                     <TextoLongo
                         label={campo.rotulo}
+                        descricao={campo.descricao}
                         name={campo.nome}
                         defaultValue={String(valor)}
                         rows={12}
