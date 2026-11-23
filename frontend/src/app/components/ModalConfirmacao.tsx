@@ -2,6 +2,7 @@
 
 import { CheckCircle2, TriangleAlert, X } from "lucide-react";
 import { cn } from "../util";
+import { ReactNode } from "react";
 
 type Variante = "perigo" | "confirmacao";
 
@@ -11,8 +12,10 @@ interface Props {
     descricao: string;
     variante?: Variante;
     textoConfirmar?: string;
+    disabledConfirmar?: boolean;
     carregando?: boolean;
     erro?: string;
+    children?: ReactNode;
     onConfirmar: () => void | Promise<void>;
     onFechar: () => void;
 }
@@ -23,8 +26,10 @@ export default function ModalConfirmacao({
     descricao, 
     variante = "confirmacao", 
     textoConfirmar = "Confirmar", 
+    disabledConfirmar = false,
     carregando = false,
     erro,
+    children,
     onConfirmar,
     onFechar
 }: Props) {
@@ -48,6 +53,12 @@ export default function ModalConfirmacao({
 
                 <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{descricao}</p>
 
+                {children && (
+                    <div className="mt-4">
+                        {children}
+                    </div>
+                )}
+
                 {erro && (
                     <p role="alert" className="mt-3 text-sm text-red-600">{erro}</p>
                 )}
@@ -59,9 +70,9 @@ export default function ModalConfirmacao({
                         Cancelar
                     </button>
 
-                    <button type="button" onClick={onConfirmar} disabled={carregando}
+                    <button type="button" onClick={onConfirmar} disabled={carregando || disabledConfirmar}
                         className={cn("cursor-pointer rounded-xl px-4 py-2 text-sm font-medium text-white disabled:opacity-60",
-                            perigo ? "bg-red-700  hover:bg-red-800" : "bg-primary hover:bg-primary-dark")
+                            perigo ? cn("bg-red-700", !disabledConfirmar && "hover:bg-red-800") : cn("bg-primary", !disabledConfirmar && "hover:bg-primary-dark"))
                         }
                     >
                         {carregando ? "Processando..." : textoConfirmar}
