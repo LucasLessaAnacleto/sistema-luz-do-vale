@@ -12,7 +12,6 @@ import { cn, formatarData } from "@/app/util";
 import AvatarIniciais from "@/app/components/ui/AvatarIniciais";
 import BotaoVoltar from "@/app/components/ui/BotaoVoltar";
 import { useAppSelector } from "@/app/redux/hook";
-import ModalStatusPaciente from "./components/ModalStatusPaciente";
 import ModalConfirmacao from "@/app/components/ModalConfirmacao";
 
 interface Props {
