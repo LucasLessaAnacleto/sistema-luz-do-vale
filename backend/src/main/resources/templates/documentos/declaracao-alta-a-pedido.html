@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+
+    <style>
+        @page {
+            size: A4;
+            margin: 16mm 26mm 18mm 26mm;
+        }
+
+        body {
+            font-family: "Times New Roman", serif;
+            font-size: 13px;
+            color: #000;
+        }
+
+        .cabecalho {
+            text-align: center;
+            margin-bottom: 34px;
+        }
+
+        .logo-superior {
+            font-size: 8px;
+            font-weight: bold;
+        }
+
+        .logo {
+            font-family: Arial, sans-serif;
+            font-size: 22px;
+            font-weight: bold;
+        }
+
+        .divisoria {
+            border-top: 1px solid #000;
+            margin: 3px 0;
+        }
+
+        .linha-topo {
+            font-size: 10px;
+        }
+
+        .titulo {
+            text-align: center;
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 34px;
+        }
+
+        .secao {
+            margin-top: 16px;
+        }
+
+        .subtitulo {
+            font-size: 14px;
+            font-weight: bold;
+        }
+
+        .declaracao {
+            text-align: justify;
+            text-indent: 42px;
+            line-height: 1.3;
+            margin: 0;
+        }
+
+        .registro-residente {
+            text-align: justify;
+            line-height: 1.3;
+            margin: 12px 0 6px;
+        }
+
+        .area-registro {
+            position: relative;
+            min-height: 54px;
+            margin-top: 6px;
+        }
+
+        .area-esclarecimentos {
+            min-height: 108px;
+        }
+
+        .linhas {
+            position: absolute;
+            top: 0;
+            right: 0;
+            left: 0;
+        }
+
+        .linha-vazia {
+            height: 17px;
+            border-bottom: 1px solid #777;
+        }
+
+        .linha-curta {
+            width: 36%;
+        }
+
+        .registro {
+            position: relative;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            line-height: 18px;
+        }
+
+        .rodape {
+            margin-top: 58px;
+            page-break-inside: avoid;
+        }
+
+        .assinaturas {
+            width: 100%;
+            border-collapse: collapse;
+            table-layout: fixed;
+        }
+
+        .assinaturas td {
+            width: 50%;
+            text-align: center;
+        }
+
+        .assinatura {
+            width: 74%;
+            margin: 0 auto;
+            border-top: 1px solid #000;
+            padding-top: 3px;
+            font-weight: bold;
+            font-style: italic;
+        }
+
+        .data {
+            margin-top: 90px;
+            text-align: center;
+            font-size: 16px;
+            text-transform: uppercase;
+        }
+    </style>
+</head>
+
+<body>
+<div class="pagina">
+    <div class="cabecalho">
+        <div class="logo-superior">CENTRO DE RECUPERAÇÃO</div>
+        <div class="logo">LUZ NO VALE</div>
+        <div class="divisoria"></div>
+        <div class="linha-topo">Rua Angelino Destro, 508 – Picadão – CEP: 88.865-000 – Nova Veneza/SC</div>
+        <div class="linha-topo">
+            Presidente: Sérgio Antonio Elias – 48. 9603-1606 | Vice-presidente: Valter Silva – 48. 9603-1498
+        </div>
+    </div>
+
+    <div class="titulo">DECLARAÇÃO ALTA Á PEDIDO</div>
+
+    <div class="secao">
+        <div class="subtitulo">DISPOSIÇÕES GERAIS</div>
+
+        <p class="declaracao">
+            <strong>A Alta a pedido</strong> do paciente representa o seu direito de recusar o atendimento ou procedimentos
+            propostos e de deixar as dependências do Centro de Recuperação Luz no Vale – CERLUZ após amplo
+            esclarecimento das possíveis consequências e riscos de tal atitude.
+        </p>
+        <p class="declaracao">
+            <strong>A Alta a pedido</strong> não constitui ato que tenha sido indicado ou praticado pela equipe
+            multiprofissional, mas sim um ato livre e soberano da autoridade do acolhido, atendido e disposto termo de
+            responsabilidade.
+        </p>
+        <p class="declaracao">
+            O exercício por parte do acolhido, deste seu direito, a partir do momento em que deixar a
+            instituição <strong>isenta toda equipe multiprofissional e a instituição</strong> da responsabilidade por quaisquer
+            consequências adversas à saúde diretamente relacionadas a esta alta.
+        </p>
+        <p class="declaracao">
+            Cabe <strong>a equipe multiprofissional</strong>, explicar em linguagem acessível ao acolhido, o diagnóstico,
+            suas condições clínicas, possibilidades terapêuticas e as consequências da interrupção da assistência a
+            saúde, especificando possíveis riscos e danos. Alta pedido não se constitui em impeditivo para o paciente
+            voltar a recorrer a instituição
+        </p>
+    </div>
+
+    <div class="secao">
+        <div class="subtitulo">REGISTRO DO PROFISSIONAL TÉCNICO RESPONSÁVEL</div>
+        <div>Esclarecimentos prestados ao acolhido:</div>
+
+        <div class="area-registro area-esclarecimentos">
+            <div class="linhas">
+                <div class="linha-vazia"></div>
+                <div class="linha-vazia"></div>
+                <div class="linha-vazia"></div>
+                <div class="linha-vazia"></div>
+                <div class="linha-vazia"></div>
+                <div class="linha-vazia linha-curta"></div>
+            </div>
+            <div class="registro" th:text="${dados['esclarecimentos']}"></div>
+        </div>
+    </div>
+
+    <div class="secao">
+        <div class="subtitulo">REGISTRO DO RESIDENTE:</div>
+
+        <p class="registro-residente">
+            EU, <span th:text="${paciente.nome}"></span> declaro que fui devidamente informado e esclarecido
+            quanto a situação de minha saúde, conforme acima registrado e decido deixar de ser assistido por esta
+            instituição em razão de:
+        </p>
+
+        <div class="area-registro">
+            <div class="linhas">
+                <div class="linha-vazia"></div>
+                <div class="linha-vazia"></div>
+                <div class="linha-vazia"></div>
+            </div>
+            <div class="registro" th:text="${dados['motivo']}"></div>
+        </div>
+    </div>
+
+    <div class="rodape">
+        <table class="assinaturas">
+            <tr>
+                <td><div class="assinatura">Paciente ou responsável</div></td>
+                <td><div class="assinatura">Profissional Responsável</div></td>
+            </tr>
+        </table>
+
+        <div class="data" th:with="data=${#temporals.createDate(dados['data'])}">
+            NOVE VENEZA/SC <span th:text="${#temporals.day(data)}"></span>
+            DE <span th:text="${#temporals.format(data, 'MMMM yyyy', T(java.util.Locale).forLanguageTag('pt-BR'))}"></span>
+        </div>
+    </div>
+</div>
+</body>
+</html>
