@@ -30,7 +30,7 @@ export async function buscarListaUsuarios(ativo?: boolean): Promise<Usuario[]> {
   return [];
 }
 
-export async function buscarUsuario(id: number): Promise<Usuario | null> {
+export async function buscarUsuario(id: number): Promise<Usuario> {
 
   const response = await api.get<Usuario>(`/usuarios/${id}`);
 

@@ -1,8 +1,6 @@
 "use client";
 
-import Link from "next/link";
 import { useEffect, useState } from "react";
-import { ArrowLeft, Plus, Search, Users } from "lucide-react";
 
 import type { Usuario } from "@/app/types/usuarios";
 import { buscarListaUsuarios } from "@/app/services/usuarioService";
