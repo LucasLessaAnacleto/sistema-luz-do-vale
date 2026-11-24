@@ -34,6 +34,11 @@ const estadoInicial = {
 };
 
 
+const gruposAvaliacao = [
+    { titulo: "Nível de consciência", campos: ["consciencia", "orientacao"] },
+    { titulo: "Postura/marcha", campos: ["postura", "posicaoSentada", "engatinha", "marcha"] },
+];
+
 function formatarTelefoneEmpresa(valor: string) {
     const numeros = valor.replace(/\D/g, "").slice(0, 11);
 
@@ -178,6 +183,24 @@ export default function NovoDocumentoFormularioPage() {
             );
         }
 
+        if (formulario?.tipoDocumentoId === 13 && (campo.nome === "engatinha" || campo.nome === "marcha")) {
+            return (
+                <div key={campo.nome}>
+                    <input type="hidden" name={campo.nome} value="false" />
+                    <label className="inline-flex cursor-pointer items-center gap-2 text-sm">
+                        <input
+                            type="checkbox"
+                            name={campo.nome}
+                            value="true"
+                            defaultChecked={String(valor) === "true"}
+                            className="h-4 w-4 accent-primary"
+                        />
+                        {campo.rotulo}
+                    </label>
+                </div>
+            );
+        }
+
         if (campo.tipo === "BOOLEANO") {
 
             return (
@@ -196,6 +219,26 @@ export default function NovoDocumentoFormularioPage() {
                         <option value="true">Sim</option>
                         <option value="false">Não</option>
                     </Selecao>
+                </div>
+            );
+        }
+
+        if (formulario?.tipoDocumentoId === 13 && campo.tipo === "SELECAO" && campo.opcoes?.length) {
+            return (
+                <div key={campo.nome} role="radiogroup" aria-label={campo.rotulo} className="flex flex-wrap gap-x-4 gap-y-2">
+                    <input type="hidden" name={campo.nome} value="" />
+                    {campo.opcoes.map((opcao) => (
+                        <label key={opcao} className="flex cursor-pointer items-center gap-2 text-sm">
+                            <input
+                                type="radio"
+                                name={campo.nome}
+                                value={opcao}
+                                defaultChecked={valor === opcao}
+                                className="h-4 w-4 accent-primary"
+                            />
+                            {opcao}
+                        </label>
+                    ))}
                 </div>
             );
         }
@@ -260,6 +303,7 @@ export default function NovoDocumentoFormularioPage() {
 
                 <Input
                     label={campo.rotulo}
+                    descricao={campo.descricao}
                     name={campo.nome}
                     defaultValue={String(valor)}
                     required={campo.obrigatorio}
@@ -332,9 +376,37 @@ export default function NovoDocumentoFormularioPage() {
 
 
                     <div className="grid gap-4 sm:grid-cols-2">
-                        {formulario.campos.map((campo) =>
-                            renderizarCampo(campo)
-                        )}
+                        {formulario.campos.map((campo) => {
+                            const grupo = formulario.tipoDocumentoId === 13
+                                ? gruposAvaliacao.find((item) => item.campos.includes(campo.nome))
+                                : undefined;
+
+                            if (!grupo) return renderizarCampo(campo);
+                            if (campo.nome !== grupo.campos[0]) return null;
+
+                            return (
+                                <fieldset key={campo.nome} className="sm:col-span-2">
+                                    <legend className="mb-2 text-sm font-medium">{grupo.titulo}</legend>
+                                    <div className="space-y-3 rounded-xl border border-border bg-input-background p-4">
+                                        {formulario.campos
+                                            .filter((item) => grupo.campos.includes(item.nome))
+                                            .map(renderizarCampo)}
+
+                                        <button
+                                            type="button"
+                                            className="text-sm text-muted-foreground underline"
+                                            onClick={(event) => {
+                                                event.currentTarget.closest("fieldset")
+                                                    ?.querySelectorAll<HTMLInputElement>('input[type="radio"], input[type="checkbox"]')
+                                                    .forEach((opcao) => { opcao.checked = false; });
+                                            }}
+                                        >
+                                            Limpar
+                                        </button>
+                                    </div>
+                                </fieldset>
+                            );
+                        })}
                     </div>
 
 

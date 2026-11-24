@@ -232,7 +232,10 @@ public class DocumentoCamposService {
                 continue;
             }
 
-            if (!campo.isObrigatorio() && campo.getTipo() == EnumTipoCampo.HORA && "".equals(valor)) {
+            if (!campo.isObrigatorio() && "".equals(valor) &&
+                    (campo.getTipo() == EnumTipoCampo.HORA ||
+                     campo.getTipo() == EnumTipoCampo.BOOLEANO ||
+                     campo.getTipo() == EnumTipoCampo.SELECAO)) {
                 continue;
             }
 

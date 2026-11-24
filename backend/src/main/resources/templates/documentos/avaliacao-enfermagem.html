@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+
+    <style>
+        @page {
+            size: A4;
+            margin: 24mm 25mm 20mm 25mm;
+        }
+
+        body {
+            font-family: "Times New Roman", serif;
+            font-size: 14px;
+            color: #000;
+        }
+
+        .segunda-pagina {
+            page-break-before: always;
+        }
+
+        .titulo {
+            text-align: center;
+            font-size: 20px;
+            font-weight: bold;
+            text-decoration: underline;
+            margin-bottom: 36px;
+        }
+
+        .campo, .sinais {
+            width: 100%;
+            border-spacing: 5px 0;
+            margin-bottom: 12px;
+        }
+
+        .campo td:first-child {
+            width: 1%;
+            white-space: nowrap;
+        }
+
+        .sinais td {
+            padding-top: 10px;
+        }
+
+        .sinais td:nth-child(odd) {
+            width: 1%;
+            white-space: nowrap;
+        }
+
+        .sinais td, .campo td {
+            vertical-align: bottom;
+        }
+
+        .valor, .registro {
+            border-bottom: 1px solid #555;
+            word-wrap: break-word;
+        }
+
+        .item {
+            margin-bottom: 20px;
+            page-break-inside: avoid;
+        }
+
+        .rotulo {
+            padding-left: 16px;
+        }
+
+        .registro {
+            min-height: 24px;
+            white-space: pre-wrap;
+        }
+
+        .linha {
+            min-height: 24px;
+            border-bottom: 1px solid #555;
+        }
+
+        .opcoes {
+            line-height: 1.5;
+        }
+    </style>
+</head>
+
+<body>
+<div class="pagina">
+    <div class="titulo">AVALIAÇÃO ENFERMAGEM</div>
+
+    <table class="campo">
+        <tr>
+            <td><strong>NOME:</strong></td>
+            <td class="valor" th:text="${paciente.nome}"></td>
+        </tr>
+    </table>
+
+    <p><strong>EXAMES FÍSICOS:</strong></p>
+    <div><strong>- SINAIS VITAIS</strong></div>
+
+    <table class="sinais">
+        <tr>
+            <td><strong>TEMPERATURA:</strong></td><td class="valor" th:text="${dados['temperatura']}"></td>
+            <td><strong>PULSO:</strong></td><td class="valor" th:text="${dados['pulso']}"></td>
+        </tr>
+        <tr>
+            <td><strong>RESPIRAÇÃO:</strong></td><td class="valor" th:text="${dados['respiracao']}"></td>
+            <td><strong>PRESSÃO ARTERIAL:</strong></td><td class="valor" th:text="${dados['pressaoArterial']}"></td>
+        </tr>
+        <tr>
+            <td><strong>PESO:</strong></td><td class="valor" th:text="${dados['peso']}"></td>
+            <td><strong>ALTURA:</strong></td><td class="valor" th:text="${dados['altura']}"></td>
+        </tr>
+    </table>
+
+    <table class="campo">
+        <tr>
+            <td><strong>QUANTIDADE DE INTERNAÇÕES ANTERIORES:</strong></td>
+            <td class="valor" th:text="${dados['internacoes']}"></td>
+        </tr>
+    </table>
+
+    <p>
+        <strong>FAZ O USO DE MEDICAÇÃO PSIQUIÁTRICA:</strong>
+        SIM <span th:text="${dados['usaMedicacao'] == true ? '(X)' : '( )'}"></span>
+        NÃO <span th:text="${dados['usaMedicacao'] == false ? '(X)' : '( )'}"></span>
+    </p>
+
+    <table class="campo">
+        <tr>
+            <td><strong>QUAL:</strong></td>
+            <td class="valor" th:text="${dados['medicacao']}"></td>
+        </tr>
+    </table>
+
+    <table class="campo">
+        <tr>
+            <td><strong>TEVE ALGUMA DST? QUAL?</strong></td>
+            <td class="valor" th:text="${dados['dst']}"></td>
+        </tr>
+    </table>
+
+    <div class="item">
+        <strong>GENITAIS E REGIÃO PERINCAL</strong>
+        (SE NECESSÁRIO) (EDEMA, SUJIDADE, LESÕES, HEMORROIDAS, DEFORMIDADES, PARASITAS, SONDAS, PRURIDO)
+        <div class="registro" th:text="${dados['genitais']}"></div>
+        <div class="linha"></div>
+    </div>
+
+    <p><strong>CABEÇA:</strong></p>
+
+    <div class="item">
+        <div class="rotulo">• <strong>COURO CABELUDO</strong> (ALOPECIA, SUJIDADE, LÊNDEAS, PIOLHOS, SEBORRÉIA, EMARANHADO, CROSTA, COMPRIMENTO, RESSECAMENTO, QUEBRADIÇO)</div>
+        <div class="registro" th:text="${dados['couroCabeludo']}"></div>
+    </div>
+
+    <div class="item">
+        <div class="rotulo">• <strong>ORELHAS E OUVIDO</strong> (ACUIDADE AUDITIVA, SECREÇÃO, LESÃO, DEFORMIDADES, DOR, APARELHO AUDITIVO)</div>
+        <div class="registro" th:text="${dados['orelhasOuvido']}"></div>
+    </div>
+
+    <div class="item">
+        <div class="rotulo">• <strong>OLHOS E PÁLPEBRAS</strong> (ACUIDADE VISUAL, SECREÇÃO, ALTERAÇÃO DA CONJUTIVA, AVALIAÇÃO PUPILAR, DEFORMIDADES,USO DE PRÓTESE)</div>
+        <div class="registro" th:text="${dados['olhosPalpebras']}"></div>
+    </div>
+
+    <div class="item">
+        <div class="rotulo">• <strong>NARIZ</strong> (OLFATO, SECREÇÃO,SUJIDADE, DEFORMIDADES, OBSTRUÇÃO)</div>
+        <div class="registro" th:text="${dados['nariz']}"></div>
+    </div>
+</div>
+
+<div class="pagina segunda-pagina">
+    <div class="item">
+        <div class="rotulo">• <strong>BOCA E MUCOSA</strong> (EDEMA, PARALISIA, LINGUA SABURROSA, SANGRAMENTO, ULCERAÇÃO, SUJIDADE, DEFORMIDADES, COLORAÇÃO MUCOSA, SIALORRÉIA, RESSECAMENTO, HIPEREMIA, DOR, DIFICULDADE PARA SUGAR E/OU MASTIGAR, PRÓTESE)</div>
+        <div class="registro" th:text="${dados['bocaMucosa']}"></div>
+    </div>
+
+    <div class="item">
+        <div class="rotulo">• <strong>PESCOÇO E GARGANTA</strong> (NÓDULOS, DISFAGIA, SECREÇÃO, HIPEREMIA E FISSURA)</div>
+        <div class="registro" th:text="${dados['pescocoGarganta']}"></div>
+    </div>
+
+    <div class="item">
+        <div class="rotulo">• <strong>MEMBRO SUPERIOR E INFERIOR</strong> (EDEMAS, PLEGIAS, DEFORMIDADES, TEMPERATURA, DOR, DORMENCIA, PRÓTESE, REDE VENENOSA VISÍVEL OU NÃO, PROCESSO INFLAMATÓRIO, UNHAS SUJAS, QUEBRADIÇAS)</div>
+        <div class="registro" th:text="${dados['membros']}"></div>
+    </div>
+
+    <div class="item">
+        <div class="rotulo">• <strong>ABDOMEM</strong> (PLANO, FLÁCIDO, DISTENDIDO, GLOBOSO, DOLOROSO, ASCITE, UMBIGO, COM SECREÇÃO OU SUJIDADE)</div>
+        <div class="registro" th:text="${dados['abdomen']}"></div>
+    </div>
+
+    <div class="item">
+        <div class="rotulo">• <strong>ELIMINAÇÕES E SECREÇÕES</strong> (SE NECESSÁRIO) (VÔMITO, INTESTINAL, VESICAL)</div>
+        <div class="registro" th:text="${dados['eliminacoesSecrecoes']}"></div>
+    </div>
+
+    <div class="item">
+        <div class="rotulo">• <strong>MALFORMAÇÕES</strong></div>
+        <div class="registro" th:text="${dados['malformacoes']}"></div>
+    </div>
+
+    <div class="item">
+        <div class="rotulo">• <strong>TRAUMATISMO</strong></div>
+        <div class="registro" th:text="${dados['traumatismo']}"></div>
+    </div>
+
+    <p><strong>NÍVEL DE CONSCIÊNCIA</strong></p>
+    <div class="opcoes">
+        <span th:text="${dados['consciencia'] == 'Consciente' ? '(X)' : '( )'}"></span> CONSCIENTE
+        <span th:text="${dados['consciencia'] == 'Semi-consciente' ? '(X)' : '( )'}"></span> SEMI-CONSCIENTE
+        <span th:text="${dados['consciencia'] == 'Inconsciente' ? '(X)' : '( )'}"></span> INCONSCIENTE<br />
+        <span th:text="${dados['orientacao'] == 'Orientado' ? '(X)' : '( )'}"></span> ORIENTADO
+        <span th:text="${dados['orientacao'] == 'Desorientado' ? '(X)' : '( )'}"></span> DESORIENTADO
+    </div>
+
+    <p><strong>POSTURA/MARCHA</strong></p>
+    <div class="opcoes">
+        <span th:text="${dados['postura'] == 'Normal' ? '(X)' : '( )'}"></span> NORMAL
+        <span th:text="${dados['postura'] == 'Alterada' ? '(X)' : '( )'}"></span> ALTERADA
+        <span th:text="${dados['posicaoSentada'] == 'Não senta' ? '(X)' : '( )'}"></span> NÃO SENTA
+        <span th:text="${dados['posicaoSentada'] == 'Senta' ? '(X)' : '( )'}"></span> SENTA
+        <span th:text="${dados['engatinha'] == true ? '(X)' : '( )'}"></span> ENGATINHA<br />
+        <span th:text="${dados['marcha'] == true ? '(X)' : '( )'}"></span> MARCHA
+    </div>
+
+    <p>DATA <span th:text="${fmt.data(dados['data'])}"></span></p>
+</div>
+</body>
+</html>

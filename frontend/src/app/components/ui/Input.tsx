@@ -3,11 +3,13 @@ import { Eye, EyeOff } from "lucide-react";
 
 interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
   label: string;
+  descricao?: string | null;
   icon?: ReactNode;
 }
 
 export default function Input({
   label,
+  descricao,
   icon,
   id,
   className = "",
@@ -36,6 +38,10 @@ export default function Input({
         {label}
       </label>
 
+      {descricao && (
+        <p id={`${inputId}-descricao`} className="mb-2 text-sm text-muted-foreground">{descricao}</p>
+      )}
+
       <div className="relative">
         {icon && (
           <span
@@ -50,6 +56,7 @@ export default function Input({
           {...props}
           id={inputId}
           type={inputType}
+          aria-describedby={descricao ? `${inputId}-descricao` : props["aria-describedby"]}
           className={`
             w-full rounded-xl border border-border bg-input-background py-3
             ${isPassword ? "pr-12" : "pr-4"}
