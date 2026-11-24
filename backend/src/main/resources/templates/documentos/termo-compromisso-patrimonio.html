@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+
+    <style>
+        @page {
+            size: A4;
+            margin: 26mm 30mm 22mm 30mm;
+        }
+
+        body {
+            font-family: "Times New Roman", serif;
+            font-size: 13px;
+            color: #000;
+        }
+
+        .secao {
+            margin-bottom: 34px;
+        }
+
+        .titulo {
+            text-align: center;
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 16px;
+        }
+
+        .declaracao {
+            text-align: justify;
+            text-indent: 40px;
+            line-height: 1.35;
+            margin: 0;
+        }
+
+        .autorizacao {
+            margin-top: 16px;
+        }
+
+        .marca {
+            white-space: pre;
+        }
+
+        .assinatura {
+            width: 48%;
+            margin: 62px auto 0;
+            border-top: 1px solid #000;
+            padding-top: 3px;
+            text-align: center;
+        }
+
+        .data {
+            margin-top: 80px;
+            text-align: center;
+        }
+    </style>
+</head>
+
+<body>
+<div class="pagina">
+    <div class="secao">
+        <div class="titulo">TERMO DE COMPROMISSO AO PATRIMONIO</div>
+
+        <p class="declaracao">
+            Estou ciente de que devo zelar pelo patrimônio que a instituição me oferece como apoio:
+            camas, guarda-roupas, paredes, roupas de cama, mesa, banheiro, ventilador e etc... (tudo que faz
+            parte do patrimônio da instituição), sendo que ressarcirei quaisquer danos causados ao mesmo.
+        </p>
+    </div>
+
+    <div class="secao">
+        <div class="titulo">TERMO DE RESPONSABILIDADE AO<br />ACOLHIMENTO DO RESIDENTE</div>
+
+        <p class="declaracao">
+            Responsabilizo-mepela inclusão do mesmo neste Centro de Recuperação, afim de que o
+            acolhido acima mencionado, possa receber orientação, educação conforme programa desta
+            instituição, por seus estatutos, regimento interno e outros dispositivos legais que venham a ser
+            baixados, com os quais estou de pleno acordo por este termo de responsabilidade, fica também
+            esclarecido que não influenciarei na decisão pessoal do acolhido a retirar-se do Centro de
+            Recuperação Luz no Vale – CERLUZ.
+        </p>
+
+        <p class="declaracao">
+            Os membros da família atenderão fielmente o calendário de visitas e todos os itens do
+            cronograma. Não cabe a entidade qualquer responsabilidade indenizatória de pessoas ou coisas,
+            pois fica aqui pré-estabelecido que todos estão cientes de seus direitos e deveres. Por ser a
+            expressão da verdade, assino o presente termo.
+        </p>
+
+        <div class="assinatura">Ass. Responsável</div>
+    </div>
+
+    <div class="secao">
+        <div class="titulo">DIREITO / USO DE IMAGEM</div>
+
+        <p class="declaracao">
+            Autorizo o Centro de Recuperação Luz no Vale – CERLUZ, CNPJ: 13.445.159/0001-61. Bem
+            como voluntários que prestam serviços na instituição, á fazer o uso de minha imagem em (redes
+            sociais, vídeos, sites, panfletos e etc...).
+        </p>
+
+        <div class="autorizacao">
+            AUTORIZAÇÃO:
+            (<span class="marca" th:text="${dados['autorizacaoImagem'] == true ? 'X' : '  '}"></span>) SIM
+            (<span class="marca" th:text="${dados['autorizacaoImagem'] == false ? 'X' : '  '}"></span>) NÃO
+        </div>
+
+        <div class="assinatura">Ass. Acolhido</div>
+    </div>
+
+    <div class="data">DATA <span th:text="${fmt.data(dados['data'])}"></span></div>
+</div>
+</body>
+</html>

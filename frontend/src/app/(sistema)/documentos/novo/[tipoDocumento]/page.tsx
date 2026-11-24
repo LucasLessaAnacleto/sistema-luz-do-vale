@@ -139,6 +139,28 @@ export default function NovoDocumentoFormularioPage() {
             );
         }
 
+        if (campo.tipo === "BOOLEANO") {
+
+            return (
+                <div key={campo.nome} className={largura}>
+                    {campo.descricao && (
+                        <p className="mb-2 text-sm text-muted-foreground">{campo.descricao}</p>
+                    )}
+
+                    <Selecao
+                        label={campo.rotulo}
+                        name={campo.nome}
+                        defaultValue={String(valor)}
+                        required={campo.obrigatorio}
+                    >
+                        <option value="">Selecione</option>
+                        <option value="true">Sim</option>
+                        <option value="false">Não</option>
+                    </Selecao>
+                </div>
+            );
+        }
+
         if (campo.tipo === "DATA") {
 
             return (
