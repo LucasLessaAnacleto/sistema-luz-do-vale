@@ -2,15 +2,17 @@
 
 import Link from "next/link";
 import { use, useEffect, useState, type ReactNode } from "react";
-import { Pencil, Plus } from "lucide-react";
+import { Pencil, Plus, UserRoundCheck, UserRoundX } from "lucide-react";
 import { usePathname } from "next/navigation";
 
 import type { PacienteDetalhes } from "@/app/types/pacientes";
-import { buscarPaciente } from "@/app/services/pacienteService";
+import { buscarPaciente, desativarPaciente, reativarPaciente } from "@/app/services/pacienteService";
 import { cn, formatarData } from "@/app/util";
 
 import AvatarIniciais from "@/app/components/ui/AvatarIniciais";
 import BotaoVoltar from "@/app/components/ui/BotaoVoltar";
+import { useAppSelector } from "@/app/redux/hook";
+import ModalConfirmacao from "@/app/components/ModalConfirmacao";
 
 interface Props {
     children: ReactNode;
@@ -47,6 +49,13 @@ export default function PacienteLayout({ children, params }: Props) {
     const [erro, setErro] = useState("");
     const [naoEncontrado, setNaoEncontrado] = useState(false);
 
+    const usuario = useAppSelector((state) => state.auth.usuario);
+
+    const [modalStatusAberto, setModalStatusAberto] = useState(false);
+    const [motivo, setMotivo] = useState("");
+    const [alterandoStatus, setAlterandoStatus] = useState(false);
+    const [erroStatus, setErroStatus] = useState("");
+
 
     useEffect(() => {
         carregarPaciente();
@@ -80,6 +89,36 @@ export default function PacienteLayout({ children, params }: Props) {
             setCarregando(false);
         }
     }
+
+
+    async function confirmarAlteracaoStatus() {
+
+        if (!paciente || alterandoStatus) return;
+
+        try {
+            setAlterandoStatus(true);
+            setErroStatus("");
+
+            const dados = { motivo: motivo.trim() || null };
+
+            if (paciente.ativo) {
+                await desativarPaciente(paciente.id, dados);
+            } else {
+                await reativarPaciente(paciente.id, dados);
+            }
+
+            await carregarPaciente();
+
+            setModalStatusAberto(false);
+            setMotivo("");
+
+        } catch (error) {
+            setErroStatus( error instanceof Error ? error.message : "Erro ao alterar status do paciente.");
+        } finally {
+            setAlterandoStatus(false);
+        }
+    }
+
 
     const historicoAtivo = pathname.endsWith("/historico");
     const idade = paciente ? calcularIdade(paciente.dtNasc) : null;
@@ -139,6 +178,21 @@ export default function PacienteLayout({ children, params }: Props) {
                         <BotaoVoltar href="/pacientes" />
 
                         <div className="flex items-center gap-2">
+
+                            {!editando && paciente && (
+                                <button type="button" title={paciente.ativo ? "Desativar paciente" : "Reativar paciente"} 
+                                    className="flex min-h-10 items-center gap-1.5 rounded-full bg-white/10 px-3 text-sm hover:bg-white/20 cursor-pointer"
+                                    onClick={() => {
+                                        setErroStatus("");
+                                        setModalStatusAberto(true);
+                                    }}
+                                >
+                                    {paciente.ativo ? <UserRoundX className="h-4 w-4" /> : <UserRoundCheck className="h-4 w-4" />}
+
+                                    {paciente.ativo ? "Desativar" : "Reativar"}
+                                </button>
+                            )}
+
                             {!editando && (
                                 <Link href={`/pacientes/${id}/editar`}
                                     className="flex min-h-10 items-center gap-1.5 rounded-full bg-white/10 px-3 text-sm hover:bg-white/20"
@@ -230,6 +284,35 @@ export default function PacienteLayout({ children, params }: Props) {
                 {children}
             </div>
 
+            
+            <ModalConfirmacao
+                aberto={modalStatusAberto}
+                titulo={paciente?.ativo ? "Desativar paciente" : "Reativar paciente"}
+                descricao={`Deseja ${paciente?.ativo ? "desativar" : "reativar"} o paciente ${paciente?.nome}?`}
+                variante={paciente?.ativo ? "perigo" : "confirmacao"}
+                textoConfirmar={paciente?.ativo ? "Desativar" : "Reativar"}
+                disabledConfirmar={!motivo}
+                carregando={alterandoStatus}
+                erro={erroStatus}
+                onConfirmar={confirmarAlteracaoStatus}
+                onFechar={() => {
+                    setModalStatusAberto(false);
+                    setMotivo("");
+                }}
+            >
+                <div>
+                    <label htmlFor="motivo-status" className="mb-2 block text-sm font-medium">
+                        Motivo
+                    </label>
+
+                    <textarea id="motivo-status" rows={3} maxLength={500} placeholder="Informe o motivo da alteração..."
+                        className="w-full resize-none rounded-xl border border-border bg-background px-3 py-2 text-sm outline-none focus:border-primary"
+                        value={motivo}
+                        disabled={alterandoStatus}
+                        onChange={(e) => setMotivo(e.target.value)}
+                    />
+                </div>
+            </ModalConfirmacao>
         </>
     );
 }
