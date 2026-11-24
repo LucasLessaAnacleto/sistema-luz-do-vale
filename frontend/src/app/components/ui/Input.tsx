@@ -56,7 +56,6 @@ export default function Input({
           {...props}
           id={inputId}
           type={inputType}
-          aria-describedby={descricao ? `${inputId}-descricao` : props["aria-describedby"]}
           className={`
             w-full rounded-xl border border-border bg-input-background py-3
             ${isPassword ? "pr-12" : "pr-4"}
