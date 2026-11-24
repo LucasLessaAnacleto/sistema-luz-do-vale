@@ -173,13 +173,13 @@ export default function InformacoesPessoaisPage() {
                             </div>
 
                             {erro && (
-                                <p role="alert" className="text-sm text-red-600">
+                                <p className="text-sm text-red-600">
                                     {erro}
                                 </p>
                             )}
 
                             {sucesso && (
-                                <p role="status" className="text-sm text-primary-dark">
+                                <p className="text-sm text-primary-dark">
                                     Informações pessoais atualizadas com sucesso.
                                 </p>
                             )}

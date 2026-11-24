@@ -47,25 +47,27 @@ export default function ConfiguracoesPage() {
 
         </ConfiguracaoSecao>
   
-        <ConfiguracaoSecao titulo="Gestão">
+        
+        {isAdmin && (
+            <ConfiguracaoSecao titulo="Gestão">
 
-          <ConfiguracaoLink
-            href="/configuracoes/equipe"
-            titulo="Equipe"
-            descricao="Profissionais e contas de acesso"
-            icon={Users}
-          />
+                <ConfiguracaoLink
+                    href="/configuracoes/equipe"
+                    titulo="Equipe"
+                    descricao="Profissionais e contas de acesso"
+                    icon={Users}
+                />
 
-          {isAdmin && (
-            <ConfiguracaoLink
-              href="/configuracoes/perfis"
-              titulo="Perfis"
-              descricao="Perfis e permissões dos profissionais"
-              icon={ShieldCheck}
-            />
-          )}
+                <ConfiguracaoLink
+                    href="/configuracoes/perfis"
+                    titulo="Perfis"
+                    descricao="Perfis e permissões dos profissionais"
+                    icon={ShieldCheck}
+                />
 
-        </ConfiguracaoSecao>
+            </ConfiguracaoSecao>
+        )}
+
 
         {/* <ConfiguracaoSecao titulo="Documentos">
 
