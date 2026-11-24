@@ -223,16 +223,20 @@ public class DocumentoCamposService {
         for (CampoDocumento campo : campos) {
             String nomeCampo = campo.getNome();
 
-            if (!dados.containsKey(nomeCampo) || dados.get(nomeCampo) == null ) {
+            Object valor = dados.get(nomeCampo);
+
+            if (valor == null) {
                 if (campo.isObrigatorio()) {
                     throw new DadosDocumentoInvalidosException("Campo \"%s\" é obrigatório.".formatted(campo.getRotulo()));
                 }
                 continue;
             }
 
-            Object valor = validaValorCampo(campo, dados.get(nomeCampo));
+            if (!campo.isObrigatorio() && campo.getTipo() == EnumTipoCampo.HORA && "".equals(valor)) {
+                continue;
+            }
 
-            documento.put(nomeCampo, valor);
+            documento.put(nomeCampo, validaValorCampo(campo, valor));
         }
 
         return documento;

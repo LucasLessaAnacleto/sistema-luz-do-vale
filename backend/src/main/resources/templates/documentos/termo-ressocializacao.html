@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+
+    <style>
+        @page {
+            size: A4;
+            margin: 17mm 20mm 18mm 20mm;
+        }
+
+        body {
+            font-family: "Times New Roman", serif;
+            font-size: 15px;
+            color: #000;
+        }
+
+        .cabecalho {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+        }
+
+        .cabecalho td {
+            vertical-align: middle;
+        }
+
+        .marca {
+            width: 150px;
+            font-family: Arial, sans-serif;
+            font-size: 11px;
+            padding-right: 10px;
+        }
+
+        .marca strong {
+            display: block;
+            font-size: 23px;
+            line-height: 1;
+        }
+
+        .titulo {
+            text-align: center;
+            font-size: 17px;
+            margin: 88px 0 60px;
+        }
+
+        .declaracao {
+            margin: 0;
+            line-height: 1.3;
+        }
+
+        .valor {
+            border-bottom: 1px solid #000;
+            padding: 0 3px;
+        }
+
+        .horarios {
+            line-height: 1.85;
+            margin: 14px 0 18px;
+        }
+
+        .hora {
+            display: inline-block;
+            min-width: 40px;
+            text-align: center;
+        }
+
+        .rodape {
+            margin-top: 72px;
+            page-break-inside: avoid;
+        }
+
+        .assinaturas {
+            width: 100%;
+            border-collapse: collapse;
+            table-layout: fixed;
+        }
+
+        .assinaturas td {
+            width: 50%;
+            text-align: center;
+            vertical-align: top;
+        }
+
+        .assinatura {
+            width: 90%;
+            margin: 0 auto;
+            border-top: 1px solid #000;
+            padding-top: 6px;
+        }
+
+        .data {
+            text-align: center;
+            margin-top: 108px;
+        }
+    </style>
+</head>
+
+<body>
+<div class="pagina">
+    <table class="cabecalho">
+        <tr>
+            <td class="marca">
+                GOVERNO DE
+                <strong>SANTA CATARINA</strong>
+                SECRETARIA DA SAÚDE
+            </td>
+            <td>
+                GOVERNO DE SANTA CATARINA<br />
+                SECRETARIA DE ESTADO DA SAÚDE<br />
+                SUPERINTENDÊNCIA DE GESTÃO ESTRATÉGICA E PLANEJAMENTO<br />
+                DIRETORIA DE REGIONALIZAÇÃO E PLANEJAMENTO<br />
+                GERÊNCIA REGIONAL DE SAÚDE DE CRICIÚMA<br />
+                EQUIPE DESCENTRALIZADA DE CONTROLE E AVALIAÇÃO
+            </td>
+        </tr>
+    </table>
+
+    <div class="titulo">TERMO DE RESSOCIALIZAÇÃO</div>
+
+    <p class="declaracao">
+        Declaro para os devidos fins que, o acolhido <span class="valor" th:text="${paciente.nome}"></span>,
+        portador do CPF: <span class="valor" th:text="${paciente.cpf}"></span>,
+        portador da chave de SISREG: <span class="valor" th:text="${dados['sisreg']}"></span>, esta nesta
+        acolhido instituição para tratamento de transtornos decorrentes do uso abusivo de Substâncias
+        Psicoativas (SPA), ocupando vaga custeada pelo Governo do Estado de Santa Catarina.
+    </p>
+    <p class="declaracao">
+        Sendo que conforme previsto em Plano Individual de Acolhido (PIA) o acolhido inciou processo de
+        ressocialização na Empresa: <span class="valor" th:text="${dados['empresa']}"></span>,
+        fone da Empresa: <span class="valor" th:text="${dados['telefoneEmpresa']}"></span>, com atividades nos dias
+    </p>
+
+    <div class="horarios">
+        <div>
+            <span th:text="${dados['segundaInicio'] != null or dados['segundaFim'] != null ? '(X)' : '( )'}"></span>
+            segunda-feira - No horário das <span class="valor hora" th:text="${dados['segundaInicio']}"></span>
+            horas até <span class="valor hora" th:text="${dados['segundaFim']}"></span> horas
+        </div>
+        <div>
+            <span th:text="${dados['tercaInicio'] != null or dados['tercaFim'] != null ? '(X)' : '( )'}"></span>
+            terça-feira - No horário das <span class="valor hora" th:text="${dados['tercaInicio']}"></span>
+            horas até <span class="valor hora" th:text="${dados['tercaFim']}"></span> horas
+        </div>
+        <div>
+            <span th:text="${dados['quartaInicio'] != null or dados['quartaFim'] != null ? '(X)' : '( )'}"></span>
+            quarta-feira - No horário das <span class="valor hora" th:text="${dados['quartaInicio']}"></span>
+            horas até <span class="valor hora" th:text="${dados['quartaFim']}"></span> horas
+        </div>
+        <div>
+            <span th:text="${dados['quintaInicio'] != null or dados['quintaFim'] != null ? '(X)' : '( )'}"></span>
+            quinta-feira - No horário das <span class="valor hora" th:text="${dados['quintaInicio']}"></span>
+            horas até <span class="valor hora" th:text="${dados['quintaFim']}"></span> horas
+        </div>
+        <div>
+            <span th:text="${dados['sextaInicio'] != null or dados['sextaFim'] != null ? '(X)' : '( )'}"></span>
+            sexta-feira - No horário das <span class="valor hora" th:text="${dados['sextaInicio']}"></span>
+            horas até <span class="valor hora" th:text="${dados['sextaFim']}"></span> horas.
+        </div>
+    </div>
+
+    <p class="declaracao">
+        Retornando para a Comunidade Terapêutica às <span class="valor hora" th:text="${dados['retorno']}"></span> horas.
+    </p>
+
+    <div class="rodape">
+        <table class="assinaturas">
+            <tr>
+                <td><div class="assinatura">Assinatura do Acolhido</div></td>
+                <td><div class="assinatura">Representante da Comunidade Terapêutica</div></td>
+            </tr>
+        </table>
+
+        <div class="data" th:with="data=${#temporals.createDate(dados['data'])}">
+            Cidade, <span class="valor" th:text="${dados['cidade']}"></span>,
+            data, <span class="valor" th:text="${#temporals.day(data)}"></span>,
+            <span class="valor" th:text="${#temporals.format(data, 'MMMM', T(java.util.Locale).forLanguageTag('pt-BR'))}"></span>,
+            <span class="valor" th:text="${#temporals.year(data)}"></span>.
+        </div>
+    </div>
+</div>
+</body>
+</html>

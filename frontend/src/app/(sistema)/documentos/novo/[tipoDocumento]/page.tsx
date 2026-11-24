@@ -34,6 +34,24 @@ const estadoInicial = {
 };
 
 
+function formatarTelefoneEmpresa(valor: string) {
+    const numeros = valor.replace(/\D/g, "").slice(0, 11);
+
+    if (!numeros) return "";
+    if (numeros.length <= 2) return `(${numeros}`;
+
+    const ddd = numeros.slice(0, 2);
+    const primeiroDigito = numeros[2];
+
+    if (numeros.length <= 3) return `(${ddd}) ${primeiroDigito}`;
+
+    const primeiraParte = numeros.slice(3, 7);
+
+    if (numeros.length <= 7) return `(${ddd}) ${primeiroDigito} ${primeiraParte}`;
+
+    return `(${ddd}) ${primeiroDigito} ${primeiraParte}-${numeros.slice(7)}`;
+}
+
 export default function NovoDocumentoFormularioPage() {
 
     const params = useParams<{ tipoDocumento: string }>();
@@ -120,6 +138,27 @@ export default function NovoDocumentoFormularioPage() {
     function renderizarCampo(campo: CampoDocumento) {
         const largura = campo.largura === 12 ? "sm:col-span-2" : "sm:col-span-1";
         const valor = estado.valores[campo.nome] ?? dadosOrigem?.[campo.nome] ?? formulario?.dadosPadrao[campo.nome] ?? "";
+
+        if (campo.nome === "telefoneEmpresa") {
+            return (
+                <div key={campo.nome} className={largura}>
+                    <Input
+                        label={campo.rotulo}
+                        name={campo.nome}
+                        type="tel"
+                        placeholder="(00) 0 0000-0000"
+                        pattern={"\\([0-9]{2}\\) [0-9] [0-9]{4}-[0-9]{4}"}
+                        title="Digite o telefone no formato (00) 0 0000-0000"
+                        defaultValue={formatarTelefoneEmpresa(String(valor))}
+                        required={campo.obrigatorio}
+                        readOnly={campo.somenteLeitura}
+                        onChange={(event) => {
+                            event.currentTarget.value = formatarTelefoneEmpresa(event.currentTarget.value);
+                        }}
+                    />
+                </div>
+            );
+        }
 
         if (campo.tipo === "TEXTO_LONGO") {
             return (
