@@ -37,7 +37,7 @@ export default function QuadroAvisos() {
     }
 
     return (
-        <section aria-labelledby="avisos-titulo">
+        <section>
 
             <div className="mb-3 flex items-center justify-between gap-3 flex-wrap">
                 <h2 id="avisos-titulo" className="flex items-center gap-2 text-base font-semibold sm:text-lg">

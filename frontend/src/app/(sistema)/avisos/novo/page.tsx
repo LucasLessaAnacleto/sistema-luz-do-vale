@@ -2,7 +2,6 @@
 
 import { useActionState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { Info } from "lucide-react";
 
 import { actionCadastrarAviso } from "../actionCadastrarAviso";
 
