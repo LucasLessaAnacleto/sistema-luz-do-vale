@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+
+    <style>
+        @page {
+            size: A4;
+            margin: 28mm 25mm 18mm 25mm;
+        }
+
+        body {
+            font-family: "Times New Roman", serif;
+            font-size: 13px;
+            color: #000;
+        }
+
+        .cabecalho {
+            text-align: center;
+            margin-bottom: 28px;
+        }
+
+        .logo-superior {
+            font-size: 8px;
+            font-weight: bold;
+        }
+
+        .logo {
+            font-family: Arial, sans-serif;
+            font-size: 22px;
+            font-weight: bold;
+        }
+
+        .divisoria {
+            border-top: 1px solid #000;
+            margin: 3px 0;
+        }
+
+        .linha-topo {
+            font-size: 10px;
+        }
+
+        .titulo {
+            text-align: center;
+            font-size: 32px;
+            line-height: 1.15;
+            margin-bottom: 16px;
+        }
+
+        .secao {
+            margin-top: 14px;
+        }
+
+        .subtitulo {
+            font-size: 14px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .declaracao {
+            font-family: Arial, sans-serif;
+            line-height: 1.55;
+            margin: 0 0 12px;
+        }
+
+        .valor {
+            border-bottom: 1px solid #000;
+            padding: 0 4px;
+        }
+
+        .rodape {
+            margin-top: 185px;
+            page-break-inside: avoid;
+        }
+
+        .assinaturas {
+            width: 100%;
+            border-collapse: collapse;
+            table-layout: fixed;
+            font-family: Arial, sans-serif;
+        }
+
+        .assinaturas td {
+            width: 50%;
+        }
+
+        .assinatura {
+            width: 68%;
+            border-top: 1px solid #000;
+            padding-top: 11px;
+            text-align: center;
+        }
+
+        .assinatura-direita {
+            margin-left: auto;
+        }
+
+        .data {
+            margin-top: 98px;
+            text-align: center;
+            font-size: 15px;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+    </style>
+</head>
+
+<body>
+<div class="pagina">
+    <div class="cabecalho">
+        <div class="logo-superior">CENTRO DE RECUPERAÇÃO</div>
+        <div class="logo">LUZ NO VALE</div>
+        <div class="divisoria"></div>
+        <div class="linha-topo">Rua Angelino Destro, 508 – Picadão – CEP: 88.865-000 – Nova Veneza/SC</div>
+        <div class="linha-topo">
+            Presidente: Sérgio Antonio Elias – 48. 9603-1606 | Vice-presidente: Valter Silva – 48. 9603-1498
+        </div>
+    </div>
+
+    <div class="titulo">ALTA TERAPEUTICA<br />CONCLUSÃO</div>
+
+    <div class="secao">
+        <div class="subtitulo">DISPOSIÇÕES GERAIS</div>
+
+        <p class="declaracao">
+            O acolhido <span class="valor" th:text="${paciente.nome}"></span>, inscrito no <strong>CPF:</strong>
+            <span class="valor" th:text="${paciente.cpf}"></span><br />
+            Concluiu duas das três fases do programa terapêutico da instituição, sendo elas.
+            Adaptação e Desintoxicação, Conscientização e Interiorização, Ressocialização e
+            Reinserção social. O tratamento proposto na CT de nove meses. Iniciando o
+            acolhimento <span th:text="${fmt.data(dados['dataAcolhimento'])}"></span>. Comemora-se a vitória pela evolução neste período.<br />
+            O graduado é convidado a retornar a CT, quando quiser ( visitas agendadas ),
+            conversas com os residentes, passar um dia com os mesmos, demonstrando, pela
+            simplicidade, que funciona, ou, como tem funcionado em sua vida o programa de
+            recuperação.
+        </p>
+    </div>
+
+    <div class="secao">
+        <div class="subtitulo">REGISTRO DO PROFISSIONAL COODENADOR / DIRETORES:</div>
+        <p class="declaracao">Esclarecimentos prestados ao acolhido:</p>
+
+        <p class="declaracao">
+            O acolhido apresentou bom comportamento, praticando todas as laborterapias
+            propostas pelos monitores e coordenadores, participou das atividades da instituição e
+            obteve evolução nas duas fases do programa terapêutico da instituição.
+        </p>
+    </div>
+
+    <div class="rodape">
+        <table class="assinaturas">
+            <tr>
+                <td><div class="assinatura">Paciente ou Responsável</div></td>
+                <td><div class="assinatura assinatura-direita">Profissional Responsável</div></td>
+            </tr>
+        </table>
+
+        <div class="data" th:with="data=${#temporals.createDate(dados['data'])}">
+            NOVA VENEZA / SC, <span th:text="${#temporals.day(data)}"></span>
+            DE <span th:text="${#temporals.format(data, 'MMMM', T(java.util.Locale).forLanguageTag('pt-BR'))}"></span>
+            DE <span th:text="${#temporals.year(data)}"></span>
+        </div>
+    </div>
+</div>
+</body>
+</html>
