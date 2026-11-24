@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+
+    <style>
+        @page {
+            size: A4;
+            margin: 17mm 20mm 18mm 20mm;
+        }
+
+        body {
+            font-family: "Times New Roman", serif;
+            font-size: 15px;
+            color: #000;
+        }
+
+        .cabecalho {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+        }
+
+        .cabecalho td {
+            vertical-align: middle;
+        }
+
+        .marca {
+            width: 150px;
+            font-family: Arial, sans-serif;
+            font-size: 11px;
+            padding-right: 10px;
+        }
+
+        .marca strong {
+            display: block;
+            font-size: 23px;
+            line-height: 1;
+        }
+
+        .titulo {
+            text-align: center;
+            font-size: 24px;
+            font-weight: bold;
+            margin: 93px 0 74px;
+        }
+
+        .declaracao {
+            margin: 0;
+            line-height: 1.3;
+        }
+
+        .valor {
+            border-bottom: 1px solid #000;
+            padding: 0 3px;
+        }
+
+        .motivos {
+            line-height: 1.3;
+            margin-top: 16px;
+        }
+
+        .rodape {
+            margin-top: 72px;
+            page-break-inside: avoid;
+        }
+
+        .assinaturas {
+            width: 100%;
+            border-collapse: collapse;
+            table-layout: fixed;
+        }
+
+        .assinaturas td {
+            width: 50%;
+            text-align: center;
+            vertical-align: top;
+        }
+
+        .assinatura {
+            width: 90%;
+            margin: 0 auto;
+            border-top: 1px solid #000;
+            padding-top: 6px;
+        }
+
+        .data {
+            text-align: center;
+            margin-top: 108px;
+        }
+    </style>
+</head>
+
+<body>
+<div class="pagina">
+    <table class="cabecalho">
+        <tr>
+            <td class="marca">
+                GOVERNO DE
+                <strong>SANTA CATARINA</strong>
+                SECRETARIA DA SAÚDE
+            </td>
+            <td>
+                GOVERNO DE SANTA CATARINA<br />
+                SECRETARIA DE ESTADO DA SAÚDE<br />
+                SUPERINTENDÊNCIA DE GESTÃO ESTRATÉGICA E PLANEJAMENTO<br />
+                DIRETORIA DE REGIONALIZAÇÃO E PLANEJAMENTO<br />
+                GERÊNCIA REGIONAL DE SAÚDE DE CRICIÚMA<br />
+                EQUIPE DESCENTRALIZADA DE CONTROLE E AVALIAÇÃO
+            </td>
+        </tr>
+    </table>
+
+    <div class="titulo">DECLARAÇÃO DE DESLIGAMENTO</div>
+
+    <p class="declaracao">
+        Declaro para os devidos fins que, o acolhido <span class="valor" th:text="${paciente.nome}"></span>,
+        portador do CPF: <span class="valor" th:text="${paciente.cpf}"></span>,
+        portador da chave de SISREG: <span class="valor" th:text="${dados['sisreg']}"></span>,
+        foi acolhido nesta Comunidade Terapêutica na data de
+        <span class="valor" th:text="${fmt.data(dados['dataAcolhimento'])}"></span>, onde esteve nesta instituição para
+        tratamento de transtornos decorrentes do uso abusivo de Substâncias Psicoativas (SPA), onde
+        ocupou vaga custeada pelo Governo do Estado de Santa Catarina.
+    </p>
+    <p class="declaracao">
+        Sendo que o acolhido foi desligado desta instituição na data de
+        <span class="valor" th:text="${fmt.data(dados['dataDesligamento'])}"></span>. Motivo do Desligamento:
+    </p>
+
+    <div class="motivos">
+        <div><span th:text="${dados['motivo'] == 'Desistência' ? '(X)' : '( )'}"></span> Desistência;</div>
+        <div><span th:text="${dados['motivo'] == 'Fuga/Evasão' ? '(X)' : '( )'}"></span> Fuga/Evasão;</div>
+        <div><span th:text="${dados['motivo'] == 'Alta Administrativa' ? '(X)' : '( )'}"></span> Alta Administrativa;</div>
+        <div><span th:text="${dados['motivo'] == 'Alta Terapêutica' ? '(X)' : '( )'}"></span> Alta Terapêutica;</div>
+        <div><span th:text="${dados['motivo'] == 'Agravante de Saúde' ? '(X)' : '( )'}"></span> Agravante de Saúde;</div>
+        <div><span th:text="${dados['motivo'] == 'Mudança de Convênio/Programa' ? '(X)' : '( )'}"></span> Mudança de Convênio/Programa;</div>
+        <div><span th:text="${dados['motivo'] == 'Óbito' ? '(X)' : '( )'}"></span> Óbito.</div>
+    </div>
+
+    <div class="rodape">
+        <table class="assinaturas">
+            <tr>
+                <td><div class="assinatura">Assinatura do Acolhido/<br />Testemunha</div></td>
+                <td><div class="assinatura">Representante da Comunidade Terapêutica</div></td>
+            </tr>
+        </table>
+
+        <div class="data" th:with="data=${#temporals.createDate(dados['data'])}">
+            Cidade, <span class="valor" th:text="${dados['cidade']}"></span>,
+            data, <span class="valor" th:text="${#temporals.day(data)}"></span>,
+            <span class="valor" th:text="${#temporals.format(data, 'MMMM', T(java.util.Locale).forLanguageTag('pt-BR'))}"></span>,
+            <span class="valor" th:text="${#temporals.year(data)}"></span>.
+        </div>
+    </div>
+</div>
+</body>
+</html>

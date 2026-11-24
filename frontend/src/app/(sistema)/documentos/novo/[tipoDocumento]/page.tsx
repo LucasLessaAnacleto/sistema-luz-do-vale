@@ -161,6 +161,25 @@ export default function NovoDocumentoFormularioPage() {
             );
         }
 
+        if (campo.tipo === "SELECAO" && campo.opcoes?.length) {
+
+            return (
+                <div key={campo.nome} className={largura}>
+                    <Selecao
+                        label={campo.rotulo}
+                        name={campo.nome}
+                        defaultValue={String(valor)}
+                        required={campo.obrigatorio}
+                    >
+                        <option value="">Selecione</option>
+                        {campo.opcoes.map((opcao) => (
+                            <option key={opcao} value={opcao}>{opcao}</option>
+                        ))}
+                    </Selecao>
+                </div>
+            );
+        }
+
         if (campo.tipo === "DATA") {
 
             return (
