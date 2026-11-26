@@ -14,6 +14,12 @@ import org.springframework.stereotype.Service;
 import org.thymeleaf.ITemplateEngine;
 import org.thymeleaf.context.Context;
 
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.util.HexFormat;
+import java.util.Set;
+
 @Service
 public class DocumentoTemplateService {
 
@@ -63,7 +69,27 @@ public class DocumentoTemplateService {
 
         String template = resolverTemplate(versao);
 
-        return templateEngine.process("documentos/"+template, context);
+        String html = templateEngine.process("documentos/"+template, context);
+        String hash = gerarHash(documento.getId() + "\n" + html);
+
+        context.setVariable("hashDocumento", hash);
+
+        String fragmento = "documentos/fragments/hash-documento";
+        String estilo = templateEngine.process(fragmento, Set.of("estilo"), context);
+        String rodape = templateEngine.process(fragmento, Set.of("rodape"), context);
+
+        return html.replace("</head>", estilo + "</head>")
+                .replace("</body>", rodape + "</body>");
+    }
+
+    private String gerarHash(String conteudo) {
+        try {
+            MessageDigest sha256 = MessageDigest.getInstance("SHA-256");
+            byte[] hash = sha256.digest(conteudo.getBytes(StandardCharsets.UTF_8));
+            return HexFormat.of().formatHex(hash);
+        } catch (NoSuchAlgorithmException e) {
+            throw new IllegalStateException("Não foi possível gerar o hash do documento.", e);
+        }
     }
 
     private String resolverTemplate(TipoDocumentoVersao versao) {
