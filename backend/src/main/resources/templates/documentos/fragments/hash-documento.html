@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <style th:fragment="estilo" th:inline="text">
+        @page {
+            @bottom-right {
+                content: "[(${hashDocumento})]";
+                font: 8pt monospace;
+                color: #555;
+            }
+        }
+
+        .hash-documento {
+            margin-top: 16px;
+            text-align: right;
+            font: 8pt monospace;
+            color: #555;
+            overflow-wrap: anywhere;
+        }
+
+        @media print {
+            .hash-documento {
+                display: none;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="hash-documento" th:fragment="rodape" th:text="${hashDocumento}"></div>
+</body>
+</html>
