@@ -1,6 +1,6 @@
 interface Props {
-  nome: string;
-  tamanho?: "sm" | "md" | "lg";
+    nome: string;
+    tamanho?: "sm" | "md" | "lg";
 }
 
 function iniciais(nome: string) {
@@ -21,7 +21,7 @@ export default function AvatarIniciais({ nome, tamanho = "md"}: Props) {
         <span className={`flex shrink-0 items-center justify-center rounded-full bg-secondary
             font-medium text-foreground ${tamanhos[tamanho]}`}
         >
-        {iniciais(nome)}
+            {iniciais(nome)}
         </span>
     );
 }

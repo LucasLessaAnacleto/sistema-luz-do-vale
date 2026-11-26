@@ -5,18 +5,18 @@ import { store } from "../redux/store";
 
 
 const api = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8080",
-  timeout: 15000,
+    baseURL: process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8080",
+    timeout: 15000,
 });
 
 api.interceptors.request.use((config) => {
-  const token = Cookies.get("token");
+    const token = Cookies.get("token");
 
-  if (token && token !== "demo-token") {
-    config.headers.Authorization = `Bearer ${token}`;
-  }
+    if (token && token !== "demo-token") {
+        config.headers.Authorization = `Bearer ${token}`;
+    }
 
-  return config;
+    return config;
 });
 
 api.interceptors.response.use((response) => response, (error) => {
@@ -57,7 +57,7 @@ api.interceptors.response.use((response) => response, (error) => {
 
 
     return Promise.reject(error);
-  }
+}
 );
 
 export default api;

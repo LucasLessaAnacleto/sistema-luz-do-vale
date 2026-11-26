@@ -1,28 +1,28 @@
 import type { Usuario } from "./usuarios";
 
 export interface LoginRequest {
-  email: string;
-  senha: string;
+    email: string;
+    senha: string;
 }
 
 export interface LoginResponse {
-  usuario: Usuario;
-  token: string;
+    usuario: Usuario;
+    token: string;
 }
 
 export interface LoginApiResponse {
-  token: string;
+    token: string;
 }
 
 export interface AuthState {
-  usuario: Usuario | null;
-  token: string;
-  status: "verificando" | "autenticado" | "naoAutenticado";
+    usuario: Usuario | null;
+    token: string;
+    status: "verificando" | "autenticado" | "naoAutenticado";
 }
 
 export interface LoginFormState {
-  email: string;
-  senha: string;
-  erro: string;
-  tentativa: number;
+    email: string;
+    senha: string;
+    erro: string;
+    tentativa: number;
 }
