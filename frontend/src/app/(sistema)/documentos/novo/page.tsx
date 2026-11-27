@@ -6,6 +6,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 
 import type { TipoDocumento } from "@/app/types/documentos";
 import type { Paciente } from "@/app/types/pacientes";
+import { CODIGO_TIPO_DOCUMENTO } from "@/app/types/documentos";
 
 import { listarTiposDocumento } from "@/app/services/tipoDocumentoService";
 import { buscarListaPacientes } from "@/app/services/pacienteService";
@@ -53,7 +54,7 @@ export default function NovoDocumentoPage() {
 
             const dados = await listarTiposDocumento();
             setTiposDocumento(
-                dados.filter((tipo) => tipo.nome !== "Ficha de Acolhimento")
+                dados.filter((tipo) => tipo.id !== CODIGO_TIPO_DOCUMENTO.FICHA_ACOLHIMENTO)
             );
         } catch (error) {
             setErroTipos( error instanceof Error ? error.message : "Erro ao carregar os tipos de documento.");

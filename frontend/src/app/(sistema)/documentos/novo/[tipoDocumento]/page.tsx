@@ -7,6 +7,7 @@ import type {
     CampoDocumento,
     FormularioDocumento
 } from "@/app/types/documentos";
+import { CODIGO_TIPO_DOCUMENTO } from "@/app/types/documentos";
 
 import { buscarFormularioDocumento } from "@/app/services/tipoDocumentoService";
 
@@ -183,7 +184,7 @@ export default function NovoDocumentoFormularioPage() {
             );
         }
 
-        if (formulario?.tipoDocumentoId === 13 && (campo.nome === "engatinha" || campo.nome === "marcha")) {
+        if (formulario?.tipoDocumentoId === CODIGO_TIPO_DOCUMENTO.AVALIACAO_ENFERMAGEM && (campo.nome === "engatinha" || campo.nome === "marcha")) {
             return (
                 <div key={campo.nome}>
                     <input type="hidden" name={campo.nome} value="false" />
@@ -223,7 +224,7 @@ export default function NovoDocumentoFormularioPage() {
             );
         }
 
-        if (formulario?.tipoDocumentoId === 13 && campo.tipo === "SELECAO" && campo.opcoes?.length) {
+        if (formulario?.tipoDocumentoId === CODIGO_TIPO_DOCUMENTO.AVALIACAO_ENFERMAGEM && campo.tipo === "SELECAO" && campo.opcoes?.length) {
             return (
                 <div key={campo.nome} role="radiogroup" aria-label={campo.rotulo} className="flex flex-wrap gap-x-4 gap-y-2">
                     <input type="hidden" name={campo.nome} value="" />
@@ -377,7 +378,7 @@ export default function NovoDocumentoFormularioPage() {
 
                     <div className="grid gap-4 sm:grid-cols-2">
                         {formulario.campos.map((campo) => {
-                            const grupo = formulario.tipoDocumentoId === 13
+                            const grupo = formulario.tipoDocumentoId === CODIGO_TIPO_DOCUMENTO.AVALIACAO_ENFERMAGEM
                                 ? gruposAvaliacao.find((item) => item.campos.includes(campo.nome))
                                 : undefined;
 

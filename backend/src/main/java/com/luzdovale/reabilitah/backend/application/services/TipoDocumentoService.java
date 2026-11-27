@@ -14,6 +14,7 @@ import com.luzdovale.reabilitah.backend.domain.repository.PacienteRepository;
 import com.luzdovale.reabilitah.backend.domain.repository.PermissaoTipoDocumentoRepository;
 import com.luzdovale.reabilitah.backend.domain.repository.TipoDocumentoRepository;
 import com.luzdovale.reabilitah.backend.domain.repository.TipoDocumentoVersaoRepository;
+import com.luzdovale.reabilitah.backend.domain.utils.CodigoTipoDocumento;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -76,8 +77,7 @@ public class TipoDocumentoService {
 
     public TipoDocumentoVersao ultimaVersaoFichaAcolhimento() {
 
-        return versaoRepository.findFirstByTemplateOrderByVersaoDesc("ficha-acolhimento")
-                .orElseThrow(TipoDocumentoVersaoNaoEncontradoExeption::new);
+        return ultimaVersaoDocumento(CodigoTipoDocumento.FICHA_ACOLHIMENTO);
     }
 
     public TipoDocumentoVersao buscarVersaoId(Long versaoId){
@@ -127,6 +127,7 @@ public class TipoDocumentoService {
         permissaoTipoDocumentoRepository.save(permissao);
     }
 
+    @Transactional
     public void removerPermissao(Long tipoDocumentoId, Long perfilId) {
 
         TipoDocumento tipoDocumento = tipoDocumentoRepository.findById(tipoDocumentoId)
