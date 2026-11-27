@@ -3,10 +3,7 @@
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 
-import {
-    buscarPaciente,
-    editarPaciente
-} from "@/app/services/pacienteService";
+import { buscarPaciente, editarPaciente } from "@/app/services/pacienteService";
 
 import { converterPacienteFormulario } from "../../converterPacienteFormulario";
 import { montarPacienteRequest } from "../../montarPacienteRequest";
@@ -14,6 +11,8 @@ import { montarPacienteRequest } from "../../montarPacienteRequest";
 import FormularioPaciente from "../../components/FormularioPaciente";
 import CarregandoConteudo from "@/app/components/CarregandoConteudo";
 import ErroCarregamento from "@/app/components/ErroCarregamento";
+import CabecalhoPagina from "@/app/components/CabecalhoPagina";
+import BotaoVoltarHistorico from "@/app/components/ui/BotaoVoltarHistorico";
 import { mensagemErro } from "@/app/util";
 
 export default function EditarPacientePage() {
@@ -69,30 +68,41 @@ export default function EditarPacientePage() {
         }
     }
 
-    return carregando ? 
-        <CarregandoConteudo mensagem="Carregando dados do paciente..."/> : 
-        !valores ? <ErroCarregamento mensagem={erro || "Não foi possível carregar o paciente."} /> : 
-        (
-            <div>
-                <div className="mx-auto max-w-6xl px-5 pt-6 sm:px-8">
-                    <h2 className="text-xl font-semibold">
-                        Editar paciente
-                    </h2>
+    return (
+        <>
+            <CabecalhoPagina>
+                <div className="flex items-center gap-3">
+                    <BotaoVoltarHistorico />
 
-                    <p className="mt-1 text-sm text-muted-foreground">
-                        Atualize os dados do acolhido, responsável e ficha
-                        de acolhimento.
-                    </p>
+                    <div>
+                        <h1 className="text-2xl font-semibold">
+                            Editar paciente
+                        </h1>
+
+                        <p className="mt-0.5 text-xs text-muted-foreground">
+                            Atualize os dados do acolhido, responsável e ficha de acolhimento
+                        </p>
+                    </div>
+                </div>
+            </CabecalhoPagina>
+
+            {carregando ? (
+                <CarregandoConteudo mensagem="Carregando dados do paciente..." />
+
+            ) : !valores ? (
+                <div className="mx-auto max-w-6xl px-5 py-6 sm:px-8">
+                    <ErroCarregamento mensagem={erro || "Não foi possível carregar o paciente."} />
                 </div>
 
+            ) : (
                 <FormularioPaciente
                     action={salvar}
                     valores={valores}
                     erro={erro}
                     loading={salvando}
                     modo="edicao"
-                    dentroDoLayout
                 />
-            </div>
-        );
+            )}
+        </>
+    );
 }

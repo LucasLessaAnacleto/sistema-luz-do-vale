@@ -9,11 +9,10 @@ import { twMerge } from "tailwind-merge";
 
 import type { PacienteDetalhes } from "@/app/types/pacientes";
 import { buscarPaciente, desativarPaciente, reativarPaciente } from "@/app/services/pacienteService";
-import { formatarData, mensagemErro } from "@/app/util";
+import { calcularIdade, formatarData, mensagemErro } from "@/app/util";
 
 import AvatarIniciais from "@/app/components/ui/AvatarIniciais";
 import BotaoVoltarHistorico from "@/app/components/ui/BotaoVoltarHistorico";
-import { useAppSelector } from "@/app/redux/hook";
 import ModalConfirmacao from "@/app/components/ModalConfirmacao";
 import CarregandoConteudo from "@/app/components/CarregandoConteudo";
 import ErroCarregamento from "@/app/components/ErroCarregamento";
@@ -23,37 +22,14 @@ interface Props {
     params: Promise<{ id: string }>;
 }
 
-function calcularIdade(dataNascimento: string | null) {
-
-    if (!dataNascimento) {
-        return null;
-    }
-
-    const nascimento = new Date(dataNascimento + "T00:00:00");
-    const hoje = new Date();
-
-    let idade = hoje.getFullYear() - nascimento.getFullYear();
-
-    const diferencaMes = hoje.getMonth() - nascimento.getMonth();
-
-    if (diferencaMes < 0 || (diferencaMes === 0 && hoje.getDate() < nascimento.getDate())) {
-        idade = idade-1;
-    }
-
-    return idade;
-}
-
 export default function PacienteLayout({ children, params }: Props) {
 
     const { id } = use(params);
     const pathname = usePathname();
     const [paciente, setPaciente] = useState<PacienteDetalhes | null>(null);
 
-    const [carregando, setCarregando] = useState(true);
     const [erro, setErro] = useState("");
     const [naoEncontrado, setNaoEncontrado] = useState(false);
-
-    const usuario = useAppSelector((state) => state.auth.usuario);
 
     const [modalStatusAberto, setModalStatusAberto] = useState(false);
     const [motivo, setMotivo] = useState("");
@@ -63,12 +39,11 @@ export default function PacienteLayout({ children, params }: Props) {
 
     useEffect(() => {
         carregarPaciente();
-    }, [id, pathname]);
+    }, [id]);
 
 
     async function carregarPaciente() {
         try {
-            setCarregando(true);
             setErro("");
             setNaoEncontrado(false);
 
@@ -89,8 +64,6 @@ export default function PacienteLayout({ children, params }: Props) {
 
             }
 
-        }finally{
-            setCarregando(false);
         }
     }
 
@@ -124,18 +97,6 @@ export default function PacienteLayout({ children, params }: Props) {
     }
 
 
-    const historicoAtivo = pathname.endsWith("/historico");
-    const idade = paciente ? calcularIdade(paciente.dtNasc) : null;
-    const editando = pathname.endsWith("/editar");
-
-    if (carregando) {
-
-        return (
-            <CarregandoConteudo mensagem="Carregando paciente..." />
-        );
-    }
-
-
     if (naoEncontrado) {
 
         return (
@@ -165,6 +126,17 @@ export default function PacienteLayout({ children, params }: Props) {
         );
     }
 
+
+    if (!paciente) {
+
+        return (
+            <CarregandoConteudo mensagem="Carregando paciente..." />
+        );
+    }
+
+    const historicoAtivo = pathname.endsWith("/historico");
+    const idade = calcularIdade(paciente.dtNasc);
+
     return (
         <>
 
@@ -176,28 +148,24 @@ export default function PacienteLayout({ children, params }: Props) {
 
                         <div className="flex items-center gap-2">
 
-                            {!editando && paciente && (
-                                <button type="button" title={paciente.ativo ? "Desativar paciente" : "Reativar paciente"} 
-                                    className="flex min-h-10 items-center gap-1.5 rounded-full bg-white/10 px-3 text-sm hover:bg-white/20 cursor-pointer"
-                                    onClick={() => {
-                                        setErroStatus("");
-                                        setModalStatusAberto(true);
-                                    }}
-                                >
-                                    {paciente.ativo ? <Ban className="h-4 w-4" /> : <UserRoundCheck className="h-4 w-4" />}
+                            <button type="button" title={paciente.ativo ? "Desativar paciente" : "Reativar paciente"}
+                                className="flex min-h-10 items-center gap-1.5 rounded-full bg-white/10 px-3 text-sm hover:bg-white/20 cursor-pointer"
+                                onClick={() => {
+                                    setErroStatus("");
+                                    setModalStatusAberto(true);
+                                }}
+                            >
+                                {paciente.ativo ? <Ban className="h-4 w-4" /> : <UserRoundCheck className="h-4 w-4" />}
 
-                                    {paciente.ativo ? "Desativar" : "Reativar"}
-                                </button>
-                            )}
+                                {paciente.ativo ? "Desativar" : "Reativar"}
+                            </button>
 
-                            {!editando && (
-                                <Link href={`/pacientes/${id}/editar`}
-                                    className="flex min-h-10 items-center gap-1.5 rounded-full bg-white/10 px-3 text-sm hover:bg-white/20"
-                                >
-                                    <Pencil className="h-4 w-4" />
-                                    Editar
-                                </Link>
-                            )}
+                            <Link href={`/pacientes/${id}/editar`}
+                                className="flex min-h-10 items-center gap-1.5 rounded-full bg-white/10 px-3 text-sm hover:bg-white/20"
+                            >
+                                <Pencil className="h-4 w-4" />
+                                Editar
+                            </Link>
 
                             <Link href={`/documentos/novo?paciente=${id}`}
                                 className="flex h-10 w-10 items-center justify-center rounded-full bg-white text-primary transition-colors hover:bg-accent"
@@ -210,73 +178,63 @@ export default function PacienteLayout({ children, params }: Props) {
                     </div>
 
 
-                    {paciente ? (
+                    <div className="flex items-center gap-4">
 
-                        <div className="flex items-center gap-4">
+                        <AvatarIniciais nome={paciente.nome} tamanho="lg" />
 
-                            <AvatarIniciais nome={paciente.nome} tamanho="lg" />
+                        <div className="min-w-0">
 
-                            <div className="min-w-0">
+                            <h1 className="break-words text-xl font-semibold">{paciente.nome}</h1>
 
-                                <h1 className="break-words text-xl font-semibold">{paciente.nome}</h1>
-
-                                {paciente.apelido && (
-                                    <p className="mt-0.5 text-sm text-white/90">
-                                        {paciente.apelido}
-                                    </p>
-                                )}
-
-                                {idade !== null && (
-                                    <p className="mt-1.5 text-sm font-medium">
-                                        {idade} anos
-                                    </p>
-                                )}
-
-                                <p className="text-sm text-white/80">
-                                    Cadastrado em {formatarData(paciente.dtCriacao)}
+                            {paciente.apelido && (
+                                <p className="mt-0.5 text-sm text-white/90">
+                                    {paciente.apelido}
                                 </p>
+                            )}
 
-                            </div>
+                            {idade !== null && (
+                                <p className="mt-1.5 text-sm font-medium">
+                                    {idade} anos
+                                </p>
+                            )}
+
+                            <p className="text-sm text-white/80">
+                                Cadastrado em {formatarData(paciente.dtCriacao)}
+                            </p>
 
                         </div>
 
-                    ) : (
-
-                        <p className="text-sm text-white/80">Carregando paciente...</p>
-
-                    )}
+                    </div>
 
                 </div>
 
             </section>
 
-            {!editando && (
-                <div className="border-b border-border bg-card">
+            <div className="border-b border-border bg-card">
 
-                    <div className="mx-auto flex max-w-6xl">
+                <div className="mx-auto flex max-w-6xl">
 
-                        <Link href={`/pacientes/${id}`} replace
-                            className={twMerge(clsx("flex-1 border-b-2 px-4 py-4 text-center text-sm font-medium transition-colors",
-                                !historicoAtivo ? "border-primary text-primary-dark" : "border-transparent text-muted-foreground hover:bg-primary/5"
-                            ))}
-                        >
-                            Prontuário
-                        </Link>
+                    <Link href={`/pacientes/${id}`} replace
+                        className={twMerge(clsx("flex-1 border-b-2 px-4 py-4 text-center text-sm font-medium transition-colors",
+                            !historicoAtivo ? "border-primary text-primary-dark" : "border-transparent text-muted-foreground hover:bg-primary/5"
+                        ))}
+                    >
+                        Prontuário
+                    </Link>
 
-                        <Link
-                            href={`/pacientes/${id}/historico`}
-                            replace
-                            className={twMerge(clsx("flex-1 border-b-2 px-4 py-4 text-center text-sm font-medium transition-colors",
-                                historicoAtivo ? "border-primary text-primary-dark" : "border-transparent text-muted-foreground hover:bg-primary/5"
-                            ))}
-                        >
-                            Histórico
-                        </Link>
-
-                    </div>
+                    <Link
+                        href={`/pacientes/${id}/historico`}
+                        replace
+                        className={twMerge(clsx("flex-1 border-b-2 px-4 py-4 text-center text-sm font-medium transition-colors",
+                            historicoAtivo ? "border-primary text-primary-dark" : "border-transparent text-muted-foreground hover:bg-primary/5"
+                        ))}
+                    >
+                        Histórico
+                    </Link>
 
                 </div>
-            )}
+
+            </div>
 
             <div className="mx-auto max-w-6xl px-5 py-6 sm:px-8">
                 {children}
@@ -285,10 +243,10 @@ export default function PacienteLayout({ children, params }: Props) {
             
             <ModalConfirmacao
                 aberto={modalStatusAberto}
-                titulo={paciente?.ativo ? "Desativar paciente" : "Reativar paciente"}
-                descricao={`Deseja ${paciente?.ativo ? "desativar" : "reativar"} o paciente ${paciente?.nome}?`}
-                variante={paciente?.ativo ? "perigo" : "confirmacao"}
-                textoConfirmar={paciente?.ativo ? "Desativar" : "Reativar"}
+                titulo={paciente.ativo ? "Desativar paciente" : "Reativar paciente"}
+                descricao={`Deseja ${paciente.ativo ? "desativar" : "reativar"} o paciente ${paciente.nome}?`}
+                variante={paciente.ativo ? "perigo" : "confirmacao"}
+                textoConfirmar={paciente.ativo ? "Desativar" : "Reativar"}
                 disabledConfirmar={!motivo}
                 carregando={alterandoStatus}
                 erro={erroStatus}

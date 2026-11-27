@@ -18,7 +18,6 @@ import BotaoNovo from "@/app/components/ui/BotaoNovo";
 import BudgetFiltros from "@/app/components/ui/BudgetFiltros";
 import BudgetStatus from "@/app/components/ui/BudgeStatus";
 import Selecao from "@/app/components/ui/Selecao";
-import AvatarIniciais from "@/app/components/ui/AvatarIniciais";
 import Card from "@/app/components/ui/Card";
 import ItemsVazio from "@/app/components/ItemsVazio";
 import ErroCarregamento from "@/app/components/ErroCarregamento";
@@ -345,22 +344,26 @@ export default function DocumentosPage() {
                                     )}
                                 </div>
 
-                                <Link href={`/pacientes/${documento.pacienteId}`} className="relative z-10 mt-3 flex w-fit max-w-full items-center gap-2">
-                                    <AvatarIniciais nome={documento.paciente} tamanho="sm" />
+                                <div className="mt-3 flex flex-wrap items-end justify-between gap-x-4 gap-y-1 text-xs text-muted-foreground">
+                                    <div className="flex flex-wrap gap-x-3 gap-y-0.5">
+                                        <p>
+                                            Paciente:{" "}
+                                            <Link href={`/pacientes/${documento.pacienteId}`} className="relative z-10 text-primary-dark hover:underline">
+                                                {documento.paciente}
 
-                                    <span className="text-xs">
-                                        {documento.paciente}
+                                                {documento.apelido && (
+                                                    <span className="text-muted-foreground">
+                                                        {" "}({documento.apelido})
+                                                    </span>
+                                                )}
+                                            </Link>
+                                        </p>
 
-                                        {documento.apelido && (
-                                            <span className="text-muted-foreground">
-                                                {" "}({documento.apelido})
-                                            </span>
-                                        )}
-                                    </span>
-                                </Link>
+                                        <p>
+                                            Criado por: <span className="text-foreground">{documento.criadoPor}</span>
+                                        </p>
+                                    </div>
 
-                                <div className="mt-3 flex flex-wrap justify-between gap-2 text-xs text-muted-foreground">
-                                    <p>{documento.criadoPor}</p>
                                     <p>{formatarData(documento.dtCriacao)}</p>
                                 </div>
                             </div>

@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 import { buscarListaPacientes } from "@/app/services/pacienteService";
 import type { Paciente } from "@/app/types/pacientes";
 import { Plus, Search } from "lucide-react";
-import { mensagemErro, normalizeSearch } from "@/app/util";
+import { calcularIdade, mensagemErro, normalizeSearch } from "@/app/util";
 import ItemsVazio from "@/app/components/ItemsVazio";
 import BarraPesquisa from "@/app/components/ui/BarraPesquisa";
 import BotaoNovo from "@/app/components/ui/BotaoNovo";
@@ -13,6 +13,21 @@ import AvatarIniciais from "@/app/components/ui/AvatarIniciais";
 import BadgeStatus from "@/app/components/ui/BudgeStatus";
 import ErroCarregamento from "@/app/components/ErroCarregamento";
 import CarregandoConteudo from "@/app/components/CarregandoConteudo";
+
+function resumoPaciente(paciente: Paciente) {
+    const partes = [];
+    const idade = calcularIdade(paciente.dtNasc);
+
+    if (idade !== null) {
+        partes.push(`${idade} anos`);
+    }
+
+    if (paciente.endereco?.municipio) {
+        partes.push(paciente.endereco.estado ? `${paciente.endereco.municipio}/${paciente.endereco.estado}` : paciente.endereco.municipio);
+    }
+
+    return partes.join(" · ");
+}
 
 export default function PacientesPage() {
     const [search, setSearch] = useState("");
@@ -49,7 +64,12 @@ export default function PacientesPage() {
                 <div className="mx-auto max-w-6xl px-5 py-6 sm:px-8 sm:py-8">
                     <div className="flex items-center justify-between gap-4">
 
-                        <h1 className="min-w-0 text-2xl font-semibold">Pacientes</h1>
+                        <div className="min-w-0">
+                            <h1 className="text-2xl font-semibold">Pacientes</h1>
+                            <p className="mt-0.5 text-xs text-muted-foreground">
+                                {pacientes.length} pacientes no total
+                            </p>
+                        </div>
                         <BotaoNovo href="/pacientes/novo"/>
 
                     </div>
@@ -87,12 +107,24 @@ export default function PacientesPage() {
                                 </p>
                             )}
 
+                            <p className="mt-0.5 text-xs text-muted-foreground">
+                                {resumoPaciente(paciente)}
+                            </p>
+
                         </div>
 
-                        <BadgeStatus
-                            texto={paciente.ativo ? "Ativo" : "Inativo"}
-                            tipo={paciente.ativo ? "sucesso" : "neutro"}
-                        />
+                        <div className="flex flex-col items-end gap-1.5 text-right">
+                            <BadgeStatus
+                                texto={paciente.ativo ? "Ativo" : "Inativo"}
+                                tipo={paciente.ativo ? "sucesso" : "neutro"}
+                            />
+
+                            <p className="text-xs text-muted-foreground">
+                                {paciente.dtDesativado
+                                    ? `Desativado em ${new Date(paciente.dtDesativado).toLocaleDateString("pt-BR")}`
+                                    : `Cadastrado em ${new Date(paciente.dtCriacao).toLocaleDateString("pt-BR")}`}
+                            </p>
+                        </div>
 
                     </Link>
                 ))) : (
