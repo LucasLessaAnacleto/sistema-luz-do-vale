@@ -37,6 +37,7 @@ public class SecurityConfiguration {
                         .requestMatchers(HttpMethod.PATCH,"/usuarios/*/senha").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.POST,"/tipos-documento/*/permissoes/*").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.DELETE,"/tipos-documento/*/permissoes/*").hasRole("ADMIN")
+                        .requestMatchers("/perfis/**").hasRole("ADMIN")
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
