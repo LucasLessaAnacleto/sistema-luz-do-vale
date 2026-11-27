@@ -1,0 +1,19 @@
+DOCUMENTOS
+
+- os tipos de documento possuem versões
+- os campos do formulário são definidos no json da versão
+- os templates html ficam em resources/templates/documentos
+- os dados preenchidos ficam no json do documento
+- a ficha de acolhimento é criada junto com o paciente
+
+Para adicionar um documento:
+1. cadastrar o tipo de documento
+2. cadastrar a versão com os campos do formulário
+3. criar o template html
+4. liberar o tipo de documento nos perfis necessários
+
+Assinatura:
+- documentos que não exigem assinatura já nascem finalizados
+- documentos que exigem assinatura ficam pendentes até o envio do pdf assinado
+- conferir o hash antes de enviar o pdf assinado
+- somente o criador ou administrador pode enviar o documento assinado

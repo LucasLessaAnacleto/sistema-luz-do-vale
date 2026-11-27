@@ -1,3 +1,12 @@
-- botao de voltar da página de documentos, sempre existe mesmo não chegando de nenhuma página, fica um loop infinito entre "documentos" e "novo documento"
-- quando esta em um documento e clica no atalho para paciente, e depois clica em voltar, ele vai para pacientes ao inves de voltar para o documento
-- atualmente é possivel criar mais de 1 paciente com as mesmas informações
+- corrigir loop do botão voltar entre documentos e novo documento
+
+- ao acessar o paciente pelo documento, o botão voltar deve retornar para o documento
+
+- impedir cadastro de pacientes duplicados
+
+- Validação da assinatura	A conferência do hash é manual. O backend não verifica se o PDF enviado corresponde ao documento original.
+
+- Pesquisa	Passou a consultar todas as páginas pelo backend, mas perdeu a normalização de acentos que existia no frontend.
+
+- em produção o backend vira um .jar compactado e o armazenamento dos documentos assinados ficariam no resources iria criar 
+uma pasta src/main/resources/uploads/assinados e não fica tao legal

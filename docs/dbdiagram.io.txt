@@ -1,134 +1,143 @@
 LINK: https://dbdiagram.io/d/6acaeded50a8c6fc361fb1c8
 
 Table PACIENTE {
-  ID int [pk, increment]
-  FICHA_DOCUMENTO_ID int [null, ref: > DOCUMENTO.ID]
-  NOME varchar
-  APELIDO varchar
-  CPF varchar
-  RG varchar
-  TELEFONE varchar
-  ENDERECO_RUA varchar
-  ENDERECO_NR varchar
-  ENDERECO_BAIRRO varchar
-  ENDERECO_MUNICIPIO varchar
-  ENDERECO_ESTADO varchar
-  DT_NASCIMENTO date
+  ID bigint [pk, increment]
+  FICHA_DOCUMENTO_ID bigint [ref: > DOCUMENTO.ID]
+  NOME varchar(400) [not null]
+  APELIDO varchar(400)
+  CPF varchar(40)
+  RG varchar(40)
+  TELEFONE varchar(40)
+  ENDERECO_RUA varchar(255)
+  ENDERECO_NR varchar(40)
+  ENDERECO_BAIRRO varchar(255)
+  ENDERECO_MUNICIPIO varchar(255)
+  ENDERECO_ESTADO varchar(255)
+  DT_NASC date
   ATIVO boolean
-  DT_CRIACAO datetime 
-  DT_DESATIVADO datetime
+  DT_CRIACAO timestamp
+  DT_DESATIVADO timestamp
 }
 
 Table TIPO_DEPENDENCIA {
-  ID int [pk, increment]
-  NOME varchar
-  CATEGORIA int
+  ID bigint [pk, increment]
+  NOME varchar(200) [not null]
+  CATEGORIA int [not null]
 }
 
 Table RESPONSAVEL {
-  ID int [pk, increment]
-  PACIENTE_ID int [not null, ref: > PACIENTE.ID]
-  NOME varchar
-  PARENTESCO varchar
-  CPF varchar
-  RG varchar
-  TELEFONE varchar
-  ENDERECO_RUA varchar
-  ENDERECO_NR varchar
-  ENDERECO_BAIRRO varchar
-  ENDERECO_MUNICIPIO varchar
-  ENDERECO_ESTADO varchar
-  DT_CRIACAO datetime
+  ID bigint [pk, increment]
+  PACIENTE_ID bigint [not null, ref: > PACIENTE.ID]
+  NOME varchar(400)
+  PARENTESCO varchar(40)
+  CPF varchar(40)
+  RG varchar(40)
+  TELEFONE varchar(40)
+  ENDERECO_RUA varchar(255)
+  ENDERECO_NR varchar(40)
+  ENDERECO_BAIRRO varchar(255)
+  ENDERECO_MUNICIPIO varchar(255)
+  ENDERECO_ESTADO varchar(255)
+  DT_NASC date
 }
 
 Table TIPO_DOCUMENTO {
-  ID int [pk, increment]
-  NOME varchar
-  DESCRICAO text
+  ID bigint [pk, increment]
+  NOME varchar(200) [not null]
+  DESCRICAO text [not null]
   EXIGE_ASSINATURA boolean
   ATIVO boolean
-  DT_DESATIVADO datetime
+  DT_DESATIVADO timestamp
 }
 
 Table TIPO_DOCUMENTO_VERSAO {
-  ID int [pk, increment]
-  TIPO_DOCUMENTO_ID int [not null, ref: > TIPO_DOCUMENTO.ID]
+  ID bigint [pk, increment]
+  TIPO_DOCUMENTO_ID bigint [not null, ref: > TIPO_DOCUMENTO.ID]
   VERSAO int
   CAMPOS jsonb
+  TEMPLATE varchar(400)
+  DT_CRIACAO timestamp
 }
 
 Table DOCUMENTO {
-  ID int [pk, increment]
-  TIPO_DOCUMENTO_VERSAO_ID int [not null, ref: > TIPO_DOCUMENTO_VERSAO.ID]
-  DOCUMENTO_ORIGEM_ID int [null, ref: > DOCUMENTO.ID]
-  PACIENTE_ID int [not null, ref: > PACIENTE.ID]
-  VERSAO_TIPO int
+  ID bigint [pk, increment]
+  TIPO_DOCUMENTO_VERSAO_ID bigint [not null, ref: > TIPO_DOCUMENTO_VERSAO.ID]
+  DOCUMENTO_ORIGEM_ID bigint [ref: > DOCUMENTO.ID]
+  PACIENTE_ID bigint [not null, ref: > PACIENTE.ID]
+  USUARIO_ID bigint [ref: > USUARIO.ID]
+  OBSERVACAO text
   DADOS jsonb
+  STATUS varchar(20) [not null, default: 'PENDENTE']
+  HASH varchar(64)
+  CAMINHO_ASSINADO varchar(400)
   ATIVO boolean
-  DT_CRIACAO datetime
-  USUARIO_ID int [ref: > USUARIO.ID]
-  DT_ATUALIZACAO datetime
-  DT_ASSINATURA datetime
-  DT_DESATIVADO datetime
+  DT_CRIACAO timestamp
+  DT_ATUALIZACAO timestamp
+  DT_ASSINATURA timestamp
+  DT_FINALIZACAO timestamp
+  DT_DESATIVADO timestamp
 }
 
 Table PROFISSIONAL {
-  ID int [pk, increment]
-  NOME varchar
-  TELEFONE varchar
-  REG_PROFISSIONAL varchar
-  CPF varchar
-  ENDERECO_RUA varchar
-  ENDERECO_NR varchar
-  ENDERECO_BAIRRO varchar
-  ENDERECO_MUNICIPIO varchar
-  ENDERECO_ESTADO varchar
+  ID bigint [pk, increment]
+  NOME varchar(255) [not null]
+  TELEFONE varchar(40)
+  REG_PROFISSIONAL varchar(255)
+  CPF varchar(40)
+  ENDERECO_RUA varchar(255)
+  ENDERECO_NR varchar(40)
+  ENDERECO_BAIRRO varchar(255)
+  ENDERECO_MUNICIPIO varchar(255)
+  ENDERECO_ESTADO varchar(255)
   DT_NASC date
 }
 
 Table USUARIO {
-  ID int [pk, increment]
-  PERFIL_ID int [ref: > PERFIL.ID]
-  PROFISSIONAL_ID int [not null,ref: > PROFISSIONAL.ID]
-  EMAIL varchar
-  SENHA varchar
-  ROLE varchar
-  ATIVO boolean
-  DT_DESATIVADO datetime
-  DT_CRIACAO datetime
+  ID bigint [pk, increment]
+  PERFIL_ID bigint [ref: > PERFIL.ID]
+  PROFISSIONAL_ID bigint [unique, ref: - PROFISSIONAL.ID]
+  EMAIL varchar(255) [not null, unique]
+  SENHA varchar(255) [not null]
+  ROLE varchar(40)
+  ATIVO boolean [default: true]
+  DT_DESATIVADO timestamp
+  DT_CRIACAO timestamp
 }
 
 Table TOKEN {
-  ID int [pk, increment]
-  USUARIO_ID int [not null,ref: > USUARIO.ID]
-  TOKEN varchar
+  ID bigint [pk, increment]
+  USUARIO_ID bigint [ref: > USUARIO.ID]
+  TOKEN varchar(255)
 }
 
 Table PERFIL {
-  ID int [pk, increment]
-  NOME varchar
-  PERM_CAD_PACIENTE boolean
+  ID bigint [pk, increment]
+  NOME varchar(255) [not null]
+  PERM_CAD_PACIENTE boolean [default: false]
 }
 
 Table PERMISSAO_TIPO_DOCUMENTO {
-  ID int [pk, increment]
-  PERFIL_ID int [not null, ref: > PERFIL.ID]
-  TIPO_DOCUMENTO_ID int [not null, ref: > TIPO_DOCUMENTO.ID]
+  ID bigint [pk, increment]
+  PERFIL_ID bigint [not null, ref: > PERFIL.ID]
+  TIPO_DOCUMENTO_ID bigint [not null, ref: > TIPO_DOCUMENTO.ID]
 }
 
 Table AVISO {
-  ID int [pk, increment]
-  USUARIO_ID int [not null, ref: > USUARIO.ID]
-  DT_CRIACAO date
-  DURACAO_DIAS int
-  CONTEUDO text 
+  ID bigint [pk, increment]
+  USUARIO_ID bigint [not null, ref: > USUARIO.ID]
+  MENSAGEM text [not null]
+  DT_CRIACAO timestamp [default: `CURRENT_TIMESTAMP`]
+  DT_FINALIZACAO timestamp
+  ATIVO boolean
+  DT_DESATIVADO timestamp
 }
 
 Table HIST_DOCUMENTO {
-  ID int [pk, increment]
-  USUARIO_ID int [not null, ref: > USUARIO.ID]
-  DOCUMENTO_ID int [not null, ref: > DOCUMENTO.ID]
-  PACIENTE_ID int [not null, ref: > PACIENTE.ID]
+  ID bigint [pk, increment]
+  USUARIO_ID bigint [ref: > USUARIO.ID]
+  DOCUMENTO_ID bigint [ref: > DOCUMENTO.ID]
+  PACIENTE_ID bigint [ref: > PACIENTE.ID]
+  ACAO varchar(200)
   OBSERVACAO text
-  DT_CRICAO datetime
+  DT_CRIACAO timestamp
 }
