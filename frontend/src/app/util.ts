@@ -1,14 +1,7 @@
-import { clsx, type ClassValue } from "clsx";
-import { twMerge } from "tailwind-merge";
-
-export function cn(...inputs: ClassValue[]) {
-  return twMerge(clsx(inputs));
-}
-
 export function normalizeSearch(value: string) {
-  return value.normalize("NFD").trim().toLowerCase();
+    return value.normalize("NFD").trim().toLowerCase();
 }
 
 export function formatarData(data: string) {
-  return new Date(data).toLocaleString("pt-BR", {dateStyle: "short",timeStyle: "short"});
+    return new Date(data).toLocaleString("pt-BR", {dateStyle: "short",timeStyle: "short"});
 }

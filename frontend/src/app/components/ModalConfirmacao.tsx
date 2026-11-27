@@ -1,7 +1,8 @@
 "use client";
 
 import { CheckCircle2, TriangleAlert, X } from "lucide-react";
-import { cn } from "../util";
+import { clsx } from "clsx";
+import { twMerge } from "tailwind-merge";
 import { ReactNode } from "react";
 
 type Variante = "perigo" | "confirmacao";
@@ -71,8 +72,8 @@ export default function ModalConfirmacao({
                     </button>
 
                     <button type="button" onClick={onConfirmar} disabled={carregando || disabledConfirmar}
-                        className={cn("cursor-pointer rounded-xl px-4 py-2 text-sm font-medium text-white disabled:opacity-60",
-                            perigo ? cn("bg-red-700", !disabledConfirmar && "hover:bg-red-800") : cn("bg-primary", !disabledConfirmar && "hover:bg-primary-dark"))
+                        className={twMerge(clsx("cursor-pointer rounded-xl px-4 py-2 text-sm font-medium text-white disabled:opacity-60",
+                            perigo ? clsx("bg-red-700", !disabledConfirmar && "hover:bg-red-800") : clsx("bg-primary", !disabledConfirmar && "hover:bg-primary-dark")))
                         }
                     >
                         {carregando ? "Processando..." : textoConfirmar}

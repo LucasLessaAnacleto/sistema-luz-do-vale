@@ -9,7 +9,6 @@ import FichaAcolhimento from "./FichaAcolhimento";
 
 import RodapeFormulario from "@/app/components/RodapeFormulario";
 import BotaoPreencherTeste from "./BotaoPreencherTeste";
-import { cn } from "@/app/util";
 
 interface Props {
     action: (form: FormData) => void;
@@ -34,7 +33,7 @@ export default function FormularioPaciente({
 }: Props) {
 
     return (
-        <form action={action} className={cn(dentroDoLayout ? "space-y-8 pb-32" : "mx-auto max-w-6xl space-y-8 px-5 pt-6 pb-32 sm:px-8")}>
+        <form action={action} className={dentroDoLayout ? "space-y-8 pb-32" : "mx-auto max-w-6xl space-y-8 px-5 pt-6 pb-32 sm:px-8"}>
             {modo === "cadastro" && (
                 <div className="flex justify-end">
                     <BotaoPreencherTeste />
