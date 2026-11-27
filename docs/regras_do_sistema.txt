@@ -13,7 +13,9 @@ PERMISSOES:
         Novo paciente + ficha de acolhimento do paciente também é o adm que concede por perfil (flag na tabela PERFIL)
     Excluir documento:
         Não é possivel
-        Admin pode desativar o documento
+        Admin e perfil com permissão no TIPO_DOCUMENTO podem desativar o documento, informando o motivo
+        Não é possível reativar, deve criar outro com base no documento desativado
+        Ficha de acolhimento não é desativada na mão, ao editar o paciente a ficha anterior fica inativa
     Baixar pdf do documento:
         Todos
     Finalizar documento:
@@ -439,3 +441,7 @@ UPDATE paciente SET cpf = regexp_replace(cpf, '\D', '', 'g');
 UPDATE responsavel SET cpf = regexp_replace(cpf, '\D', '', 'g');
 UPDATE profissional SET cpf = regexp_replace(cpf, '\D', '', 'g');
 UPDATE documento SET caminho_assinado = regexp_replace(caminho_assinado, '^.*/', '');
+UPDATE documento SET ativo = false, dt_desativado = now() WHERE ativo AND tipo_documento_versao_id IN 
+  (SELECT id FROM tipo_documento_versao WHERE tipo_documento_id = 1) 
+  AND id NOT IN 
+  (SELECT ficha_documento_id FROM paciente WHERE ficha_documento_id IS NOT NULL);

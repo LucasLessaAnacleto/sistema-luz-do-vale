@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { use, useEffect, useState, type ReactNode } from "react";
-import { Pencil, Plus, UserRoundCheck, UserRoundX } from "lucide-react";
+import { Ban, Pencil, Plus, UserRoundCheck } from "lucide-react";
 import { usePathname } from "next/navigation";
 import { clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
@@ -189,7 +189,7 @@ export default function PacienteLayout({ children, params }: Props) {
                                         setModalStatusAberto(true);
                                     }}
                                 >
-                                    {paciente.ativo ? <UserRoundX className="h-4 w-4" /> : <UserRoundCheck className="h-4 w-4" />}
+                                    {paciente.ativo ? <Ban className="h-4 w-4" /> : <UserRoundCheck className="h-4 w-4" />}
 
                                     {paciente.ativo ? "Desativar" : "Reativar"}
                                 </button>

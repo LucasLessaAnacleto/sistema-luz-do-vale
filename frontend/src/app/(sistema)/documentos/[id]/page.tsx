@@ -3,16 +3,18 @@
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
-import { CopyPlus, Download, Upload } from "lucide-react";
+import { Ban, CopyPlus, Download, Upload, UserRound } from "lucide-react";
+import { clsx } from "clsx";
+import { twMerge } from "tailwind-merge";
 
 import type { DocumentoDetalhes } from "@/app/types/documentos";
 import type { PacienteDetalhes } from "@/app/types/pacientes";
 import { CODIGO_TIPO_DOCUMENTO } from "@/app/types/documentos";
 
-import { buscarDocumento, buscarHtmlDocumento, buscarPdfDocumento, enviarDocumentoAssinado } from "@/app/services/documentoService";
+import { buscarDocumento, buscarHtmlDocumento, buscarPdfDocumento, desativarDocumento, enviarDocumentoAssinado } from "@/app/services/documentoService";
 import { buscarPaciente } from "@/app/services/pacienteService";
+import { listarTiposDocumento } from "@/app/services/tipoDocumentoService";
 
-import AvatarIniciais from "@/app/components/ui/AvatarIniciais";
 import BadgeStatus from "@/app/components/ui/BudgeStatus";
 import CabecalhoPagina from "@/app/components/CabecalhoPagina";
 import Card from "@/app/components/ui/Card";
@@ -28,6 +30,7 @@ export default function DocumentoDetalhesPage() {
     const [documento, setDocumento] = useState<DocumentoDetalhes | null>(null);
     const [paciente, setPaciente] = useState<PacienteDetalhes | null>(null);
     const [html, setHtml] = useState("");
+    const [carregando, setCarregando] = useState(true);
     const [baixando, setBaixando] = useState(false);
 
     const usuario = useAppSelector(state => state.auth.usuario);
@@ -36,8 +39,16 @@ export default function DocumentoDetalhesPage() {
     const [enviandoAssinado, setEnviandoAssinado] = useState(false);
     const [erroAssinado, setErroAssinado] = useState("");
 
+    const [temPermissao, setTemPermissao] = useState(false);
+    const [modalDesativarAberto, setModalDesativarAberto] = useState(false);
+    const [motivo, setMotivo] = useState("");
+    const [desativando, setDesativando] = useState(false);
+    const [erroDesativar, setErroDesativar] = useState("");
+
     const podeEnviarAssinado = documento?.ativo && documento.exigeAssinatura && documento.status === "PENDENTE" && 
         ( usuario?.role === "ROLE_ADMIN" || usuario?.id === documento.criadoPorId );
+
+    const podeDesativar = documento?.ativo && temPermissao && documento.tipoDocumentoId !== CODIGO_TIPO_DOCUMENTO.FICHA_ACOLHIMENTO;
 
     useEffect(() => {
         carregarDocumento();
@@ -46,15 +57,21 @@ export default function DocumentoDetalhesPage() {
     async function carregarDocumento() {
         try {
             const dadosDocumento = await buscarDocumento(Number(id));
-            setDocumento(dadosDocumento);
             const dadosPaciente = await buscarPaciente(dadosDocumento.pacienteId);
+            const tipos = await listarTiposDocumento();
+
+            setDocumento(dadosDocumento);
             setPaciente(dadosPaciente);
+            setTemPermissao(tipos.some((tipo) => tipo.id === dadosDocumento.tipoDocumentoId));
+
             const conteudoHtml = await buscarHtmlDocumento(Number(id));
             setHtml(conteudoHtml);
         } catch (error) {
             if (error instanceof Error) {
                 alert(error.message);
             }
+        } finally {
+            setCarregando(false);
         }
     }
 
@@ -116,6 +133,26 @@ export default function DocumentoDetalhesPage() {
         }
     }
 
+    async function confirmarDesativacao() {
+        if (!documento || desativando) return;
+
+        try {
+            setDesativando(true);
+            setErroDesativar("");
+
+            await desativarDocumento(documento.id, { motivo: motivo.trim() || null });
+
+            const atualizado = await buscarDocumento(documento.id);
+            setDocumento(atualizado);
+            setModalDesativarAberto(false);
+            setMotivo("");
+        } catch (error) {
+            setErroDesativar(error instanceof Error ? error.message : "Erro ao desativar documento.");
+        } finally {
+            setDesativando(false);
+        }
+    }
+
 
     if (!documento) {
         return (
@@ -129,7 +166,7 @@ export default function DocumentoDetalhesPage() {
         <>
             <CabecalhoPagina>
                 <div className="flex items-start justify-between gap-4">
-                    <div className="flex items-center gap-3">
+                    <div className="flex items-start gap-3">
 
                         {/* <BotaoVoltar href={voltarHref} /> */}
                         <BotaoVoltarHistorico />
@@ -140,49 +177,68 @@ export default function DocumentoDetalhesPage() {
                             </h1>
 
                             <p className="mt-0.5 text-xs text-muted-foreground">
-                                Documento #{documento.id} · v{documento.versao}
+                                Documento #{documento.id} · v{documento.versao} · Criado por {documento.criadoPor} em {formatarData(documento.dtCriacao)}
                             </p>
+
+                            {paciente && (
+                                <Link href={`/pacientes/${paciente.id}`}
+                                    className="mt-2.5 flex w-fit items-center gap-1.5 text-sm text-primary-dark hover:underline"
+                                >
+                                    <UserRound className="h-4 w-4" />
+
+                                    <span>
+                                        {paciente.nome}
+
+                                        {paciente.apelido && (
+                                            <span className="text-muted-foreground">
+                                                {" "}({paciente.apelido})
+                                            </span>
+                                        )}
+                                    </span>
+                                </Link>
+                            )}
                         </div>
                     </div>
 
-                    <BadgeStatus
-                        texto={documento.dtAssinatura ? "Finalizado e assinado" : documento.status === "FINALIZADO" ? "Finalizado" : "Pendente"}
-                        tipo={documento.status === "FINALIZADO" ? "sucesso" : "alerta"}
-                    />
+                    <div className="flex flex-col items-end gap-1.5">
+                        {documento.ativo ? (
+                            <BadgeStatus
+                                texto={documento.dtAssinatura ? "Finalizado e assinado" : documento.status === "FINALIZADO" ? "Finalizado" : "Pendente"}
+                                tipo={documento.status === "FINALIZADO" ? "sucesso" : "alerta"}
+                            />
+                        ) : (
+                            <BadgeStatus texto="Inativo" tipo="neutro" />
+                        )}
+
+                        {documento.dtAssinatura && (
+                            <p className="text-right text-xs text-muted-foreground">
+                                Assinado em {formatarData(documento.dtAssinatura)}
+                            </p>
+                        )}
+                    </div>
                 </div>
-
-                {paciente && (
-                    <Link
-                        href={`/pacientes/${paciente.id}`}
-                        className="mt-4 flex items-center gap-2 rounded-xl bg-primary/15 px-3 py-2 transition-colors hover:bg-primary/20"
-                    >
-                        <AvatarIniciais nome={paciente.nome} tamanho="sm" />
-
-                        <span className="text-sm">
-                            {paciente.nome}
-
-                            {paciente.apelido && (
-                                <span className="text-muted-foreground">
-                                    {" "}({paciente.apelido})
-                                </span>
-                            )}
-                        </span>
-                    </Link>
-                )}
             </CabecalhoPagina>
 
             <section className="mx-auto max-w-6xl px-5 py-5 sm:px-8">
-                <div className="mb-4 flex flex-wrap gap-2">
-                    <button type="button" onClick={baixarPdf} disabled={baixando}
+                {documento.dtAssinatura && (
+                    <p className="mb-2.5 text-xs text-muted-foreground">
+                        A visualização abaixo é a do sistema, a versão com assinatura está no PDF.
+                    </p>
+                )}
+
+                <div className="mb-2.5 flex flex-wrap gap-2">
+                    <button type="button" onClick={baixarPdf} disabled={baixando || carregando}
                         className="flex min-h-10 items-center gap-2 rounded-full bg-primary/15 px-4 text-sm font-medium text-primary-dark transition-colors enabled:cursor-pointer enabled:hover:bg-primary/25 disabled:opacity-60"
                     >
                         <Download className="h-4 w-4" />
                         {baixando ? "Baixando..." : documento.dtAssinatura ? "Baixar PDF assinado" : "Baixar PDF"}
                     </button>
 
-                    {documento.ativo && documento.tipoDocumentoId !== CODIGO_TIPO_DOCUMENTO.FICHA_ACOLHIMENTO && (
+                    {documento.tipoDocumentoId !== CODIGO_TIPO_DOCUMENTO.FICHA_ACOLHIMENTO && (
                         <Link href={`/documentos/novo/${documento.tipoDocumentoId}?paciente=${documento.pacienteId}&origem=${documento.id}`}
-                            className="flex min-h-10 items-center gap-2 rounded-full bg-primary/15 px-4 text-sm font-medium text-primary-dark transition-colors hover:bg-primary/25"
+                            className={twMerge(clsx("flex min-h-10 items-center gap-2 rounded-full bg-primary/15 px-4 text-sm font-medium text-primary-dark transition-colors hover:bg-primary/25",
+                                carregando && "pointer-events-none opacity-60"
+                            ))}
                         >
                             <CopyPlus className="h-4 w-4" />
                             Criar com base neste
@@ -190,11 +246,13 @@ export default function DocumentoDetalhesPage() {
                     )}
 
                     {podeEnviarAssinado && (
-                        <label className="relative flex min-h-10 items-center gap-2 rounded-full bg-primary px-4 text-sm font-medium text-white hover:bg-primary-dark cursor-pointer">
+                        <label className={twMerge(clsx("relative flex min-h-10 items-center gap-2 rounded-full bg-primary px-4 text-sm font-medium text-white hover:bg-primary-dark cursor-pointer",
+                            carregando && "pointer-events-none opacity-60"
+                        ))}>
                             <Upload className="h-4 w-4" />
                             Enviar documento assinado
 
-                            <input type="file" accept="application/pdf" className="sr-only"
+                            <input type="file" accept="application/pdf" className="sr-only" disabled={carregando}
                                 onChange={(e) => {
                                     selecionarArquivoAssinado(e.target.files?.[0]);
                                     e.target.value = "";
@@ -202,20 +260,29 @@ export default function DocumentoDetalhesPage() {
                             />
                         </label>
                     )}
+
+                    {podeDesativar && (
+                        <button type="button" title="Desativar documento" disabled={carregando}
+                            className="flex min-h-10 items-center gap-2 rounded-full border border-gray-300 px-4 text-sm font-medium text-muted-foreground transition-colors enabled:cursor-pointer enabled:hover:border-red-200 enabled:hover:bg-red-50 enabled:hover:text-red-700 disabled:opacity-60 sm:ml-auto"
+                            onClick={() => {
+                                setErroDesativar("");
+                                setModalDesativarAberto(true);
+                            }}
+                        >
+                            <Ban className="h-4 w-4" />
+                            Desativar
+                        </button>
+                    )}
                 </div>
 
-                {documento.dtAssinatura && (
-                    <p className="mb-4 text-xs text-muted-foreground">
-                        Assinado em {formatarData(documento.dtAssinatura)}. A visualização abaixo é a do sistema, a versão com assinatura está no PDF.
-                    </p>
-                )}
-
                 {html ? (
-                    <iframe
-                        srcDoc={html}
-                        title={documento.tipoDocumento}
-                        className="h-[750px] w-full rounded-2xl border border-border bg-white"
-                    />
+                    <Card>
+                        <iframe
+                            srcDoc={html}
+                            title={documento.tipoDocumento}
+                            className="h-[750px] w-full"
+                        />
+                    </Card>
                 ) : (
                     <Card>
                         <p className="text-sm text-muted-foreground">
@@ -247,6 +314,35 @@ export default function DocumentoDetalhesPage() {
                         </p>
                     </>
                 )}
+            </ModalConfirmacao>
+
+            <ModalConfirmacao
+                aberto={modalDesativarAberto}
+                titulo="Desativar documento"
+                descricao={`Deseja desativar o documento #${documento.id}? Não será possível reativar depois.`}
+                variante="perigo"
+                textoConfirmar="Desativar"
+                disabledConfirmar={!motivo}
+                carregando={desativando}
+                erro={erroDesativar}
+                onConfirmar={confirmarDesativacao}
+                onFechar={() => {
+                    setModalDesativarAberto(false);
+                    setMotivo("");
+                }}
+            >
+                <div>
+                    <label htmlFor="motivo-desativar" className="mb-2 block text-sm font-medium">
+                        Motivo
+                    </label>
+
+                    <textarea id="motivo-desativar" rows={3} maxLength={500} placeholder="Informe o motivo da desativação..."
+                        className="w-full resize-none rounded-xl border border-border bg-background px-3 py-2 text-sm outline-none focus:border-primary"
+                        value={motivo}
+                        disabled={desativando}
+                        onChange={(e) => setMotivo(e.target.value)}
+                    />
+                </div>
             </ModalConfirmacao>
         </>
     );

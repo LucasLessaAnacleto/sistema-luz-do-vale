@@ -10,6 +10,7 @@ import com.luzdovale.reabilitah.backend.application.exceptions.UsuarioSemAutoriz
 import com.luzdovale.reabilitah.backend.domain.entities.*;
 import com.luzdovale.reabilitah.backend.domain.enuns.EnumStatusDocumento;
 import com.luzdovale.reabilitah.backend.domain.repository.*;
+import com.luzdovale.reabilitah.backend.domain.utils.CodigoTipoDocumento;
 import jakarta.transaction.Transactional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -153,6 +154,11 @@ public class DocumentoService {
 
         documento.setHash(documentoTemplateService.gerarHashDocumento(documento));
         documento = documentoRepository.save(documento);
+
+        if(documentoOrigem != null){
+            documentoOrigem.desativar();
+            documentoRepository.save(documentoOrigem);
+        }
 
         histDocumentoService.registrarHistorico(
                 documento,
@@ -370,6 +376,35 @@ public class DocumentoService {
             usuarioLogado,
             "ASSINADO"
         );
+    }
+
+    @Transactional
+    public DocumentoResponse desativar(Long id, DesativarDocumentoRequest dto, Usuario usuarioLogado) {
+        Documento documento = buscarDocumento(id);
+        TipoDocumento tipoDocumento = documento.getTipoDocumentoVersao().getTipoDocumento();
+
+        tipoDocumentoService.validarPermissao(tipoDocumento, usuarioLogado);
+
+        if(!documento.isAtivo()){
+            throw new DocumentoDesativadoException();
+        }
+
+        if(tipoDocumento.getId().equals(CodigoTipoDocumento.FICHA_ACOLHIMENTO)){
+            throw new IllegalArgumentException("A ficha de acolhimento só é desativada ao editar o paciente.");
+        }
+
+        documento.desativar();
+        documentoRepository.save(documento);
+
+        histDocumentoService.registrarHistorico(
+            documento,
+            documento.getPaciente(),
+            usuarioLogado,
+            "DESATIVADO",
+            dto.motivo()
+        );
+
+        return mapeiaParaDTO(documento);
     }
 
     public long contarDocumentos(){

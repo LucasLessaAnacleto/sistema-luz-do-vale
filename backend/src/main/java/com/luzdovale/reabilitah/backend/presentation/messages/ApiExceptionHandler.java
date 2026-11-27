@@ -42,6 +42,7 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler({
             IllegalArgumentException.class,
             DadosDocumentoInvalidosException.class,
+            DocumentoDesativadoException.class,
             EmailJaCadastradoException.class,
             PacienteJaCadastradoException.class,
             AvisoDtFinalizacaoFuturaException.class

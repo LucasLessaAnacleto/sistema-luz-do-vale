@@ -85,6 +85,10 @@ export interface HistoricoDocumento {
     dtCriacao: string;
 }
 
+export interface DesativarDocumentoRequest {
+    motivo: string | null;
+}
+
 export interface CriarDocumentoRequest {
     tipoDocumentoVersaoId: number;
     pacienteId: number;

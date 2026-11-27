@@ -1,7 +1,7 @@
 import { Pagina } from "../types/pagina";
 import api from "./api";
 
-import type { CriarDocumentoRequest, Documento, DocumentoDetalhes, DocumentoLista, FiltrosDocumento } from "@/app/types/documentos";
+import type { CriarDocumentoRequest, DesativarDocumentoRequest, Documento, DocumentoDetalhes, DocumentoLista, FiltrosDocumento } from "@/app/types/documentos";
 
 
 export async function criarDocumento(dados: CriarDocumentoRequest): Promise<Documento> {
@@ -51,4 +51,9 @@ export async function enviarDocumentoAssinado(id: number, arquivo: File): Promis
     form.append("arquivo", arquivo);
 
     await api.post(`/documentos/${id}/assinado`, form);
+}
+
+export async function desativarDocumento(id: number, dados: DesativarDocumentoRequest): Promise<void> {
+
+    await api.patch(`/documentos/${id}/desativar`, dados);
 }

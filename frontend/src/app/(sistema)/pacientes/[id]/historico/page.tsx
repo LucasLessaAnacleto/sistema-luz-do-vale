@@ -94,7 +94,7 @@ export default function HistoricoPacientePage() {
 
                                             </div>
 
-                                            <BadgeStatus texto={historico.acao} tipo="sucesso" />
+                                            <BadgeStatus texto={historico.acao} tipo={historico.acao === "DESATIVADO" ? "alerta" : "sucesso"} />
 
                                         </div>
 

@@ -85,6 +85,14 @@ public class DocumentoController {
         return ResponseEntity.ok().build();
     }
 
+    @PatchMapping("/{id}/desativar")
+    public ResponseEntity<DocumentoResponse> desativar(@PathVariable Long id, @RequestBody DesativarDocumentoRequest dto, Authentication auth) {
+
+        return ResponseEntity.ok(
+                documentoService.desativar(id, dto, (Usuario) auth.getPrincipal())
+        );
+    }
+
     @GetMapping(value = "/{id}/html", produces = MediaType.TEXT_HTML_VALUE)
     public ResponseEntity<String> visualizarHtml(@PathVariable Long id) {
 

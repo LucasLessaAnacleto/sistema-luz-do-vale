@@ -71,4 +71,9 @@ public class Documento {
         finalizar();
     }
 
+    public void desativar(){
+        this.ativo = false;
+        this.dtDesativado = LocalDateTime.now();
+    }
+
 }
