@@ -43,6 +43,7 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
             IllegalArgumentException.class,
             DadosDocumentoInvalidosException.class,
             EmailJaCadastradoException.class,
+            PacienteJaCadastradoException.class,
             AvisoDtFinalizacaoFuturaException.class
     })
     public ResponseEntity<ApiErrorMessage> handleIllegalArgument(RuntimeException ex) {

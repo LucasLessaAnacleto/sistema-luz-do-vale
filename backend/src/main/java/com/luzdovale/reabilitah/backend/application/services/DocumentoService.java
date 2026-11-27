@@ -360,9 +360,9 @@ public class DocumentoService {
             throw new IllegalArgumentException("O documento já foi finalizado.");
         }
 
-        String caminho = documentoPdfService.salvarAssinado(documento, arquivo);
+        String nomeArquivo = documentoPdfService.salvarAssinado(documento, arquivo);
 
-        documento.assinar(caminho);
+        documento.assinar(nomeArquivo);
         documentoRepository.save(documento);
         histDocumentoService.registrarHistorico(
             documento,

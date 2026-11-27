@@ -5,6 +5,7 @@ import com.luzdovale.reabilitah.backend.domain.entities.Documento;
 import com.luzdovale.reabilitah.backend.domain.repository.DocumentoRepository;
 import com.openhtmltopdf.pdfboxout.PdfRendererBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -16,12 +17,13 @@ import java.nio.file.Path;
 @Service
 public class DocumentoPdfService {
 
-    private static final String PASTA_ASSINADOS = "src/main/resources/uploads/assinados";
-
     @Autowired
     private DocumentoTemplateService documentoTemplateService;
     @Autowired
     private DocumentoRepository documentoRepository;
+
+    @Value("${spring.pastaAssinados}")
+    private String pastaAssinados;
 
     public byte[] gerarPdf(Long documentoId) throws IOException {
 
@@ -29,7 +31,7 @@ public class DocumentoPdfService {
                 .orElseThrow(() -> new DocumentoNaoEncontradoException());
 
         if(documento.getCaminhoAssinado() != null){
-            return Files.readAllBytes(Path.of(documento.getCaminhoAssinado()));
+            return Files.readAllBytes(Path.of(pastaAssinados, documento.getCaminhoAssinado()));
         }
 
         String html = documentoTemplateService.gerarHtml(documento);
@@ -55,11 +57,11 @@ public class DocumentoPdfService {
             throw new IllegalArgumentException("O documento assinado deve ser um arquivo PDF.");
         }
 
-        String caminho = PASTA_ASSINADOS + "/documento-" + documento.getId() + ".pdf";
+        String nomeArquivo = "documento-" + documento.getId() + ".pdf";
 
-        Files.createDirectories(Path.of(PASTA_ASSINADOS));
-        Files.write(Path.of(caminho), arquivo.getBytes());
+        Files.createDirectories(Path.of(pastaAssinados));
+        Files.write(Path.of(pastaAssinados, nomeArquivo), arquivo.getBytes());
 
-        return caminho;
+        return nomeArquivo;
     }
 }

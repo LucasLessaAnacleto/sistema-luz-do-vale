@@ -12,7 +12,7 @@ import { buscarPaciente, desativarPaciente, reativarPaciente } from "@/app/servi
 import { formatarData } from "@/app/util";
 
 import AvatarIniciais from "@/app/components/ui/AvatarIniciais";
-import BotaoVoltar from "@/app/components/ui/BotaoVoltar";
+import BotaoVoltarHistorico from "@/app/components/ui/BotaoVoltarHistorico";
 import { useAppSelector } from "@/app/redux/hook";
 import ModalConfirmacao from "@/app/components/ModalConfirmacao";
 
@@ -177,7 +177,7 @@ export default function PacienteLayout({ children, params }: Props) {
                 <div className="mx-auto max-w-6xl px-5 py-6 sm:px-8">
                     <div className="mb-6 flex items-center justify-between gap-3">
 
-                        <BotaoVoltar href="/pacientes" />
+                        <BotaoVoltarHistorico />
 
                         <div className="flex items-center gap-2">
 
@@ -260,7 +260,7 @@ export default function PacienteLayout({ children, params }: Props) {
 
                     <div className="mx-auto flex max-w-6xl">
 
-                        <Link href={`/pacientes/${id}`}
+                        <Link href={`/pacientes/${id}`} replace
                             className={twMerge(clsx("flex-1 border-b-2 px-4 py-4 text-center text-sm font-medium transition-colors",
                                 !historicoAtivo ? "border-primary text-primary-dark" : "border-transparent text-muted-foreground hover:bg-primary/5"
                             ))}
@@ -270,6 +270,7 @@ export default function PacienteLayout({ children, params }: Props) {
 
                         <Link
                             href={`/pacientes/${id}/historico`}
+                            replace
                             className={twMerge(clsx("flex-1 border-b-2 px-4 py-4 text-center text-sm font-medium transition-colors",
                                 historicoAtivo ? "border-primary text-primary-dark" : "border-transparent text-muted-foreground hover:bg-primary/5"
                             ))}

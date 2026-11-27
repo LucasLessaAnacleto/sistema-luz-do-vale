@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { FileText, Funnel, Search } from "lucide-react";
 
@@ -26,6 +27,8 @@ import DocumentosRecentes from "../home/components/DocumentosRecentes";
 import BotaoVoltarHistorico from "@/app/components/ui/BotaoVoltarHistorico";
 
 export default function DocumentosPage() {
+    const searchParams = useSearchParams();
+    const origem = searchParams.get("origem");
 
     const [documentos, setDocumentos] = useState<DocumentoLista[]>([]);
     const [pagina, setPagina] = useState(0);
@@ -134,6 +137,7 @@ export default function DocumentosPage() {
         setDataInicio("");
         setDataFim("");
         setSituacao("ativos");
+        setMostrarFiltros(false);
     }
 
     return (
@@ -143,7 +147,9 @@ export default function DocumentosPage() {
                     <div className="flex items-center justify-between gap-4">
 
                         <div className="flex items-center gap-3">
-                            <BotaoVoltarHistorico />
+                            {origem && (
+                                <BotaoVoltarHistorico />
+                            )}
 
                             <div className="min-w-0">
                                 <h1 className="text-2xl font-semibold">Documentos</h1>

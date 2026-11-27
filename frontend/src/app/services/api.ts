@@ -49,6 +49,11 @@ api.interceptors.response.use((response) => response, (error) => {
         return Promise.reject(erroNaoEncontrado);
     }
 
+    if (status === 413) {
+
+        return Promise.reject(new Error("O arquivo deve ter no máximo 10 MB."));
+    }
+
 
     if (mensagemBackend) {
 

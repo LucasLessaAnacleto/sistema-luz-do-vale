@@ -16,7 +16,7 @@ interface Props {
     erro?: string;
     loading?: boolean;
     modo: "cadastro" | "edicao";
-    cancelarHref: string;
+    cancelarHref?: string;
     children?: ReactNode;
     dentroDoLayout?: boolean;
 }

@@ -43,7 +43,7 @@ export default function DocumentosRecentes() {
                     Últimos documentos criados
                 </h2>
 
-                <Link href="/documentos" className="text-xs font-medium text-primary-dark hover:underline sm:text-sm">
+                <Link href="/documentos?origem=home" className="text-xs font-medium text-primary-dark hover:underline sm:text-sm">
                     Ver todos
                 </Link>
             </div>

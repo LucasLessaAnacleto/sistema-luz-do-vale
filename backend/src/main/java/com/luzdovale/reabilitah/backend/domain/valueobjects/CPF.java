@@ -17,7 +17,7 @@ public class CPF {
             throw new IllegalArgumentException("CPF Invalido!");
         }
 
-        this.cpf = cpf;
+        this.cpf = cpf.replaceAll("\\D", "");
     }
 
     private boolean isValid(String cpf){

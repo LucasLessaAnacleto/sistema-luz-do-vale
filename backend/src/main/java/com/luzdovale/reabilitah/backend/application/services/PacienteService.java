@@ -5,6 +5,7 @@ import com.luzdovale.reabilitah.backend.application.DTO.paciente.AlterarStatusPa
 import com.luzdovale.reabilitah.backend.application.DTO.paciente.PacienteRequest;
 import com.luzdovale.reabilitah.backend.application.DTO.paciente.PacienteResponse;
 import com.luzdovale.reabilitah.backend.application.DTO.responsavel.ResponsavelResponse;
+import com.luzdovale.reabilitah.backend.application.exceptions.PacienteJaCadastradoException;
 import com.luzdovale.reabilitah.backend.application.exceptions.PacienteNaoEncontradoException;
 import com.luzdovale.reabilitah.backend.application.exceptions.UsuarioSemAutorizacao;
 import com.luzdovale.reabilitah.backend.application.DTO.paciente.PacienteDetalhesResponse;
@@ -212,7 +213,22 @@ public class PacienteService {
         paciente.setDtNasc(dados.dtNasc());
 
         validarCampos(paciente);
+        validarCpfDuplicado(paciente);
         return pacienteRepository.save(paciente);
+    }
+
+    private void validarCpfDuplicado(Paciente paciente) {
+        boolean duplicado;
+
+        if(paciente.getId() == null){
+            duplicado = pacienteRepository.existsByCpf(paciente.getCpf());
+        }else{
+            duplicado = pacienteRepository.existsByCpfAndIdNot(paciente.getCpf(), paciente.getId());
+        }
+
+        if(duplicado){
+            throw new PacienteJaCadastradoException();
+        }
     }
 
     private void validarCampos(Paciente dado) {

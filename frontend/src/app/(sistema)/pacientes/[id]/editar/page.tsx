@@ -63,8 +63,7 @@ export default function EditarPacientePage() {
 
             await editarPaciente(pacienteId, dados);
 
-            router.push(`/pacientes/${pacienteId}`);
-            router.refresh();
+            router.back();
 
         } catch (error) {
             setErro(
@@ -99,7 +98,6 @@ export default function EditarPacientePage() {
                     erro={erro}
                     loading={salvando}
                     modo="edicao"
-                    cancelarHref={`/pacientes/${pacienteId}`}
                     dentroDoLayout
                 />
             </div>

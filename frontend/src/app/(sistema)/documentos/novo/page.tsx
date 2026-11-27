@@ -13,7 +13,7 @@ import { buscarListaPacientes } from "@/app/services/pacienteService";
 
 import { normalizeSearch } from "@/app/util";
 
-import BotaoVoltar from "@/app/components/ui/BotaoVoltar";
+import BotaoVoltarHistorico from "@/app/components/ui/BotaoVoltarHistorico";
 import BarraPesquisa from "@/app/components/ui/BarraPesquisa";
 import AvatarIniciais from "@/app/components/ui/AvatarIniciais";
 import BadgeStatus from "@/app/components/ui/BudgeStatus";
@@ -117,7 +117,6 @@ export default function NovoDocumentoPage() {
         )
     );
 
-    const voltarHref = pacienteId ? `/pacientes/${pacienteId}` : "/documentos";
     return (
         <>
             <section className="border-b border-border bg-card">
@@ -127,7 +126,7 @@ export default function NovoDocumentoPage() {
                         {selecionandoPaciente ? (
                             <BotaoVoltarEtapa onClick={voltarParaTipos}/>
                         ) : (
-                            <BotaoVoltar href={voltarHref} />
+                            <BotaoVoltarHistorico />
                         )}
 
                         <div>
