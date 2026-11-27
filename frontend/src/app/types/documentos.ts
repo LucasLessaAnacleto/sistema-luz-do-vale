@@ -38,6 +38,7 @@ export interface DocumentoLista {
     ativo: boolean;
 
     status: StatusDocumento;
+    hash: string | null;
     dtFinalizacao: string | null;
 
     dtCriacao: string;
@@ -64,6 +65,8 @@ export interface DocumentoDetalhes {
     ativo: boolean;
     
     status: StatusDocumento;
+    exigeAssinatura: boolean;
+    hash: string | null;
     dtFinalizacao: string | null;
 
     dtCriacao: string;
@@ -142,6 +145,24 @@ export interface TipoDocumento {
 }
 
 
+// ids fixos dos tipos de documento, definidos nas migrations
+export const CODIGO_TIPO_DOCUMENTO = {
+    FICHA_ACOLHIMENTO: 1,
+    EVOLUCAO_ENFERMAGEM: 2,
+    CONTROLE_SAIDA: 3,
+    RELATORIO_ACOMPANHAMENTO: 4,
+    EVOLUCAO_GERAL: 5,
+    TERMO_ACOLHIMENTO: 6,
+    TERMO_COMPROMISSO_PATRIMONIO: 7,
+    DECLARACAO_ALTA_A_PEDIDO: 8,
+    ALTA_TERAPEUTICA_CONCLUSAO: 9,
+    DECLARACAO_ALTA_ADMINISTRATIVA: 10,
+    DECLARACAO_DESLIGAMENTO: 11,
+    TERMO_RESSOCIALIZACAO: 12,
+    AVALIACAO_ENFERMAGEM: 13,
+};
+
+
 export interface FormularioDocumento {
     tipoDocumentoId: number;
 
@@ -160,19 +181,3 @@ export interface FormularioDocumento {
     dadosPadrao: Record<string, unknown>;
 }
 
-
-export const CODIGO_TIPO_DOCUMENTO = {
-    FICHA_ACOLHIMENTO: 1,
-    EVOLUCAO_ENFERMAGEM: 2,
-    CONTROLE_SAIDA: 3,
-    RELATORIO_ACOMPANHAMENTO: 4,
-    EVOLUCAO_GERAL: 5,
-    TERMO_ACOLHIMENTO: 6,
-    TERMO_COMPROMISSO_PATRIMONIO: 7,
-    DECLARACAO_ALTA_A_PEDIDO: 8,
-    ALTA_TERAPEUTICA_CONCLUSAO: 9,
-    DECLARACAO_ALTA_ADMINISTRATIVA: 10,
-    DECLARACAO_DESLIGAMENTO: 11,
-    TERMO_RESSOCIALIZACAO: 12,
-    AVALIACAO_ENFERMAGEM: 13,
-};

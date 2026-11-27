@@ -3,12 +3,13 @@
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
-import { CopyPlus, Download } from "lucide-react";
+import { CopyPlus, Download, Upload } from "lucide-react";
 
 import type { DocumentoDetalhes } from "@/app/types/documentos";
 import type { PacienteDetalhes } from "@/app/types/pacientes";
+import { CODIGO_TIPO_DOCUMENTO } from "@/app/types/documentos";
 
-import { buscarDocumento, buscarHtmlDocumento, buscarPdfDocumento, finalizarDocumento } from "@/app/services/documentoService";
+import { buscarDocumento, buscarHtmlDocumento, buscarPdfDocumento, enviarDocumentoAssinado } from "@/app/services/documentoService";
 import { buscarPaciente } from "@/app/services/pacienteService";
 
 import AvatarIniciais from "@/app/components/ui/AvatarIniciais";
@@ -31,10 +32,11 @@ export default function DocumentoDetalhesPage() {
 
     const usuario = useAppSelector(state => state.auth.usuario);
 
-    const [finalizando, setFinalizando] = useState(false);
-    const [confirmarFinalizacao, setConfirmarFinalizacao] = useState(false);
+    const [arquivoAssinado, setArquivoAssinado] = useState<File | null>(null);
+    const [enviandoAssinado, setEnviandoAssinado] = useState(false);
+    const [erroAssinado, setErroAssinado] = useState("");
 
-    const podeFinalizar = documento?.ativo && documento.status === "PENDENTE" && 
+    const podeEnviarAssinado = documento?.ativo && documento.exigeAssinatura && documento.status === "PENDENTE" && 
         ( usuario?.role === "ROLE_ADMIN" || usuario?.id === documento.criadoPorId );
 
     useEffect(() => {
@@ -83,21 +85,34 @@ export default function DocumentoDetalhesPage() {
         }
     }
 
-    async function finalizarStatusDoc() {
-        if (!documento) return;
+    function selecionarArquivoAssinado(arquivo?: File) {
+        if (!arquivo) return;
+
+        if (arquivo.type !== "application/pdf") {
+            alert("O documento assinado deve ser um arquivo PDF.");
+            return;
+        }
+
+        setErroAssinado("");
+        setArquivoAssinado(arquivo);
+    }
+
+    async function enviarAssinado() {
+        if (!documento || !arquivoAssinado) return;
 
         try {
-            setFinalizando(true);
+            setEnviandoAssinado(true);
+            setErroAssinado("");
 
-            await finalizarDocumento(documento.id);
+            await enviarDocumentoAssinado(documento.id, arquivoAssinado);
 
             const atualizado = await buscarDocumento(documento.id);
             setDocumento(atualizado);
-            setConfirmarFinalizacao(false);
+            setArquivoAssinado(null);
         } catch (error) {
-            alert(error instanceof Error ? error.message : "Erro ao finalizar documento.");
+            setErroAssinado(error instanceof Error ? error.message : "Erro ao enviar documento assinado.");
         } finally {
-            setFinalizando(false);
+            setEnviandoAssinado(false);
         }
     }
 
@@ -131,7 +146,7 @@ export default function DocumentoDetalhesPage() {
                     </div>
 
                     <BadgeStatus
-                        texto={documento.status === "FINALIZADO" ? "Finalizado" : "Pendente"}
+                        texto={documento.dtAssinatura ? "Finalizado e assinado" : documento.status === "FINALIZADO" ? "Finalizado" : "Pendente"}
                         tipo={documento.status === "FINALIZADO" ? "sucesso" : "alerta"}
                     />
                 </div>
@@ -162,10 +177,10 @@ export default function DocumentoDetalhesPage() {
                         className="flex min-h-10 items-center gap-2 rounded-full bg-primary/15 px-4 text-sm font-medium text-primary-dark transition-colors enabled:cursor-pointer enabled:hover:bg-primary/25 disabled:opacity-60"
                     >
                         <Download className="h-4 w-4" />
-                        {baixando ? "Baixando..." : "Baixar PDF"}
+                        {baixando ? "Baixando..." : documento.dtAssinatura ? "Baixar PDF assinado" : "Baixar PDF"}
                     </button>
 
-                    {documento.ativo && documento.tipoDocumentoId !== 1 && (
+                    {documento.ativo && documento.tipoDocumentoId !== CODIGO_TIPO_DOCUMENTO.FICHA_ACOLHIMENTO && (
                         <Link href={`/documentos/novo/${documento.tipoDocumentoId}?paciente=${documento.pacienteId}&origem=${documento.id}`}
                             className="flex min-h-10 items-center gap-2 rounded-full bg-primary/15 px-4 text-sm font-medium text-primary-dark transition-colors hover:bg-primary/25"
                         >
@@ -174,14 +189,26 @@ export default function DocumentoDetalhesPage() {
                         </Link>
                     )}
 
-                    {podeFinalizar && (
-                        <button type="button" onClick={() => setConfirmarFinalizacao(true)}
-                            className="flex min-h-10 items-center rounded-full bg-primary px-4 text-sm font-medium text-white hover:bg-primary-dark cursor-pointer"
-                        >
-                            Finalizar documento
-                        </button>
+                    {podeEnviarAssinado && (
+                        <label className="relative flex min-h-10 items-center gap-2 rounded-full bg-primary px-4 text-sm font-medium text-white hover:bg-primary-dark cursor-pointer">
+                            <Upload className="h-4 w-4" />
+                            Enviar documento assinado
+
+                            <input type="file" accept="application/pdf" className="sr-only"
+                                onChange={(e) => {
+                                    selecionarArquivoAssinado(e.target.files?.[0]);
+                                    e.target.value = "";
+                                }}
+                            />
+                        </label>
                     )}
                 </div>
+
+                {documento.dtAssinatura && (
+                    <p className="mb-4 text-xs text-muted-foreground">
+                        Assinado em {formatarData(documento.dtAssinatura)}. A visualização abaixo é a do sistema, a versão com assinatura está no PDF.
+                    </p>
+                )}
 
                 {html ? (
                     <iframe
@@ -199,15 +226,28 @@ export default function DocumentoDetalhesPage() {
             </section>
               
             <ModalConfirmacao
-                aberto={confirmarFinalizacao}
-                titulo="Finalizar documento?"
-                descricao="O documento deixará de ser considerado pendente. Essa ação não registra uma assinatura."
+                aberto={arquivoAssinado !== null}
+                titulo="Enviar documento assinado?"
+                descricao={`O arquivo "${arquivoAssinado?.name}" será guardado como a versão assinada e o documento será finalizado.`}
                 variante="confirmacao"
-                textoConfirmar="Finalizar"
-                carregando={finalizando}
-                onConfirmar={finalizarStatusDoc}
-                onFechar={() => setConfirmarFinalizacao(false)}
-            />
+                textoConfirmar="Enviar"
+                carregando={enviandoAssinado}
+                erro={erroAssinado}
+                onConfirmar={enviarAssinado}
+                onFechar={() => setArquivoAssinado(null)}
+            >
+                {documento.hash && (
+                    <>
+                        <p className="text-sm">
+                            Antes de enviar, confira se o código no rodapé do documento começa e termina assim:
+                        </p>
+
+                        <p className="mt-2 rounded-xl bg-input-background px-3 py-2 text-center font-mono text-sm">
+                            {documento.hash.slice(0, 8)} ... {documento.hash.slice(-8)}
+                        </p>
+                    </>
+                )}
+            </ModalConfirmacao>
         </>
     );
 }

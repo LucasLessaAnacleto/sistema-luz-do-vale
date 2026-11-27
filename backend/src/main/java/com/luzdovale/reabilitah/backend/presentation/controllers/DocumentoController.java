@@ -12,6 +12,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.List;
@@ -42,9 +43,10 @@ public class DocumentoController {
     @GetMapping
     public ResponseEntity<Page<DocumentoListaResponse>> listar(
             @RequestParam(defaultValue = "0") int pagina,
-            @RequestParam(required = false) EnumStatusDocumento status) {
+            @RequestParam(required = false) EnumStatusDocumento status,
+            @RequestParam(required = false) String busca) {
 
-        return ResponseEntity.ok(documentoService.listar(pagina, status));
+        return ResponseEntity.ok(documentoService.listar(pagina, status, busca));
     }
 
     @GetMapping("/recentes")
@@ -64,10 +66,13 @@ public class DocumentoController {
         return ResponseEntity.ok(documentoService.listarHistorico(id));
     }
 
-    @PatchMapping("/{id}/finalizar")
-    public ResponseEntity<Void> finalizar(@PathVariable Long id, Authentication auth){
+    @PostMapping("/{id}/assinado")
+    public ResponseEntity<Void> enviarAssinado(
+            @PathVariable Long id,
+            @RequestParam("arquivo") MultipartFile arquivo,
+            Authentication auth) throws IOException {
 
-        documentoService.finalizar(id, (Usuario) auth.getPrincipal());
+        documentoService.assinar(id, arquivo, (Usuario) auth.getPrincipal());
         return ResponseEntity.ok().build();
     }
 

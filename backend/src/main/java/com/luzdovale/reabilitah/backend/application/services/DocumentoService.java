@@ -10,13 +10,15 @@ import com.luzdovale.reabilitah.backend.application.exceptions.UsuarioSemAutoriz
 import com.luzdovale.reabilitah.backend.domain.entities.*;
 import com.luzdovale.reabilitah.backend.domain.enuns.EnumStatusDocumento;
 import com.luzdovale.reabilitah.backend.domain.repository.*;
+import jakarta.transaction.Transactional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -35,6 +37,10 @@ public class DocumentoService {
     private DocumentoCamposService documentoCamposService;
     @Autowired
     private HistDocumentoService histDocumentoService;
+    @Autowired
+    private DocumentoPdfService documentoPdfService;
+    @Autowired
+    private DocumentoTemplateService documentoTemplateService;
 
     @Transactional
     public DocumentoResponse criar(CriarDocumentoRequest request, Usuario usuarioLogado) {
@@ -85,6 +91,15 @@ public class DocumentoService {
         documento.setDados(dadosNormalizados);
         documento.setDocumentoOrigem(documentoOrigem);
 
+        // quando não exige assinatura já nasce finalizado
+        if(!versao.getTipoDocumento().isExigeAssinatura()){
+            documento.finalizar();
+        }
+
+        documento = documentoRepository.save(documento);
+
+        // o hash usa o id, por isso só é gerado depois de salvar
+        documento.setHash(documentoTemplateService.gerarHashDocumento(documento));
         documento = documentoRepository.save(documento);
 
         histDocumentoService.registrarHistorico(
@@ -129,6 +144,13 @@ public class DocumentoService {
         documento.setDocumentoOrigem(documentoOrigem);
         documento.setDados(dadosNormalizados);
 
+        if(!versao.getTipoDocumento().isExigeAssinatura()){
+            documento.finalizar();
+        }
+
+        documento = documentoRepository.save(documento);
+
+        documento.setHash(documentoTemplateService.gerarHashDocumento(documento));
         documento = documentoRepository.save(documento);
 
         histDocumentoService.registrarHistorico(
@@ -141,9 +163,16 @@ public class DocumentoService {
         return documento;
     }
 
-    public Page<DocumentoListaResponse> listar(int pagina, EnumStatusDocumento status) {
+    public Page<DocumentoListaResponse> listar(int pagina, EnumStatusDocumento status, String busca) {
 
         var pageable = PageRequest.of(pagina, 50);
+
+        if(busca != null && !busca.isBlank()){
+            return documentoRepository
+                .buscar(busca.trim(), status, pageable)
+                .map(this::mapeiaParaListaDTO);
+        }
+
         if(status == null){
             return documentoRepository
                 .findByAtivoTrueOrderByDtCriacaoDesc(pageable)
@@ -225,6 +254,8 @@ public class DocumentoService {
             dados,
             documento.isAtivo(),
             documento.getStatus(),
+            versao.getTipoDocumento().isExigeAssinatura(),
+            documento.getHash(),
             documento.getDtCriacao(),
             documento.getDtAtualizacao(),
             documento.getDtAssinatura(),
@@ -233,7 +264,7 @@ public class DocumentoService {
     }
 
     @Transactional
-    public void finalizar(Long id, Usuario usuarioLogado){
+    public void assinar(Long id, MultipartFile arquivo, Usuario usuarioLogado) throws IOException {
         Documento documento = buscarDocumento(id);
 
         if(!usuarioLogado.isAdmin() &&
@@ -245,17 +276,23 @@ public class DocumentoService {
             throw new DocumentoDesativadoException();
         }
 
-        if(documento.getStatus() == EnumStatusDocumento.FINALIZADO){
-            return;
+        if(!documento.getTipoDocumentoVersao().getTipoDocumento().isExigeAssinatura()){
+            throw new IllegalArgumentException("Este tipo de documento não exige assinatura.");
         }
 
-        documento.finalizar();
+        if(documento.getStatus() == EnumStatusDocumento.FINALIZADO){
+            throw new IllegalArgumentException("O documento já foi finalizado.");
+        }
+
+        String caminho = documentoPdfService.salvarAssinado(documento, arquivo);
+
+        documento.assinar(caminho);
         documentoRepository.save(documento);
         histDocumentoService.registrarHistorico(
             documento,
             documento.getPaciente(),
             usuarioLogado,
-            "FINALIZADO"
+            "ASSINADO"
         );
     }
 
@@ -340,6 +377,7 @@ public class DocumentoService {
             nomeUsuario,
             documento.isAtivo(),
             documento.getStatus(),
+            documento.getHash(),
             documento.getDtCriacao(),
             documento.getDtAssinatura(),
             documento.getDtFinalizacao()

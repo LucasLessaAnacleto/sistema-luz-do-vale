@@ -11,15 +11,16 @@ public class FormatacaoTemplate {
             return "";
         }
 
-        if (valor instanceof LocalDate data) {
-            return data.format(DateTimeFormatter.ofPattern("dd/MM/yyyy"));
+        if (valor instanceof LocalDate) {
+            return ((LocalDate) valor).format(DateTimeFormatter.ofPattern("dd/MM/yyyy"));
         }
 
-        if (valor instanceof LocalDateTime dataHora) {
-            return dataHora.format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm"));
+        if (valor instanceof LocalDateTime) {
+            return ((LocalDateTime) valor).format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm"));
         }
 
-        if (valor instanceof String texto) {
+        if (valor instanceof String) {
+            String texto = (String) valor;
             try {
                 LocalDate data = LocalDate.parse(texto);
                 return data.format(DateTimeFormatter.ofPattern("dd/MM/yyyy"));
@@ -63,8 +64,8 @@ public class FormatacaoTemplate {
             return "";
         }
 
-        if (valor instanceof Number numero) {
-            return String.valueOf(numero.intValue());
+        if (valor instanceof Number) {
+            return String.valueOf(((Number) valor).intValue());
         }
 
         return String.valueOf(valor);
@@ -75,8 +76,8 @@ public class FormatacaoTemplate {
             return "Não informado";
         }
 
-        if (valor instanceof Boolean b) {
-            return b ? "Sim" : "Não";
+        if (valor instanceof Boolean) {
+            return (Boolean) valor ? "Sim" : "Não";
         }
 
         return String.valueOf(valor);

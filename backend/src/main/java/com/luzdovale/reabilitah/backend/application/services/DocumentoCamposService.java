@@ -41,7 +41,7 @@ public class DocumentoCamposService {
 
     public List<OpcaoLista> buscaListaOpcao(String nomeLista) {
 
-        if(nomeLista.startsWith("TIPO_DEPENDENCIA")){
+        if (nomeLista.startsWith("TIPO_DEPENDENCIA")) {
             List<TipoDependencia> dependencias = tipoDependenciaRepository.findAllByOrderByNomeAsc();
 
             if ("TIPO_DEPENDENCIA_LICITA".equals(nomeLista)) {
@@ -104,11 +104,11 @@ public class DocumentoCamposService {
         return gson.fromJson(dadosJson, tipoMap);
     }
 
-    public List<CampoDocumento> lerCampos(TipoDocumentoVersao versaoDocumento)  {
+    public List<CampoDocumento> lerCampos(TipoDocumentoVersao versaoDocumento) {
         var camposJson    = versaoDocumento.getCampos();
         var tipoDocumento = versaoDocumento.getTipoDocumento();
 
-        try{
+        try {
             Type tipoLista = new TypeToken<List<CampoDocumento>>() {}.getType();
             List<CampoDocumento> campos = gson.fromJson(camposJson, tipoLista);
             validarCampos(campos);
@@ -129,8 +129,7 @@ public class DocumentoCamposService {
     }
 
     public String validarENormalizarDados(List<CampoDocumento> campos, Map<String, Object> dados) {
-        Map<String, Object> dadosNormalizados =
-                normalizarDados(campos, dados);
+        Map<String, Object> dadosNormalizados = normalizarDados(campos, dados);
 
         return gson.toJson(dadosNormalizados);
     }
@@ -199,26 +198,23 @@ public class DocumentoCamposService {
         };
     }
 
-    private void resolverListasOpcoes(List<CampoDocumento> campos, Map<String, List<OpcaoLista>> listas){
-        for (CampoDocumento campo : campos){
+    private void resolverListasOpcoes(List<CampoDocumento> campos, Map<String, List<OpcaoLista>> listas) {
+        for (CampoDocumento campo : campos) {
             String nomeLista = campo.getTabelaLista();
 
-            if(nomeLista != null && !nomeLista.isBlank()){
-                if(!listas.containsKey(nomeLista)){
+            if (nomeLista != null && !nomeLista.isBlank()) {
+                if (!listas.containsKey(nomeLista)) {
                     listas.put(nomeLista, buscaListaOpcao(nomeLista));
                 }
             }
 
-            if(campo.getTipo() == EnumTipoCampo.GRUPO && campo.getCampos() != null){
+            if (campo.getTipo() == EnumTipoCampo.GRUPO && campo.getCampos() != null) {
                 resolverListasOpcoes(campo.getCampos(), listas);
             }
         }
     }
 
-    private Map<String, Object> normalizarDados(
-            List<CampoDocumento> campos,
-            Map<String, Object> dados
-    ) {
+    private Map<String, Object> normalizarDados(List<CampoDocumento> campos, Map<String, Object> dados) {
         var documento = new HashMap<String, Object>();
         for (CampoDocumento campo : campos) {
             String nomeCampo = campo.getNome();
@@ -245,14 +241,10 @@ public class DocumentoCamposService {
         return documento;
     }
 
-    private Object validaValorCampo(
-            CampoDocumento campo,
-            Object input
-    ) {
+    private Object validaValorCampo(CampoDocumento campo, Object input) {
         var tipo = campo.getTipo();
 
-        if (tipo == EnumTipoCampo.TEXTO ||
-                tipo == EnumTipoCampo.TEXTO_LONGO) {
+        if (tipo == EnumTipoCampo.TEXTO || tipo == EnumTipoCampo.TEXTO_LONGO) {
 
             return validarTexto(campo, input);
 
@@ -289,13 +281,13 @@ public class DocumentoCamposService {
     }
 
     private String validarTexto(CampoDocumento campo, Object input) {
-        if(!(input instanceof String)){
+        if (!(input instanceof String)) {
             throw new DadosDocumentoInvalidosException(
                     "Campo \"%s\" %s.".formatted(campo.getRotulo(), "deve ser um texto")
             );
         }
         String valor = (String) input;
-        if(campo.isObrigatorio() && valor.isBlank()){
+        if (campo.isObrigatorio() && valor.isBlank()) {
             throw new DadosDocumentoInvalidosException(
                     "Campo \"%s\" %s.".formatted(campo.getRotulo(), "não pode ser vazio")
             );
@@ -305,22 +297,22 @@ public class DocumentoCamposService {
 
     private Number validarNumero(CampoDocumento campo, Object input) {
         boolean isInteiro = campo.getTipo() == EnumTipoCampo.INTEIRO;
-        if(input instanceof Number){
+        if (input instanceof Number) {
             Number numero = (Number) input;
-            if(isInteiro){
+            if (isInteiro) {
                 return numero.intValue();
             }
             return numero.doubleValue();
         }
-        if(input instanceof String){
+        if (input instanceof String) {
 
-            try{
-                if(isInteiro) {
+            try {
+                if (isInteiro) {
                     return Integer.valueOf((String) input);
                 }
                 return Double.valueOf((String) input);
 
-            }catch (NumberFormatException e){
+            } catch (NumberFormatException e) {
                 throw new DadosDocumentoInvalidosException(
                         "Campo \"%s\" possui valor inválido para um %s.".formatted(campo.getRotulo(), isInteiro ? "inteiro" : "número")
                 );
@@ -352,13 +344,13 @@ public class DocumentoCamposService {
     }
 
     private String validarData(CampoDocumento campo, Object input) {
-        if(input instanceof LocalDate){
+        if (input instanceof LocalDate) {
             return ((LocalDate) input).toString();
         }
-        if(input instanceof String) {
-            try{
+        if (input instanceof String) {
+            try {
                 return LocalDate.parse((String) input).toString();
-            }catch (DateTimeParseException ex){}
+            } catch (DateTimeParseException ex) {}
         }
         throw new DadosDocumentoInvalidosException("Campo \"%s\" %s.".formatted(
                 campo.getRotulo(),
@@ -379,11 +371,11 @@ public class DocumentoCamposService {
 
     private String validarSelecao(CampoDocumento campo, Object input) {
         String valor = String.valueOf(input);
-        if(campo.getOpcoes() != null && !campo.getOpcoes().isEmpty()) {
+        if (campo.getOpcoes() != null && !campo.getOpcoes().isEmpty()) {
             if (campo.getOpcoes().contains(valor)) {
                 return valor;
             }
-        }else if(campo.getTabelaLista() != null && !campo.getTabelaLista().isBlank()){
+        } else if (campo.getTabelaLista() != null && !campo.getTabelaLista().isBlank()) {
             var opcoes = buscaListaOpcao(campo.getTabelaLista());
             boolean existe = opcoes.stream().anyMatch(opcao -> opcao.valor().equals(valor));
             if (existe) {
@@ -397,7 +389,7 @@ public class DocumentoCamposService {
     }
 
     private List<String> validarMultiplaSelecao(CampoDocumento campo, Object input) {
-        if(!(input instanceof List<?>)){
+        if (!(input instanceof List<?>)) {
             throw new DadosDocumentoInvalidosException(
                     "Campo \"%s\" deve ser uma lista de valores"
                             .formatted(campo.getRotulo())
@@ -414,10 +406,10 @@ public class DocumentoCamposService {
         }
         List<String> resultado = new ArrayList<>();
 
-        for(Object item : valores){
+        for (Object item : valores) {
             String valor = String.valueOf(item);
 
-            if(!valoresValidos.contains(valor)){
+            if (!valoresValidos.contains(valor)) {
                 throw new DadosDocumentoInvalidosException("Campo \"%s\" com valor \"%s\" não é uma opção válida."
                     .formatted(campo.getRotulo(), valor)
                 );
@@ -446,16 +438,16 @@ public class DocumentoCamposService {
         validarCampos(campos, true);
     }
 
-    private void validarCampos(List<CampoDocumento> campos, boolean permiteGrupo){
-        if(campos == null || campos.isEmpty())
+    private void validarCampos(List<CampoDocumento> campos, boolean permiteGrupo) {
+        if (campos == null || campos.isEmpty())
             throw new IllegalArgumentException("JSON dos campos do TIPO_DOCUMENTO não definido");
 
         for (CampoDocumento campo : campos) {
 
-            if(campo.getNome() == null || campo.getNome().isBlank()){
+            if (campo.getNome() == null || campo.getNome().isBlank()) {
                 throw new IllegalArgumentException("campo \"nome\" é obrigatório");
             }
-            if(campo.getRotulo() == null || campo.getRotulo().isBlank()){
+            if (campo.getRotulo() == null || campo.getRotulo().isBlank()) {
                 throw new IllegalArgumentException("campo \"rotulo\" é obrigatório");
             }
 
@@ -474,12 +466,12 @@ public class DocumentoCamposService {
 
                 if (!permiteGrupo) {
                     throw new IllegalArgumentException("campo tipo GRUPO não é permitido de forma aninhada");
-                }else if(campo.getCampos() == null || campo.getCampos().isEmpty()){
+                } else if (campo.getCampos() == null || campo.getCampos().isEmpty()) {
                     throw new IllegalArgumentException("campo tipo GRUPO é obrigatório \"campos\" definidos");
                 }
                 validarCampos(campo.getCampos(), false);
             }
-            if(campo.getLargura() < 1 || campo.getLargura() > 12){
+            if (campo.getLargura() < 1 || campo.getLargura() > 12) {
                 campo.setLargura(12);
             }
 

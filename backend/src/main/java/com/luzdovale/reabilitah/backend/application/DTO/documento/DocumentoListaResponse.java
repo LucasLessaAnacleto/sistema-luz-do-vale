@@ -20,6 +20,7 @@ public record DocumentoListaResponse(
 
     boolean ativo,
     EnumStatusDocumento status,
+    String hash,
 
     LocalDateTime dtCriacao,
     LocalDateTime dtAssinatura,

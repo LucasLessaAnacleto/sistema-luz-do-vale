@@ -44,6 +44,39 @@ public class DocumentoTemplateService {
 
     public String gerarHtml(Documento documento) {
 
+        Context context = montarContexto(documento);
+        String template = resolverTemplate(documento.getTipoDocumentoVersao());
+
+        String html = templateEngine.process("documentos/"+template, context);
+
+        // documento antigo não tem o hash guardado, então calcula na hora
+        String hash = documento.getHash();
+        if (hash == null) {
+            hash = gerarHash(documento.getId() + "\n" + html);
+        }
+
+        context.setVariable("hashDocumento", hash);
+
+        String fragmento = "documentos/fragments/hash-documento";
+        String estilo = templateEngine.process(fragmento, Set.of("estilo"), context);
+        String rodape = templateEngine.process(fragmento, Set.of("rodape"), context);
+
+        return html.replace("</head>", estilo + "</head>")
+                .replace("</body>", rodape + "</body>");
+    }
+
+    public String gerarHashDocumento(Documento documento) {
+
+        Context context = montarContexto(documento);
+        String template = resolverTemplate(documento.getTipoDocumentoVersao());
+
+        String html = templateEngine.process("documentos/"+template, context);
+
+        return gerarHash(documento.getId() + "\n" + html);
+    }
+
+    private Context montarContexto(Documento documento) {
+
         var versao = documento.getTipoDocumentoVersao();
         var campos = documentoCamposService.lerCampos(versao);
         var dados = documentoCamposService.lerDados(documento.getDados());
@@ -67,19 +100,7 @@ public class DocumentoTemplateService {
         context.setVariable("listas", listas);
         context.setVariable("fmt", new FormatacaoTemplate());
 
-        String template = resolverTemplate(versao);
-
-        String html = templateEngine.process("documentos/"+template, context);
-        String hash = gerarHash(documento.getId() + "\n" + html);
-
-        context.setVariable("hashDocumento", hash);
-
-        String fragmento = "documentos/fragments/hash-documento";
-        String estilo = templateEngine.process(fragmento, Set.of("estilo"), context);
-        String rodape = templateEngine.process(fragmento, Set.of("rodape"), context);
-
-        return html.replace("</head>", estilo + "</head>")
-                .replace("</body>", rodape + "</body>");
+        return context;
     }
 
     private String gerarHash(String conteudo) {

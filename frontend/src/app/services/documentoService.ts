@@ -10,9 +10,9 @@ export async function criarDocumento(dados: CriarDocumentoRequest): Promise<Docu
     return response.data;
 }
 
-export async function listarDocumentos(pagina = 0, status?: StatusDocumento): Promise<Pagina<DocumentoLista>> {
+export async function listarDocumentos(pagina = 0, status?: StatusDocumento, busca?: string): Promise<Pagina<DocumentoLista>> {
 
-    const response = await api.get<Pagina<DocumentoLista>>("/documentos",{ params: { pagina, status } });
+    const response = await api.get<Pagina<DocumentoLista>>("/documentos",{ params: { pagina, status, busca } });
     return response.data;
 }
 
@@ -45,6 +45,10 @@ export async function buscarPdfDocumento(id: number): Promise<Blob> {
     return response.data;
 }
 
-export async function finalizarDocumento(id: number): Promise<void> {
-    await api.patch(`/documentos/${id}/finalizar`);
+export async function enviarDocumentoAssinado(id: number, arquivo: File): Promise<void> {
+
+    const form = new FormData();
+    form.append("arquivo", arquivo);
+
+    await api.post(`/documentos/${id}/assinado`, form);
 }

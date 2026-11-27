@@ -44,6 +44,9 @@ public class Documento {
     @Enumerated(EnumType.STRING)
     private EnumStatusDocumento status = EnumStatusDocumento.PENDENTE;
 
+    private String hash;
+    private String caminhoAssinado;
+
     private boolean ativo = true;
     private LocalDateTime dtCriacao = LocalDateTime.now();
     private LocalDateTime dtAtualizacao;
@@ -60,6 +63,12 @@ public class Documento {
     public void finalizar(){
         this.status = EnumStatusDocumento.FINALIZADO;
         this.dtFinalizacao = LocalDateTime.now();
+    }
+
+    public void assinar(String caminhoAssinado){
+        this.caminhoAssinado = caminhoAssinado;
+        this.dtAssinatura = LocalDateTime.now();
+        finalizar();
     }
 
 }

@@ -24,6 +24,8 @@ public record DocumentoDetalhesResponse(
 
         boolean ativo,
         EnumStatusDocumento status,
+        boolean exigeAssinatura,
+        String hash,
 
         LocalDateTime dtCriacao,
         LocalDateTime dtAtualizacao,

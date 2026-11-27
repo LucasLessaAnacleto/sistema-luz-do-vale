@@ -1,15 +1,15 @@
 export interface Pagina<T> {
-  content: T[];
+    content: T[];
 
-  totalElements: number;
-  totalPages: number;
+    totalElements: number;
+    totalPages: number;
 
-  size: number;
-  number: number;
+    size: number;
+    number: number;
 
-  first: boolean;
-  last: boolean;
+    first: boolean;
+    last: boolean;
 
-  numberOfElements: number;
-  empty: boolean;
+    numberOfElements: number;
+    empty: boolean;
 }
