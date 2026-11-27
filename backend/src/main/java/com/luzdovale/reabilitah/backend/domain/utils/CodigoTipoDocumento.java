@@ -1,6 +1,5 @@
 package com.luzdovale.reabilitah.backend.domain.utils;
 
-// ids fixos dos tipos de documento, definidos nas migrations
 public class CodigoTipoDocumento {
 
     public static final Long FICHA_ACOLHIMENTO = 1L;

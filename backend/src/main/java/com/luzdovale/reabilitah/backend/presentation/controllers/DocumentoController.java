@@ -8,6 +8,7 @@ import com.luzdovale.reabilitah.backend.domain.entities.Usuario;
 import com.luzdovale.reabilitah.backend.domain.enuns.EnumStatusDocumento;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.time.LocalDate;
 import java.util.List;
 
 @RestController
@@ -44,9 +46,16 @@ public class DocumentoController {
     public ResponseEntity<Page<DocumentoListaResponse>> listar(
             @RequestParam(defaultValue = "0") int pagina,
             @RequestParam(required = false) EnumStatusDocumento status,
-            @RequestParam(required = false) String busca) {
+            @RequestParam(required = false) String busca,
+            @RequestParam(required = false) Long usuarioId,
+            @RequestParam(required = false) Long pacienteId,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate dataInicio,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate dataFim,
+            @RequestParam(defaultValue = "true") boolean ativo) {
 
-        return ResponseEntity.ok(documentoService.listar(pagina, status, busca));
+        return ResponseEntity.ok(
+                documentoService.listar(pagina, status, busca, usuarioId, pacienteId, dataInicio, dataFim, ativo)
+        );
     }
 
     @GetMapping("/recentes")

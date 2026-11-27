@@ -1,7 +1,7 @@
 import { Pagina } from "../types/pagina";
 import api from "./api";
 
-import type { CriarDocumentoRequest, Documento, DocumentoDetalhes, DocumentoLista, StatusDocumento } from "@/app/types/documentos";
+import type { CriarDocumentoRequest, Documento, DocumentoDetalhes, DocumentoLista, FiltrosDocumento } from "@/app/types/documentos";
 
 
 export async function criarDocumento(dados: CriarDocumentoRequest): Promise<Documento> {
@@ -10,9 +10,9 @@ export async function criarDocumento(dados: CriarDocumentoRequest): Promise<Docu
     return response.data;
 }
 
-export async function listarDocumentos(pagina = 0, status?: StatusDocumento, busca?: string): Promise<Pagina<DocumentoLista>> {
+export async function listarDocumentos(pagina = 0, filtros: FiltrosDocumento = {}): Promise<Pagina<DocumentoLista>> {
 
-    const response = await api.get<Pagina<DocumentoLista>>("/documentos",{ params: { pagina, status, busca } });
+    const response = await api.get<Pagina<DocumentoLista>>("/documentos",{ params: { pagina, ...filtros } });
     return response.data;
 }
 

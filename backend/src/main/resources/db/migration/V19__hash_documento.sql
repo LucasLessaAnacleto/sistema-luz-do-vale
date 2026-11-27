@@ -1,7 +1,6 @@
 ALTER TABLE documento
     ADD COLUMN hash VARCHAR(64);
 
--- não existe mais o finalizar manual, os pendentes que não exigem assinatura ficam finalizados
 UPDATE documento
 SET status = 'FINALIZADO',
     dt_finalizacao = CURRENT_TIMESTAMP

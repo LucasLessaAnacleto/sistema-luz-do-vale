@@ -1,4 +1,4 @@
-import type { EditarInformacoesPessoaisRequest, Usuario, UsuarioRequest } from "@/app/types/usuarios";
+import type { EditarInformacoesPessoaisRequest, Usuario, UsuarioNome, UsuarioRequest } from "@/app/types/usuarios";
 import api from "./api";
 
 export async function buscarUsuarioLogado(): Promise<Usuario> {
@@ -24,6 +24,12 @@ export async function buscarListaUsuarios(ativo?: boolean): Promise<Usuario[]> {
     }
 
     return [];
+}
+
+export async function listarNomesUsuarios(): Promise<UsuarioNome[]> {
+
+    const response = await api.get<UsuarioNome[]>("/usuarios/nomes");
+    return response.data;
 }
 
 export async function buscarUsuario(id: number): Promise<Usuario> {

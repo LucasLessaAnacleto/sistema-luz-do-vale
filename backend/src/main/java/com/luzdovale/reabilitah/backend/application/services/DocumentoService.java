@@ -12,13 +12,16 @@ import com.luzdovale.reabilitah.backend.domain.enuns.EnumStatusDocumento;
 import com.luzdovale.reabilitah.backend.domain.repository.*;
 import jakarta.transaction.Transactional;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -91,14 +94,12 @@ public class DocumentoService {
         documento.setDados(dadosNormalizados);
         documento.setDocumentoOrigem(documentoOrigem);
 
-        // quando não exige assinatura já nasce finalizado
         if(!versao.getTipoDocumento().isExigeAssinatura()){
             documento.finalizar();
         }
 
         documento = documentoRepository.save(documento);
 
-        // o hash usa o id, por isso só é gerado depois de salvar
         documento.setHash(documentoTemplateService.gerarHashDocumento(documento));
         documento = documentoRepository.save(documento);
 
@@ -163,14 +164,37 @@ public class DocumentoService {
         return documento;
     }
 
-    public Page<DocumentoListaResponse> listar(int pagina, EnumStatusDocumento status, String busca) {
+    public Page<DocumentoListaResponse> listar(
+            int pagina,
+            EnumStatusDocumento status,
+            String busca,
+            Long usuarioId,
+            Long pacienteId,
+            LocalDate dataInicio,
+            LocalDate dataFim,
+            boolean ativo
+    ) {
 
         var pageable = PageRequest.of(pagina, 50);
 
-        if(busca != null && !busca.isBlank()){
-            return documentoRepository
-                .buscar(busca.trim(), status, pageable)
-                .map(this::mapeiaParaListaDTO);
+        if(busca == null){
+            busca = "";
+        }
+
+        boolean temFiltro = !busca.isBlank() || usuarioId != null || pacienteId != null
+                || dataInicio != null || dataFim != null || !ativo;
+
+        if(temFiltro){
+            return buscar(
+                    busca.trim().toLowerCase(),
+                    status,
+                    usuarioId,
+                    pacienteId,
+                    dataInicio,
+                    dataFim,
+                    ativo,
+                    pageable
+            );
         }
 
         if(status == null){
@@ -182,6 +206,58 @@ public class DocumentoService {
         return documentoRepository
             .findByAtivoTrueAndStatusOrderByDtCriacaoDesc(status, pageable)
             .map(this::mapeiaParaListaDTO);
+    }
+
+    private Page<DocumentoListaResponse> buscar(
+            String busca,
+            EnumStatusDocumento status,
+            Long usuarioId,
+            Long pacienteId,
+            LocalDate dataInicio,
+            LocalDate dataFim,
+            boolean ativo,
+            Pageable pageable
+    ) {
+
+        List<DocumentoListaResponse> encontrados = new ArrayList<>();
+
+        for(Documento documento : documentoRepository.findAllByAtivoOrderByDtCriacaoDesc(ativo)){
+
+            if(status != null && documento.getStatus() != status){
+                continue;
+            }
+
+            if(usuarioId != null && !documento.getCriadoPor().getId().equals(usuarioId)){
+                continue;
+            }
+
+            if(pacienteId != null && !documento.getPaciente().getId().equals(pacienteId)){
+                continue;
+            }
+
+            LocalDate dataCriacao = documento.getDtCriacao().toLocalDate();
+
+            if(dataInicio != null && dataCriacao.isBefore(dataInicio)){
+                continue;
+            }
+
+            if(dataFim != null && dataCriacao.isAfter(dataFim)){
+                continue;
+            }
+
+            String tipo = documento.getTipoDocumentoVersao().getTipoDocumento().getNome().toLowerCase();
+            String numero = documento.getId().toString();
+            String hash = documento.getHash() != null ? documento.getHash() : "";
+
+            if(tipo.contains(busca) || numero.equals(busca) || hash.startsWith(busca) || hash.endsWith(busca)){
+                encontrados.add(mapeiaParaListaDTO(documento));
+            }
+        }
+
+        int inicio = Math.min((int) pageable.getOffset(), encontrados.size());
+        int fim = Math.min(inicio + pageable.getPageSize(), encontrados.size());
+
+        return new PageImpl<>(encontrados.subList(inicio, fim), pageable, encontrados.size());
     }
 
     public List<DocumentoListaResponse> listarRecentes() {

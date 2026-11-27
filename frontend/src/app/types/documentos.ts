@@ -95,6 +95,16 @@ export interface CriarDocumentoRequest {
 
 export type StatusDocumento = "PENDENTE" | "FINALIZADO";
 
+export interface FiltrosDocumento {
+    status?: StatusDocumento;
+    busca?: string;
+    usuarioId?: number;
+    pacienteId?: number;
+    dataInicio?: string;
+    dataFim?: string;
+    ativo?: boolean;
+}
+
 // documentos dinamicos
 
 export type TipoCampoDocumento =
@@ -145,7 +155,6 @@ export interface TipoDocumento {
 }
 
 
-// ids fixos dos tipos de documento, definidos nas migrations
 export const CODIGO_TIPO_DOCUMENTO = {
     FICHA_ACOLHIMENTO: 1,
     EVOLUCAO_ENFERMAGEM: 2,

@@ -9,7 +9,6 @@ export function montarPerfilRequest(form: FormData): PerfilRequest {
 
         nome: String(form.get("nome") ?? "").trim(),
 
-        // toggle marcado vem como "on", desmarcado nao vem no form
         permCadPaciente: form.get("permCadPaciente") === "on",
 
         tiposDocumento,

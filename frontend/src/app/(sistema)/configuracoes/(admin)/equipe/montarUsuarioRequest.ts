@@ -25,7 +25,6 @@ export function montarUsuarioRequest(form: FormData): UsuarioRequest {
         email: valorTexto("email"),
         role: valorTexto("role") === "ROLE_ADMIN" ? "ROLE_ADMIN" : "ROLE_USER",
 
-        // perfilId 0 = sem perfil
         perfilId: Number(valorTexto("perfilId")),
     };
 

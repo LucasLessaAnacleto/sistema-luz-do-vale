@@ -18,6 +18,11 @@ export interface Usuario {
     dtDesativado: string | null;
 }
 
+export interface UsuarioNome {
+    id: number;
+    nome: string;
+}
+
 export interface UsuarioRequest {
     nome: string;
     telefone: string;

@@ -16,7 +16,6 @@ import java.nio.file.Path;
 @Service
 public class DocumentoPdfService {
 
-    // pasta onde ficam os documentos assinados que foram enviados
     private static final String PASTA_ASSINADOS = "src/main/resources/uploads/assinados";
 
     @Autowired
@@ -29,7 +28,6 @@ public class DocumentoPdfService {
         Documento documento = documentoRepository.findById(documentoId)
                 .orElseThrow(() -> new DocumentoNaoEncontradoException());
 
-        // se ja foi assinado baixa o arquivo que foi enviado
         if(documento.getCaminhoAssinado() != null){
             return Files.readAllBytes(Path.of(documento.getCaminhoAssinado()));
         }

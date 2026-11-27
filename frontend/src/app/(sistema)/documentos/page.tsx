@@ -2,16 +2,21 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { FileText, Search } from "lucide-react";
+import { FileText, Funnel, Search } from "lucide-react";
 
 import type { DocumentoLista } from "@/app/types/documentos";
+import type { UsuarioNome } from "@/app/types/usuarios";
+import type { Paciente } from "@/app/types/pacientes";
 import { listarDocumentos } from "@/app/services/documentoService";
+import { listarNomesUsuarios } from "@/app/services/usuarioService";
+import { buscarListaPacientes } from "@/app/services/pacienteService";
 import { formatarData } from "@/app/util";
 
 import BarraPesquisa from "@/app/components/ui/BarraPesquisa";
 import BotaoNovo from "@/app/components/ui/BotaoNovo";
 import BudgetFiltros from "@/app/components/ui/BudgetFiltros";
 import BudgetStatus from "@/app/components/ui/BudgeStatus";
+import Selecao from "@/app/components/ui/Selecao";
 import AvatarIniciais from "@/app/components/ui/AvatarIniciais";
 import Card from "@/app/components/ui/Card";
 import ItemsVazio from "@/app/components/ItemsVazio";
@@ -32,6 +37,18 @@ export default function DocumentosPage() {
 
     const [search, setSearch] = useState("");
     const [busca, setBusca] = useState("");
+
+    const [mostrarFiltros, setMostrarFiltros] = useState(false);
+
+    const [funcionarios, setFuncionarios] = useState<UsuarioNome[]>([]);
+    const [pacientes, setPacientes] = useState<Paciente[]>([]);
+
+    const [criadoPor, setCriadoPor] = useState("");
+    const [pacienteId, setPacienteId] = useState("");
+    const [tipoData, setTipoData] = useState("dia");
+    const [dataInicio, setDataInicio] = useState("");
+    const [dataFim, setDataFim] = useState("");
+    const [situacao, setSituacao] = useState("ativos");
     
     type FiltroDocumento = "todos" | "pendentes" | "finalizados";
     const [filtro, setFiltro] = useState<FiltroDocumento>("todos");
@@ -40,11 +57,23 @@ export default function DocumentosPage() {
         filtro === "finalizados" ? "FINALIZADO" :
         undefined;
 
+    let filtrosAtivos = 0;
+    if (criadoPor) filtrosAtivos++;
+    if (pacienteId) filtrosAtivos++;
+    if (dataInicio || dataFim) filtrosAtivos++;
+    if (situacao === "inativos") filtrosAtivos++;
+
+    const estiloData = "h-9 rounded-lg border border-border bg-input-background px-2.5 text-sm focus:ring-2 focus:ring-ring focus:outline-none";
+
     useEffect(() => {
         carregarDocumentos();
-    }, [pagina, filtro, busca]);
+    }, [pagina, filtro, busca, criadoPor, pacienteId, tipoData, dataInicio, dataFim, situacao]);
 
-    // espera parar de digitar para não buscar no backend a cada letra
+    useEffect(() => {
+        carregarFuncionarios();
+        carregarPacientes();
+    }, []);
+
     useEffect(() => {
         const espera = setTimeout(() => {
             setPagina(0);
@@ -59,7 +88,15 @@ export default function DocumentosPage() {
             setCarregando(true);
             setErro("");
 
-            const dados = await listarDocumentos(pagina, status, busca);
+            const dados = await listarDocumentos(pagina, {
+                status,
+                busca,
+                usuarioId: criadoPor ? Number(criadoPor) : undefined,
+                pacienteId: pacienteId ? Number(pacienteId) : undefined,
+                dataInicio: dataInicio || undefined,
+                dataFim: (tipoData === "periodo" ? dataFim : dataInicio) || undefined,
+                ativo: situacao === "ativos",
+            });
 
             setDocumentos(dados.content);
             setTotalPaginas(dados.totalPages);
@@ -69,6 +106,34 @@ export default function DocumentosPage() {
         } finally {
             setCarregando(false);
         }
+    }
+
+    async function carregarFuncionarios() {
+        try {
+            const dados = await listarNomesUsuarios();
+            setFuncionarios(dados);
+        } catch (error) {
+            alert(error instanceof Error ? error.message : "Erro ao carregar os funcionários.");
+        }
+    }
+
+    async function carregarPacientes() {
+        try {
+            const dados = await buscarListaPacientes();
+            setPacientes(dados.sort((a, b) => a.nome.localeCompare(b.nome)));
+        } catch (error) {
+            alert(error instanceof Error ? error.message : "Erro ao carregar os pacientes.");
+        }
+    }
+
+    function limparFiltros() {
+        setPagina(0);
+        setCriadoPor("");
+        setPacienteId("");
+        setTipoData("dia");
+        setDataInicio("");
+        setDataFim("");
+        setSituacao("ativos");
     }
 
     return (
@@ -93,7 +158,114 @@ export default function DocumentosPage() {
                     </div>  
 
                     <div className="mt-5">
-                        <BarraPesquisa value={search} onChange={setSearch} placeholder="Buscar por paciente, tipo, responsável ou hash..."/>
+                        <div className="flex gap-2">
+
+                            <div className="min-w-0 flex-1">
+                                <BarraPesquisa value={search} onChange={setSearch} placeholder="Buscar por tipo, número ou hash..."
+                                    title="Busque pelo tipo do documento, pelo número (16) ou pelo começo ou fim do hash"
+                                />
+                            </div>
+
+                            <button type="button" title="Filtros" onClick={() => setMostrarFiltros(!mostrarFiltros)}
+                                className={`relative flex w-12 shrink-0 cursor-pointer items-center justify-center rounded-2xl border transition-colors
+                                    ${mostrarFiltros ? "border-secondary bg-accent text-primary-dark" : "border-border bg-card text-muted-foreground hover:bg-accent hover:text-primary-dark"}`}
+                            >
+                                <Funnel className="h-5 w-5" />
+
+                                {filtrosAtivos > 0 && (
+                                    <span className="absolute -top-1.5 -right-1.5 flex h-5 min-w-5 items-center justify-center rounded-full bg-primary px-1 text-xs font-semibold text-white">
+                                        {filtrosAtivos}
+                                    </span>
+                                )}
+                            </button>
+
+                        </div>
+
+                        {mostrarFiltros && (
+                            <div className="mt-3 flex flex-wrap items-end gap-x-5 gap-y-3 rounded-2xl border border-border bg-background px-4 py-3.5">
+
+                                <Selecao tamanho="sm" label="Criado por" value={criadoPor}
+                                    onChange={(e) => {
+                                        setPagina(0);
+                                        setCriadoPor(e.target.value);
+                                    }}
+                                >
+                                    <option value="">Todos</option>
+
+                                    {funcionarios.map((funcionario) => (
+                                        <option key={funcionario.id} value={funcionario.id}>
+                                            {funcionario.nome}
+                                        </option>
+                                    ))}
+                                </Selecao>
+
+                                <Selecao tamanho="sm" label="Paciente" value={pacienteId}
+                                    onChange={(e) => {
+                                        setPagina(0);
+                                        setPacienteId(e.target.value);
+                                    }}
+                                >
+                                    <option value="">Todos</option>
+
+                                    {pacientes.map((paciente) => (
+                                        <option key={paciente.id} value={paciente.id}>
+                                            {paciente.nome}
+                                        </option>
+                                    ))}
+                                </Selecao>
+
+                                <div className="flex flex-wrap items-end gap-1.5">
+
+                                    <Selecao tamanho="sm" label="Data de criação" value={tipoData}
+                                        onChange={(e) => {
+                                            setPagina(0);
+                                            setTipoData(e.target.value);
+                                        }}
+                                    >
+                                        <option value="dia">Dia</option>
+                                        <option value="periodo">Período</option>
+                                    </Selecao>
+
+                                    <input type="date" value={dataInicio} className={estiloData}
+                                        onChange={(e) => {
+                                            setPagina(0);
+                                            setDataInicio(e.target.value);
+                                        }}
+                                    />
+
+                                    {tipoData === "periodo" && (
+                                        <>
+                                            <span className="pb-2 text-xs text-muted-foreground">até</span>
+
+                                            <input type="date" value={dataFim} className={estiloData}
+                                                onChange={(e) => {
+                                                    setPagina(0);
+                                                    setDataFim(e.target.value);
+                                                }}
+                                            />
+                                        </>
+                                    )}
+
+                                </div>
+
+                                <Selecao tamanho="sm" label="Situação" value={situacao}
+                                    onChange={(e) => {
+                                        setPagina(0);
+                                        setSituacao(e.target.value);
+                                    }}
+                                >
+                                    <option value="ativos">Ativos</option>
+                                    <option value="inativos">Inativos</option>
+                                </Selecao>
+
+                                <button type="button" onClick={limparFiltros}
+                                    className="ml-auto h-9 cursor-pointer text-xs font-medium text-primary-dark hover:underline"
+                                >
+                                    Limpar filtros
+                                </button>
+
+                            </div>
+                        )}
 
                         <div className="mt-3">
                             <BudgetFiltros
@@ -144,10 +316,14 @@ export default function DocumentosPage() {
                                         </p>
                                     </div>
 
-                                    <BudgetStatus
-                                        texto={documento.status === "FINALIZADO" ? "Finalizado" : "Pendente"}
-                                        tipo={documento.status === "FINALIZADO" ? "sucesso" : "alerta"}
-                                    />
+                                    {documento.ativo ? (
+                                        <BudgetStatus
+                                            texto={documento.status === "FINALIZADO" ? "Finalizado" : "Pendente"}
+                                            tipo={documento.status === "FINALIZADO" ? "sucesso" : "alerta"}
+                                        />
+                                    ) : (
+                                        <BudgetStatus texto="Inativo" tipo="neutro" />
+                                    )}
                                 </div>
 
                                 <Link href={`/pacientes/${documento.pacienteId}`} className="relative z-10 mt-3 flex w-fit max-w-full items-center gap-2">

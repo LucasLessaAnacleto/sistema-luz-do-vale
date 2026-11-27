@@ -3,6 +3,7 @@ package com.luzdovale.reabilitah.backend.presentation.controllers;
 import com.luzdovale.reabilitah.backend.application.DTO.usuario.CriarUsuarioRequest;
 import com.luzdovale.reabilitah.backend.application.DTO.usuario.EditarInformacoesPessoaisRequest;
 import com.luzdovale.reabilitah.backend.application.DTO.usuario.EditarUsuarioRequest;
+import com.luzdovale.reabilitah.backend.application.DTO.usuario.UsuarioNomeResponse;
 import com.luzdovale.reabilitah.backend.application.DTO.usuario.UsuarioResponse;
 import com.luzdovale.reabilitah.backend.application.DTO.usuario.RedefinirSenhaDto;
 import com.luzdovale.reabilitah.backend.application.services.UsuarioService;
@@ -29,6 +30,12 @@ public class UsuarioController {
         return ResponseEntity.ok(
                 usuarioService.listarComDadosProfissional(usuarioLogado, ativo)
         );
+    }
+
+    @GetMapping("/nomes")
+    public ResponseEntity<List<UsuarioNomeResponse>> listarNomes(){
+
+        return ResponseEntity.ok(usuarioService.listarNomes());
     }
 
     @GetMapping("/{id}")

@@ -59,7 +59,6 @@ export default function EditarMembroPage() {
 
         } catch (error) {
 
-            // mantem o que foi digitado, senao o form volta pros valores antigos
             const digitados: Record<string, string> = {};
             for (const campo of form.entries()) {
                 digitados[campo[0]] = String(campo[1] ?? "").trim();

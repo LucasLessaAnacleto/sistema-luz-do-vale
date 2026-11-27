@@ -36,7 +36,6 @@ export default function IndicadorDocumentosMes() {
                     setErro(error instanceof Error ? error.message : "Erro ao carregar quantidade de documentos.");
                 }
             } finally {
-                // espera no minimo 200ms pro loader nao ficar piscando
                 let tempoRestante = 200 - (Date.now() - inicio);
                 if(tempoRestante < 0) tempoRestante = 0;
 

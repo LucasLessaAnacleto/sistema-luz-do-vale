@@ -49,7 +49,6 @@ public class DocumentoTemplateService {
 
         String html = templateEngine.process("documentos/"+template, context);
 
-        // documento antigo não tem o hash guardado, então calcula na hora
         String hash = documento.getHash();
         if (hash == null) {
             hash = gerarHash(documento.getId() + "\n" + html);

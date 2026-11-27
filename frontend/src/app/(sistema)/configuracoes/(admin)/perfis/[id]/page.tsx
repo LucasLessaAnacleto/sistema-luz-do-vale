@@ -67,7 +67,6 @@ export default function EditarPerfilPage() {
 
         } catch (error) {
 
-            // mantem o que foi marcado, senao o form volta pros valores antigos
             setValores(dados);
 
             setErro(error instanceof Error ? error.message : "Erro ao salvar perfil.");

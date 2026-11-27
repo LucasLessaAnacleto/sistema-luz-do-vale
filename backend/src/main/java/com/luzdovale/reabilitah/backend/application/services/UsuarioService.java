@@ -3,6 +3,7 @@ package com.luzdovale.reabilitah.backend.application.services;
 import com.luzdovale.reabilitah.backend.application.DTO.usuario.CriarUsuarioRequest;
 import com.luzdovale.reabilitah.backend.application.DTO.usuario.EditarInformacoesPessoaisRequest;
 import com.luzdovale.reabilitah.backend.application.DTO.usuario.EditarUsuarioRequest;
+import com.luzdovale.reabilitah.backend.application.DTO.usuario.UsuarioNomeResponse;
 import com.luzdovale.reabilitah.backend.application.DTO.usuario.UsuarioResponse;
 import com.luzdovale.reabilitah.backend.application.exceptions.EmailJaCadastradoException;
 import com.luzdovale.reabilitah.backend.application.exceptions.UsuarioNaoEncontradoException;
@@ -47,6 +48,25 @@ public class UsuarioService {
                 )
                 .map(this::mapeiaParaDTO)
                 .toList();
+    }
+
+    public List<UsuarioNomeResponse> listarNomes() {
+        List<UsuarioNomeResponse> nomes = new ArrayList<>();
+
+        for(Usuario usuario : usuarioRepository.findAll()){
+            String nome;
+
+            if (usuario.getProfissional() != null) {
+                nome = usuario.getProfissional().getNome();
+            } else {
+                nome = usuario.getEmail();
+            }
+
+            nomes.add(new UsuarioNomeResponse(usuario.getId(), nome));
+        }
+
+        nomes.sort((a, b) -> a.nome().compareToIgnoreCase(b.nome()));
+        return nomes;
     }
 
     public UsuarioResponse buscarComDadosProfissional( Long usuarioId, Usuario usuarioLogado ) {

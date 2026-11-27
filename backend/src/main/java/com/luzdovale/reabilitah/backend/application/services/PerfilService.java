@@ -78,7 +78,6 @@ public class PerfilService {
 
     private void salvarPermissoes(Perfil perfil, List<Long> tiposDocumento){
 
-        // remove as permissoes que foram desmarcadas
         for(PermissaoTipoDocumento permissao : permissaoTipoDocumentoRepository.findByPerfil(perfil)){
             if(!tiposDocumento.contains(permissao.getTipoDocumento().getId())){
                 permissaoTipoDocumentoRepository.delete(permissao);

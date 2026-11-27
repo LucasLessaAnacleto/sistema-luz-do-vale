@@ -4,9 +4,10 @@ interface Props {
     value: string;
     onChange: (value: string) => void;
     placeholder?: string;
+    title?: string;
 }
 
-export default function BarraPesquisa({ value, onChange, placeholder = "Buscar...",}: Props) {
+export default function BarraPesquisa({ value, onChange, placeholder = "Buscar...", title }: Props) {
     return (
 
         <div className="relative">
@@ -18,6 +19,7 @@ export default function BarraPesquisa({ value, onChange, placeholder = "Buscar..
                 value={value}
                 onChange={(event) => onChange(event.target.value)}
                 placeholder={placeholder}
+                title={title}
                 className="w-full rounded-2xl border border-border bg-secondary/50 py-3 pr-4 pl-12 text-base 
                 placeholder:text-muted-foreground focus:ring-2 focus:ring-ring focus:outline-none"
             />

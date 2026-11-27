@@ -29,7 +29,6 @@ export default function PerfilForm({
     textoSalvar
 }: Props) {
 
-    // a ficha de acolhimento é criada junto com o paciente, nao entra nas permissoes
     const documentos = tiposDocumento.filter((tipo) => tipo.id !== CODIGO_TIPO_DOCUMENTO.FICHA_ACOLHIMENTO);
 
     const [marcados, setMarcados] = useState<number[]>(valores.tiposDocumento);
