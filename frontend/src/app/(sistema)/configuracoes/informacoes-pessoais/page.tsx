@@ -6,12 +6,14 @@ import BotaoVoltar from "@/app/components/ui/BotaoVoltar";
 import Input from "@/app/components/ui/Input";
 import Button from "@/app/components/ui/Button";
 import ModalConfirmacao from "@/app/components/ModalConfirmacao";
+import ModalErro from "@/app/components/ModalErro";
 
 import { useAppDispatch, useAppSelector } from "@/app/redux/hook";
 import { setUsuario } from "@/app/redux/slices/authSlice";
 
 import { actionEditarInformacoesPessoais, DadosInformacoesPessoais } from "./actionEditarInformacoesPessoais";
 import CabecalhoPagina from "@/app/components/CabecalhoPagina";
+import { mensagemErro } from "@/app/util";
 
 const dadosIniciais: DadosInformacoesPessoais = {
     nome: "",
@@ -30,6 +32,7 @@ export default function InformacoesPessoaisPage() {
     const [modalAberto, setModalAberto] = useState(false);
     const [salvando, setSalvando] = useState(false);
     const [erro, setErro] = useState("");
+    const [modalErroAberto, setModalErroAberto] = useState(false);
     const [sucesso, setSucesso] = useState(false);
 
     useEffect(() => {
@@ -95,8 +98,9 @@ export default function InformacoesPessoaisPage() {
             setSucesso(true);
 
         } catch (error) {
-            setErro( error instanceof Error ? error.message : "Erro ao atualizar informações pessoais.");
+            setErro(mensagemErro(error, "Erro ao atualizar informações pessoais."));
             setModalAberto(false);
+            setModalErroAberto(true);
         } finally {
             setSalvando(false);
         }
@@ -208,6 +212,8 @@ export default function InformacoesPessoaisPage() {
                 onConfirmar={salvar}
                 onFechar={() => setModalAberto(false)}
             />
+
+            <ModalErro aberto={modalErroAberto} mensagem={erro} onFechar={() => setModalErroAberto(false)} />
         </>
     );
 }

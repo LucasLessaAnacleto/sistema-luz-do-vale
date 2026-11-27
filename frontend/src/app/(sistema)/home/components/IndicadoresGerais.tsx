@@ -6,6 +6,7 @@ import { twMerge } from "tailwind-merge";
 import { Clock3, FileText, PenLine, Users } from "lucide-react";
 import { useEffect, useState } from "react";
 import MiniLoader from "./MiniLoader";
+import { mensagemErro } from "@/app/util";
 
 export default function IndicadoresGerais() {
     const [indicadores, setIndicadores] = useState<DashResponse | null>(null);
@@ -20,7 +21,7 @@ export default function IndicadoresGerais() {
             const dados = await indicadoresGerais();
             setIndicadores(dados);
         } catch(error) {
-            setErro( error instanceof Error ? error.message : "Erro ao carregar indicadores.");
+            setErro(mensagemErro(error, "Erro ao carregar indicadores."));
         } finally {
             setCarregando(false);
         }

@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 import { buscarListaPacientes } from "@/app/services/pacienteService";
 import type { Paciente } from "@/app/types/pacientes";
 import { Plus, Search } from "lucide-react";
-import { normalizeSearch } from "@/app/util";
+import { mensagemErro, normalizeSearch } from "@/app/util";
 import ItemsVazio from "@/app/components/ItemsVazio";
 import BarraPesquisa from "@/app/components/ui/BarraPesquisa";
 import BotaoNovo from "@/app/components/ui/BotaoNovo";
@@ -31,8 +31,7 @@ export default function PacientesPage() {
             const dados = await buscarListaPacientes();
             setPacientes(dados);
         } catch (error) {
-            setErro("Erro ao carregar os pacientes!");
-            console.error(error);
+            setErro(mensagemErro(error, "Erro ao carregar os pacientes!"));
         } finally {
             setCarregando(false);
         }

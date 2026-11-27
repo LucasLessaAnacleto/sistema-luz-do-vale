@@ -6,10 +6,12 @@ import { FileText, Plus, UserRoundCheck, UserRoundX } from "lucide-react";
 
 import type { HistoricoDocumento } from "@/app/types/documentos";
 import { buscarHistoricoPaciente } from "@/app/services/pacienteService";
-import { formatarData } from "@/app/util";
+import { formatarData, mensagemErro } from "@/app/util";
 
 import Card from "@/app/components/ui/Card";
 import ItemsVazio from "@/app/components/ItemsVazio";
+import CarregandoConteudo from "@/app/components/CarregandoConteudo";
+import ErroCarregamento from "@/app/components/ErroCarregamento";
 import BotaoNovo from "@/app/components/ui/BotaoNovo";
 import BadgeStatus from "@/app/components/ui/BudgeStatus";
 import { useParams } from "next/navigation";
@@ -20,6 +22,7 @@ export default function HistoricoPacientePage() {
 
     const [historicos, setHistoricos] = useState<HistoricoDocumento[]>([]);
     const [carregando, setCarregando] = useState(true);
+    const [erro, setErro] = useState("");
 
 
     useEffect(() => {
@@ -36,11 +39,7 @@ export default function HistoricoPacientePage() {
             setHistoricos(dados);
 
         } catch (error) {
-
-            if (error instanceof Error) {
-                alert(error.message);
-            }
-
+            setErro(mensagemErro(error, "Erro ao carregar o histórico."));
         } finally {
 
             setCarregando(false);
@@ -62,9 +61,11 @@ export default function HistoricoPacientePage() {
 
             {carregando ? (
 
-                <p className="text-sm text-muted-foreground">
-                    Carregando histórico...
-                </p>
+                <CarregandoConteudo mensagem="Carregando histórico..." />
+
+            ) : erro ? (
+
+                <ErroCarregamento mensagem={erro} />
 
             ) : historicos.length ? (
 

@@ -13,6 +13,7 @@ import BotaoVoltarHistorico from "@/app/components/ui/BotaoVoltarHistorico";
 import CabecalhoPagina from "@/app/components/CabecalhoPagina";
 import CarregandoConteudo from "@/app/components/CarregandoConteudo";
 import ErroCarregamento from "@/app/components/ErroCarregamento";
+import { mensagemErro } from "@/app/util";
 
 export default function EditarMembroPage() {
     const { id } = useParams<{ id: string }>();
@@ -40,7 +41,7 @@ export default function EditarMembroPage() {
             setSemProfissional(usuario.profissionalId == null);
 
         } catch (error) {
-            setErro(error instanceof Error ? error.message : "Erro ao carregar membro.");
+            setErro(mensagemErro(error, "Erro ao carregar membro."));
         } finally {
             setCarregando(false);
         }
@@ -65,7 +66,7 @@ export default function EditarMembroPage() {
             }
             setValores(digitados);
 
-            setErro(error instanceof Error ? error.message : "Erro ao editar membro.");
+            setErro(mensagemErro(error, "Erro ao editar membro."));
         } finally {
             setSalvando(false);
         }
@@ -94,7 +95,7 @@ export default function EditarMembroPage() {
 
             ) : !valores ? (
                 <div className="mx-auto max-w-6xl px-5 py-6 sm:px-8">
-                    <ErroCarregamento mensagem={erro || "Não foi possível carregar o membro."} onRetry={carregarUsuario} />
+                    <ErroCarregamento mensagem={erro || "Não foi possível carregar o membro."} />
                 </div>
 
             ) : (

@@ -5,3 +5,11 @@ export function normalizeSearch(value: string) {
 export function formatarData(data: string) {
     return new Date(data).toLocaleString("pt-BR", {dateStyle: "short",timeStyle: "short"});
 }
+
+export function mensagemErro(error: unknown, padrao: string) {
+    if (error instanceof Error && error.message) {
+        return error.message;
+    }
+
+    return padrao;
+}

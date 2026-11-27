@@ -18,6 +18,7 @@ export default function FichaAcolhimento({ valores = {} }: Props) {
     const [dependencias, setDependencias] = useState<OpcaoLista[]>([]);
     const [dependenciasLicitas, setDependenciasLicitas] = useState<OpcaoLista[]>([]);
     const [dependenciasIlicitas, setDependenciasIlicitas] = useState<OpcaoLista[]>([]);
+    const [erroListas, setErroListas] = useState(false);
 
 
     useEffect(() => {
@@ -36,12 +37,8 @@ export default function FichaAcolhimento({ valores = {} }: Props) {
                 setDependenciasLicitas(listaLicitas);
                 setDependenciasIlicitas(listaIlicitas);
 
-            } catch (error) {
-
-                if (error instanceof Error) {
-                    alert(error.message);
-                }
-
+            } catch {
+                setErroListas(true);
             }
         }
 
@@ -101,6 +98,10 @@ export default function FichaAcolhimento({ valores = {} }: Props) {
 
                 <div className="grid gap-2 rounded-xl border border-border bg-input-background p-4 sm:grid-cols-2">
 
+                    {erroListas && (
+                        <p className="text-sm text-red-600">Erro ao carregar</p>
+                    )}
+
                     {dependencias.map((opcao) => (
 
                         <label key={opcao.valor} className="flex cursor-pointer items-center gap-2 text-sm">
@@ -126,7 +127,7 @@ export default function FichaAcolhimento({ valores = {} }: Props) {
             </div>
 
 
-            <Selecao label="Primeira droga lícita" name="primeiraDrogaLicita" defaultValue={valores.primeiraDrogaLicita || ""}>
+            <Selecao label="Primeira droga lícita" name="primeiraDrogaLicita" defaultValue={valores.primeiraDrogaLicita || ""} erro={erroListas}>
 
                 <option value="">Selecione</option>
 
@@ -141,7 +142,7 @@ export default function FichaAcolhimento({ valores = {} }: Props) {
             <Input label="Idade" name="idadePrimeiraDrogaLicita" type="number" min="0" defaultValue={valores.idadePrimeiraDrogaLicita} />
 
 
-            <Selecao label="Primeira droga ilícita" name="primeiraDrogaIlicita" defaultValue={valores.primeiraDrogaIlicita || ""}>
+            <Selecao label="Primeira droga ilícita" name="primeiraDrogaIlicita" defaultValue={valores.primeiraDrogaIlicita || ""} erro={erroListas}>
 
                 <option value="">Selecione</option>
 

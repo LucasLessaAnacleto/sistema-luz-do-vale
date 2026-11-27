@@ -12,6 +12,10 @@ import { buscarPdfDocumento } from "@/app/services/documentoService";
 
 import Card from "@/app/components/ui/Card";
 import ListaDetalhes from "@/app/components/ListaDetalhes";
+import ModalErro from "@/app/components/ModalErro";
+import CarregandoConteudo from "@/app/components/CarregandoConteudo";
+import ErroCarregamento from "@/app/components/ErroCarregamento";
+import { mensagemErro } from "@/app/util";
 
 function formatarDataNascimento(data: string | null) {
 
@@ -66,6 +70,8 @@ export default function PacientePage({ params }: { params: Promise<{ id: string 
     const [dependenciasLicitas, setDependenciasLicitas] = useState<OpcaoLista[]>([]);
     const [dependenciasIlicitas, setDependenciasIlicitas] = useState<OpcaoLista[]>([]);
     const [baixandoPdf, setBaixandoPdf] = useState(false);
+    const [erro, setErro] = useState("");
+    const [erroAcao, setErroAcao] = useState("");
 
     useEffect(() => {
         carregarDados();
@@ -89,11 +95,7 @@ export default function PacientePage({ params }: { params: Promise<{ id: string 
             setDependenciasIlicitas(listaIlicitas);
 
         } catch (error) {
-
-            if (error instanceof Error) {
-                alert(error.message);
-            }
-
+            setErro(mensagemErro(error, "Erro ao carregar o prontuário."));
         }
     }
 
@@ -121,7 +123,7 @@ export default function PacientePage({ params }: { params: Promise<{ id: string 
             URL.revokeObjectURL(url);
 
         } catch (error) {
-            alert( error instanceof Error ? error.message : "Erro ao baixar ficha de acolhimento.");
+            setErroAcao(mensagemErro(error, "Erro ao baixar ficha de acolhimento."));
         } finally {
             setBaixandoPdf(false);
         }
@@ -129,7 +131,7 @@ export default function PacientePage({ params }: { params: Promise<{ id: string 
 
 
     if (!paciente) {
-        return <p className="text-sm text-muted-foreground">Carregando prontuário...</p>;
+        return erro ? <ErroCarregamento mensagem={erro} /> : <CarregandoConteudo mensagem="Carregando prontuário..." />;
     }
 
 
@@ -207,6 +209,10 @@ export default function PacientePage({ params }: { params: Promise<{ id: string 
     return (
         <div className="space-y-5">
 
+            {erro && (
+                <ErroCarregamento mensagem={erro} />
+            )}
+
             <Card>
                 <div className="mb-4 flex items-center justify-between gap-3">
 
@@ -280,6 +286,8 @@ export default function PacientePage({ params }: { params: Promise<{ id: string 
                 )}
 
             </Card>
+
+            <ModalErro aberto={erroAcao !== ""} mensagem={erroAcao} onFechar={() => setErroAcao("")} />
 
         </div>
     );

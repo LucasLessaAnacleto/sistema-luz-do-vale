@@ -23,10 +23,12 @@ import TextoLongo from "@/app/components/ui/TextoLongo";
 import RodapeFormulario from "@/app/components/RodapeFormulario";
 import CarregandoConteudo from "@/app/components/CarregandoConteudo";
 import ErroCarregamento from "@/app/components/ErroCarregamento";
+import ModalErro from "@/app/components/ModalErro";
 import { Paciente } from "@/app/types/pacientes";
 import { buscarListaPacientes } from "@/app/services/pacienteService";
 import BotaoVoltarHistorico from "@/app/components/ui/BotaoVoltarHistorico";
 import { buscarDocumento } from "@/app/services/documentoService";
+import { mensagemErro } from "@/app/util";
 
 const estadoInicial = {
     erro: "",
@@ -74,6 +76,9 @@ export default function NovoDocumentoFormularioPage() {
     const [dadosOrigem, setDadosOrigem] = useState<Record<string, unknown> | null>(null);
 
     const [formulario, setFormulario] = useState<FormularioDocumento | null>(null);
+    const [erro, setErro] = useState("");
+    const [erroPacientes, setErroPacientes] = useState(false);
+    const [modalErroAberto, setModalErroAberto] = useState(false);
 
     const [estado, action, pending] = useActionState(
         actionCadastrarDocumento,
@@ -99,6 +104,12 @@ export default function NovoDocumentoFormularioPage() {
         }
     }, []);
 
+    useEffect(() => {
+        if (!pending && estado.erro) {
+            setModalErroAberto(true);
+        }
+    }, [pending, estado.erro]);
+
     async function carregarFormulario() {
 
         if (!pacienteId) {
@@ -108,6 +119,7 @@ export default function NovoDocumentoFormularioPage() {
         try {
             setFormulario(null);
             setDadosOrigem(null);
+            setErro("");
 
             const dados = await buscarFormularioDocumento(Number(tipoDocumento), Number(pacienteId));
 
@@ -126,7 +138,7 @@ export default function NovoDocumentoFormularioPage() {
 
             setFormulario(dados);
         } catch (error) {
-            alert( error instanceof Error ? error.message : "Erro ao carregar formulário.");
+            setErro(mensagemErro(error, "Erro ao carregar formulário."));
         }
     }
 
@@ -134,10 +146,8 @@ export default function NovoDocumentoFormularioPage() {
         try {
             const dados = await buscarListaPacientes(true);
             setPacientes(dados);
-        } catch (error) {
-            if (error instanceof Error) {
-                alert(error.message);
-            }
+        } catch {
+            setErroPacientes(true);
         }
     }
 
@@ -344,7 +354,7 @@ export default function NovoDocumentoFormularioPage() {
 
             {!pacienteIdUrl && (
                 <div className="mx-auto max-w-3xl px-5 pt-6 sm:px-8">
-                    <Selecao label="Paciente" value={pacienteId} onChange={(event) => setPacienteId(event.target.value) }>
+                    <Selecao label="Paciente" value={pacienteId} erro={erroPacientes} onChange={(event) => setPacienteId(event.target.value) }>
 
                         <option value="">Selecione o paciente</option>
                         {pacientes.map((paciente) => (
@@ -364,6 +374,10 @@ export default function NovoDocumentoFormularioPage() {
                 <p className="mx-auto max-w-3xl px-5 py-8 text-center text-sm text-muted-foreground sm:px-8">
                     Selecione um paciente para preencher o documento.
                 </p>
+            ) : erro ? (
+                <div className="mx-auto max-w-3xl px-5 py-6 sm:px-8">
+                    <ErroCarregamento mensagem={erro} />
+                </div>
             ) : !formulario ? (
                 <CarregandoConteudo mensagem="Carregando formulário..." />
             ) : (
@@ -414,6 +428,8 @@ export default function NovoDocumentoFormularioPage() {
                     {estado.erro && (
                         <ErroCarregamento mensagem={estado.erro} />
                     )}
+
+                    <ModalErro aberto={modalErroAberto} mensagem={estado.erro} onFechar={() => setModalErroAberto(false)} />
 
 
                     <RodapeFormulario

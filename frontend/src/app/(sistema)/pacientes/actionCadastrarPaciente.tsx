@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 
 import { criarPaciente } from "@/app/services/pacienteService";
 import { montarPacienteRequest } from "./montarPacienteRequest";
+import { mensagemErro } from "@/app/util";
 
 export type EstadoFormulario = {
     erro: string;
@@ -31,7 +32,7 @@ export async function actionCadastrarPaciente(_estado: EstadoFormulario, form: F
         
         console.error("Erro ao cadastrar paciente:", error);
         return { 
-            erro: error instanceof Error ? error.message : "Erro ao cadastrar paciente.",
+            erro: mensagemErro(error, "Erro ao cadastrar paciente."),
             valores
         };
     }

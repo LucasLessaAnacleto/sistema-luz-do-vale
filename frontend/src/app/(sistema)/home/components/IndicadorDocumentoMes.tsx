@@ -5,6 +5,7 @@ import { ChevronLeft, ChevronRight, TrendingUp } from "lucide-react";
 
 import { contarDocumentosMes } from "@/app/services/dashService";
 import MiniLoader from "./MiniLoader";
+import { mensagemErro } from "@/app/util";
 
 export default function IndicadorDocumentosMes() {
 
@@ -33,7 +34,7 @@ export default function IndicadorDocumentosMes() {
                 }
             } catch (error) {
                 if(!cancelado){
-                    setErro(error instanceof Error ? error.message : "Erro ao carregar quantidade de documentos.");
+                    setErro(mensagemErro(error, "Erro ao carregar quantidade de documentos."));
                 }
             } finally {
                 let tempoRestante = 200 - (Date.now() - inicio);

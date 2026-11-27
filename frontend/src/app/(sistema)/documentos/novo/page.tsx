@@ -11,7 +11,7 @@ import { CODIGO_TIPO_DOCUMENTO } from "@/app/types/documentos";
 import { listarTiposDocumento } from "@/app/services/tipoDocumentoService";
 import { buscarListaPacientes } from "@/app/services/pacienteService";
 
-import { normalizeSearch } from "@/app/util";
+import { mensagemErro, normalizeSearch } from "@/app/util";
 
 import BotaoVoltarHistorico from "@/app/components/ui/BotaoVoltarHistorico";
 import BarraPesquisa from "@/app/components/ui/BarraPesquisa";
@@ -57,7 +57,7 @@ export default function NovoDocumentoPage() {
                 dados.filter((tipo) => tipo.id !== CODIGO_TIPO_DOCUMENTO.FICHA_ACOLHIMENTO)
             );
         } catch (error) {
-            setErroTipos( error instanceof Error ? error.message : "Erro ao carregar os tipos de documento.");
+            setErroTipos(mensagemErro(error, "Erro ao carregar os tipos de documento."));
         } finally {
             setCarregandoTipos(false);
         }
@@ -72,7 +72,7 @@ export default function NovoDocumentoPage() {
             const dados = await buscarListaPacientes(true);
             setPacientes(dados);
         } catch (error) {
-            setErroPacientes(error instanceof Error ? error.message : "Erro ao carregar os pacientes.");
+            setErroPacientes(mensagemErro(error, "Erro ao carregar os pacientes."));
         } finally {
             setCarregandoPacientes(false);
         }

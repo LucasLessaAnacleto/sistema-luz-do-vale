@@ -14,6 +14,7 @@ import { montarPacienteRequest } from "../../montarPacienteRequest";
 import FormularioPaciente from "../../components/FormularioPaciente";
 import CarregandoConteudo from "@/app/components/CarregandoConteudo";
 import ErroCarregamento from "@/app/components/ErroCarregamento";
+import { mensagemErro } from "@/app/util";
 
 export default function EditarPacientePage() {
     const { id } = useParams<{ id: string }>();
@@ -36,11 +37,7 @@ export default function EditarPacientePage() {
                 setValores(converterPacienteFormulario(paciente));
 
             } catch (error) {
-                setErro(
-                    error instanceof Error
-                        ? error.message
-                        : "Erro ao carregar paciente."
-                );
+                setErro(mensagemErro(error, "Erro ao carregar paciente."));
             } finally {
                 setCarregando(false);
             }
@@ -66,11 +63,7 @@ export default function EditarPacientePage() {
             router.back();
 
         } catch (error) {
-            setErro(
-                error instanceof Error
-                    ? error.message
-                    : "Erro ao editar paciente."
-            );
+            setErro(mensagemErro(error, "Erro ao editar paciente."));
         } finally {
             setSalvando(false);
         }

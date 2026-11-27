@@ -9,7 +9,7 @@ import ListaDetalhes from "@/app/components/ListaDetalhes";
 import ModalConfirmacao from "@/app/components/ModalConfirmacao";
 import Input from "@/app/components/ui/Input";
 import { UserRound, ShieldCheck, CalendarDays, Pencil, KeyRound, UserRoundX, UserRoundCheck } from "lucide-react";
-import { formatarData } from "@/app/util";
+import { formatarData, mensagemErro } from "@/app/util";
 import { buscarUsuario, alterarStatusUsuario, redefinirSenhaUsuario } from "@/app/services/usuarioService";
 import { Usuario } from "@/app/types/usuarios";
 import { useAppSelector } from "@/app/redux/hook";
@@ -53,7 +53,7 @@ export default function MembroEquipePage(){
 
             setMembro(dados);
         } catch (err) {
-            setErro(err instanceof Error ? err.message : "Erro ao carregar informações do membro.");
+            setErro(mensagemErro(err, "Erro ao carregar informações do membro."));
         } finally {
             setCarregando(false);
         }
@@ -71,7 +71,7 @@ export default function MembroEquipePage(){
             setMembro(atualizado);
             setModalStatusAberto(false);
         } catch (err) {
-            setErroStatus(err instanceof Error ? err.message : "Erro ao alterar status do membro.");
+            setErroStatus(mensagemErro(err, "Erro ao alterar status do membro."));
         } finally {
             setAlterandoStatus(false);
         }
@@ -90,7 +90,7 @@ export default function MembroEquipePage(){
             setNovaSenha("");
             setSenhaRedefinida(true);
         } catch (err) {
-            setErroSenha(err instanceof Error ? err.message : "Erro ao redefinir a senha.");
+            setErroSenha(mensagemErro(err, "Erro ao redefinir a senha."));
         } finally {
             setSalvandoSenha(false);
         }

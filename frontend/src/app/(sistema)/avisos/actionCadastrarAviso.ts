@@ -1,5 +1,6 @@
 import { criarAviso } from "@/app/services/avisoService";
 import { CriarAvisoRequest } from "@/app/types/avisos";
+import { mensagemErro } from "@/app/util";
 
 interface EstadoFormulario {
     erro: string;
@@ -33,7 +34,7 @@ export async function actionCadastrarAviso(estadoAnterior: EstadoFormulario, for
     } catch (error) {
 
         return { 
-            erro: error instanceof Error ? error.message : "Erro ao cadastrar aviso.",
+            erro: mensagemErro(error, "Erro ao cadastrar aviso."),
             sucesso: false,
             valores
         };

@@ -2,6 +2,7 @@
 
 import { CriarDocumentoRequest } from "@/app/types/documentos";
 import { criarDocumento } from "@/app/services/documentoService";
+import { mensagemErro } from "@/app/util";
 
 export interface EstadoFormularioDocumento {
     erro: string;
@@ -42,7 +43,7 @@ export async function actionCadastrarDocumento(_estado: EstadoFormularioDocument
     } catch (error) {
         
         return {
-            erro: error instanceof Error ? error.message : "Erro ao criar documento.",
+            erro: mensagemErro(error, "Erro ao criar documento."),
             documentoId: null,
             valores,
         };

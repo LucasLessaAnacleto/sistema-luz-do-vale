@@ -8,6 +8,7 @@ import ErroCarregamento from "@/app/components/ErroCarregamento";
 import CarregandoConteudo from "@/app/components/CarregandoConteudo";
 import { buscarProximosAniversariantes } from "@/app/services/dashService";
 import { AniversarioResponse } from "@/app/types/dash";
+import { mensagemErro } from "@/app/util";
 
 function formatDiaMes(dt: string): string{
     const [_, mes, dia] = dt.split("-");
@@ -29,7 +30,7 @@ export default function ProximosAniversariantes() {
             const resposta = await buscarProximosAniversariantes();
             setAniversariantes(resposta);
         } catch (error) {
-            setErro(error instanceof Error ? error.message: "Erro ao carregar aniversariantes.");
+            setErro(mensagemErro(error, "Erro ao carregar aniversariantes."));
         } finally {
             setCarregando(false);
         }

@@ -12,6 +12,7 @@ import BotaoVoltar from "@/app/components/ui/BotaoVoltar";
 import ItemsVazio from "@/app/components/ItemsVazio";
 import ErroCarregamento from "@/app/components/ErroCarregamento";
 import CarregandoConteudo from "@/app/components/CarregandoConteudo";
+import { mensagemErro } from "@/app/util";
 
 export default function PerfisPage() {
 
@@ -32,7 +33,7 @@ export default function PerfisPage() {
             const dados = await listarPerfis();
             setPerfis(dados);
         } catch (error) {
-            setErro(error instanceof Error ? error.message : "Erro ao carregar os perfis!");
+            setErro(mensagemErro(error, "Erro ao carregar os perfis!"));
         } finally {
             setCarregando(false);
         }
@@ -65,7 +66,7 @@ export default function PerfisPage() {
                     <CarregandoConteudo mensagem="Carregando perfis..." />
 
                 ) : erro ? (
-                    <ErroCarregamento mensagem={erro} onRetry={carregarPerfis} />
+                    <ErroCarregamento mensagem={erro} />
 
                 ) : perfis.length ? (
 

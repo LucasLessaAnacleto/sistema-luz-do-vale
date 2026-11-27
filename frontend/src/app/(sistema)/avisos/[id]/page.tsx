@@ -7,7 +7,7 @@ import { Archive } from "lucide-react";
 import type { Aviso } from "@/app/types/avisos";
 import { buscarAviso, desativarAviso } from "@/app/services/avisoService";
 import { useAppSelector } from "@/app/redux/hook";
-import { formatarData } from "@/app/util";
+import { formatarData, mensagemErro } from "@/app/util";
 
 import CabecalhoPagina from "@/app/components/CabecalhoPagina";
 import BotaoVoltarHistorico from "@/app/components/ui/BotaoVoltarHistorico";
@@ -44,7 +44,7 @@ export default function AvisoDetalhesPage() {
             const dados = await buscarAviso(Number(id));
             setAviso(dados);
         } catch (error) {
-            setErro( error instanceof Error ? error.message : "Erro ao carregar aviso.");
+            setErro(mensagemErro(error, "Erro ao carregar aviso."));
         } finally {
             setCarregando(false);
         }
@@ -67,7 +67,7 @@ export default function AvisoDetalhesPage() {
             setAviso(atualizado);
             setConfirmarDesativacao(false);
         } catch (error) {
-            setErroDesativacao( error instanceof Error ? error.message : "Erro ao desativar aviso.");
+            setErroDesativacao(mensagemErro(error, "Erro ao desativar aviso."));
         } finally {
             setDesativando(false);
         }
@@ -106,7 +106,7 @@ export default function AvisoDetalhesPage() {
                     <CarregandoConteudo mensagem="Carregando aviso..." />
 
                 ) : erro ? (
-                    <ErroCarregamento mensagem={erro} onRetry={carregarAviso}/>
+                    <ErroCarregamento mensagem={erro} />
 
                 ) : aviso && (
                     <>

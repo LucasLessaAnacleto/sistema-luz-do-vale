@@ -6,7 +6,7 @@ import { FileText } from "lucide-react";
 
 import type { DocumentoLista } from "@/app/types/documentos";
 import { listarDocumentosRecentes } from "@/app/services/documentoService";
-import { formatarData } from "@/app/util";
+import { formatarData, mensagemErro } from "@/app/util";
 
 import BadgeStatus from "@/app/components/ui/BudgeStatus";
 import ErroCarregamento from "@/app/components/ErroCarregamento";
@@ -26,7 +26,7 @@ export default function DocumentosRecentes() {
             const dados = await listarDocumentosRecentes();
             setDocumentos(dados);
         } catch (error) {
-            setErro( error instanceof Error ? error.message : "Erro ao carregar documentos recentes.");
+            setErro(mensagemErro(error, "Erro ao carregar documentos recentes."));
         } finally {
             setCarregando(false);
         }

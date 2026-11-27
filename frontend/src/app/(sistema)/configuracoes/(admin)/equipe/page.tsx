@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 
 import type { Usuario } from "@/app/types/usuarios";
 import { buscarListaUsuarios } from "@/app/services/usuarioService";
-import { normalizeSearch } from "@/app/util";
+import { mensagemErro, normalizeSearch } from "@/app/util";
 
 import UsuarioEquipeCard from "./components/UsuarioEquipeCard";
 import BotaoNovo from "@/app/components/ui/BotaoNovo";
@@ -37,8 +37,7 @@ export default function EquipePage() {
             setUsuarios(dados);
 
         } catch (error) {
-            setErro("Erro ao carregar a equipe!");
-            console.error(error);
+            setErro(mensagemErro(error, "Erro ao carregar a equipe!"));
         } finally {
             setCarregando(false);
         }   

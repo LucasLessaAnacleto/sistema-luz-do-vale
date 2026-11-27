@@ -9,12 +9,14 @@ import { twMerge } from "tailwind-merge";
 
 import type { PacienteDetalhes } from "@/app/types/pacientes";
 import { buscarPaciente, desativarPaciente, reativarPaciente } from "@/app/services/pacienteService";
-import { formatarData } from "@/app/util";
+import { formatarData, mensagemErro } from "@/app/util";
 
 import AvatarIniciais from "@/app/components/ui/AvatarIniciais";
 import BotaoVoltarHistorico from "@/app/components/ui/BotaoVoltarHistorico";
 import { useAppSelector } from "@/app/redux/hook";
 import ModalConfirmacao from "@/app/components/ModalConfirmacao";
+import CarregandoConteudo from "@/app/components/CarregandoConteudo";
+import ErroCarregamento from "@/app/components/ErroCarregamento";
 
 interface Props {
     children: ReactNode;
@@ -83,7 +85,7 @@ export default function PacienteLayout({ children, params }: Props) {
 
             } else {
 
-                setErro(error instanceof Error ? error.message : "Erro ao carregar o paciente.");
+                setErro(mensagemErro(error, "Erro ao carregar o paciente."));
 
             }
 
@@ -115,7 +117,7 @@ export default function PacienteLayout({ children, params }: Props) {
             setMotivo("");
 
         } catch (error) {
-            setErroStatus( error instanceof Error ? error.message : "Erro ao alterar status do paciente.");
+            setErroStatus(mensagemErro(error, "Erro ao alterar status do paciente."));
         } finally {
             setAlterandoStatus(false);
         }
@@ -129,9 +131,7 @@ export default function PacienteLayout({ children, params }: Props) {
     if (carregando) {
 
         return (
-            <p className="px-5 py-12 text-center text-sm text-muted-foreground">
-                Carregando paciente...
-            </p>
+            <CarregandoConteudo mensagem="Carregando paciente..." />
         );
     }
 
@@ -159,13 +159,8 @@ export default function PacienteLayout({ children, params }: Props) {
     if (erro) {
 
         return (
-            <div className="mx-auto max-w-6xl px-5 py-12 text-center sm:px-8">
-                <p className="text-sm text-red-600">{erro}</p>
-
-                <button type="button" onClick={carregarPaciente} 
-                className="mt-4 cursor-pointer rounded-xl bg-primary px-4 py-2 text-sm font-medium text-white">
-                    Tentar novamente
-                </button>
+            <div className="mx-auto max-w-6xl px-5 py-12 sm:px-8">
+                <ErroCarregamento mensagem={erro} />
             </div>
         );
     }

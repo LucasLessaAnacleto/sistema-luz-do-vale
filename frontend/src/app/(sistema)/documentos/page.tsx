@@ -11,7 +11,7 @@ import type { Paciente } from "@/app/types/pacientes";
 import { listarDocumentos } from "@/app/services/documentoService";
 import { listarNomesUsuarios } from "@/app/services/usuarioService";
 import { buscarListaPacientes } from "@/app/services/pacienteService";
-import { formatarData } from "@/app/util";
+import { formatarData, mensagemErro } from "@/app/util";
 
 import BarraPesquisa from "@/app/components/ui/BarraPesquisa";
 import BotaoNovo from "@/app/components/ui/BotaoNovo";
@@ -45,6 +45,8 @@ export default function DocumentosPage() {
 
     const [funcionarios, setFuncionarios] = useState<UsuarioNome[]>([]);
     const [pacientes, setPacientes] = useState<Paciente[]>([]);
+    const [erroFuncionarios, setErroFuncionarios] = useState(false);
+    const [erroPacientes, setErroPacientes] = useState(false);
 
     const [criadoPor, setCriadoPor] = useState("");
     const [pacienteId, setPacienteId] = useState("");
@@ -69,7 +71,43 @@ export default function DocumentosPage() {
     const estiloData = "h-9 rounded-lg border border-border bg-input-background px-2.5 text-sm focus:ring-2 focus:ring-ring focus:outline-none";
 
     useEffect(() => {
+        let cancelado = false;
+
+        async function carregarDocumentos() {
+            try {
+                setCarregando(true);
+                setErro("");
+
+                const dados = await listarDocumentos(pagina, {
+                    status,
+                    busca,
+                    usuarioId: criadoPor ? Number(criadoPor) : undefined,
+                    pacienteId: pacienteId ? Number(pacienteId) : undefined,
+                    dataInicio: dataInicio || undefined,
+                    dataFim: (tipoData === "periodo" ? dataFim : dataInicio) || undefined,
+                    ativo: situacao === "ativos",
+                });
+
+                if (!cancelado) {
+                    setDocumentos(dados.content);
+                    setTotalPaginas(dados.totalPages);
+                    setTotalDocumentos(dados.totalElements);
+                }
+            } catch (error) {
+                if (!cancelado) {
+                    setErro(mensagemErro(error, "Erro ao carregar documentos."));
+                }
+            } finally {
+                if (!cancelado) {
+                    setCarregando(false);
+                }
+            }
+        }
         carregarDocumentos();
+
+        return () => {
+            cancelado = true;
+        };
     }, [pagina, filtro, busca, criadoPor, pacienteId, tipoData, dataInicio, dataFim, situacao]);
 
     useEffect(() => {
@@ -86,37 +124,12 @@ export default function DocumentosPage() {
         return () => clearTimeout(espera);
     }, [search]);
 
-    async function carregarDocumentos() {
-        try {
-            setCarregando(true);
-            setErro("");
-
-            const dados = await listarDocumentos(pagina, {
-                status,
-                busca,
-                usuarioId: criadoPor ? Number(criadoPor) : undefined,
-                pacienteId: pacienteId ? Number(pacienteId) : undefined,
-                dataInicio: dataInicio || undefined,
-                dataFim: (tipoData === "periodo" ? dataFim : dataInicio) || undefined,
-                ativo: situacao === "ativos",
-            });
-
-            setDocumentos(dados.content);
-            setTotalPaginas(dados.totalPages);
-            setTotalDocumentos(dados.totalElements);
-        } catch (error) {
-            setErro(error instanceof Error ? error.message : "Erro ao carregar documentos.");
-        } finally {
-            setCarregando(false);
-        }
-    }
-
     async function carregarFuncionarios() {
         try {
             const dados = await listarNomesUsuarios();
             setFuncionarios(dados);
-        } catch (error) {
-            alert(error instanceof Error ? error.message : "Erro ao carregar os funcionários.");
+        } catch {
+            setErroFuncionarios(true);
         }
     }
 
@@ -124,8 +137,8 @@ export default function DocumentosPage() {
         try {
             const dados = await buscarListaPacientes();
             setPacientes(dados.sort((a, b) => a.nome.localeCompare(b.nome)));
-        } catch (error) {
-            alert(error instanceof Error ? error.message : "Erro ao carregar os pacientes.");
+        } catch {
+            setErroPacientes(true);
         }
     }
 
@@ -190,7 +203,7 @@ export default function DocumentosPage() {
                         {mostrarFiltros && (
                             <div className="mt-3 flex flex-wrap items-end gap-x-5 gap-y-3 rounded-2xl border border-border bg-background px-4 py-3.5">
 
-                                <Selecao tamanho="sm" label="Criado por" value={criadoPor}
+                                <Selecao tamanho="sm" label="Criado por" value={criadoPor} erro={erroFuncionarios}
                                     onChange={(e) => {
                                         setPagina(0);
                                         setCriadoPor(e.target.value);
@@ -205,7 +218,7 @@ export default function DocumentosPage() {
                                     ))}
                                 </Selecao>
 
-                                <Selecao tamanho="sm" label="Paciente" value={pacienteId}
+                                <Selecao tamanho="sm" label="Paciente" value={pacienteId} erro={erroPacientes}
                                     onChange={(e) => {
                                         setPagina(0);
                                         setPacienteId(e.target.value);

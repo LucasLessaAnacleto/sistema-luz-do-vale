@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 
 import { criarUsuario } from "@/app/services/usuarioService";
 import { montarUsuarioRequest } from "./montarUsuarioRequest";
+import { mensagemErro } from "@/app/util";
 
 export type EstadoFormulario = {
     erro: string;
@@ -29,7 +30,7 @@ export async function actionCadastrarUsuario(_estado: EstadoFormulario, form: Fo
 
         console.error("Erro ao cadastrar usuário:", error);
         return {
-            erro: error instanceof Error ? error.message : "Erro ao cadastrar usuário.",
+            erro: mensagemErro(error, "Erro ao cadastrar usuário."),
             valores
         };
     }

@@ -9,6 +9,7 @@ import Input from "@/app/components/ui/Input";
 import Selecao from "@/app/components/ui/Selecao";
 import SecaoFormulario from "@/app/components/SecaoFormulario";
 import RodapeFormulario from "@/app/components/RodapeFormulario";
+import ModalErro from "@/app/components/ModalErro";
 
 interface Props {
     action: (form: FormData) => void;
@@ -31,6 +32,14 @@ export default function UsuarioForm({
 }: Props) {
 
     const [perfis, setPerfis] = useState<Perfil[]>([]);
+    const [erroPerfis, setErroPerfis] = useState(false);
+    const [modalErroAberto, setModalErroAberto] = useState(false);
+
+    useEffect(() => {
+        if (!loading && erro) {
+            setModalErroAberto(true);
+        }
+    }, [loading, erro]);
 
     useEffect(() => {
 
@@ -41,12 +50,8 @@ export default function UsuarioForm({
                 const lista = await listarPerfis();
                 setPerfis(lista);
 
-            } catch (error) {
-
-                if (error instanceof Error) {
-                    alert(error.message);
-                }
-
+            } catch {
+                setErroPerfis(true);
             }
         }
 
@@ -119,7 +124,7 @@ export default function UsuarioForm({
 
                 </Selecao>
 
-                <Selecao key={perfis.length} label="Perfil" name="perfilId" defaultValue={valores.perfilId || ""}>
+                <Selecao key={perfis.length} label="Perfil" name="perfilId" defaultValue={valores.perfilId || ""} erro={erroPerfis}>
 
                     <option value="">Sem perfil</option>
 
@@ -136,6 +141,8 @@ export default function UsuarioForm({
             {erro && (
                 <p className="text-sm text-red-600">{erro}</p>
             )}
+
+            <ModalErro aberto={modalErroAberto} mensagem={erro} onFechar={() => setModalErroAberto(false)} />
 
             <RodapeFormulario cancelarHref={cancelarHref} loading={loading}
                 textoSalvar={ modo === "cadastro" ? "Cadastrar membro" : "Salvar alterações"}

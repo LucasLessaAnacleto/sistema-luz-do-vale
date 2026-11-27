@@ -55,13 +55,13 @@ api.interceptors.response.use((response) => response, (error) => {
     }
 
 
-    if (mensagemBackend) {
+    if (status >= 400 && status < 500 && mensagemBackend) {
 
         return Promise.reject(new Error(mensagemBackend));
     }
 
 
-    return Promise.reject(error);
+    return Promise.reject(new Error(""));
 }
 );
 

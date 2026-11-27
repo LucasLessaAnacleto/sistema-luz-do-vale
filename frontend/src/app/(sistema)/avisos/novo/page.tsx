@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState, useEffect } from "react";
+import { useActionState, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 
 import { actionCadastrarAviso } from "../actionCadastrarAviso";
@@ -8,6 +8,7 @@ import { actionCadastrarAviso } from "../actionCadastrarAviso";
 import CabecalhoPagina from "@/app/components/CabecalhoPagina";
 import BotaoVoltarHistorico from "@/app/components/ui/BotaoVoltarHistorico";
 import RodapeFormulario from "@/app/components/RodapeFormulario";
+import ModalErro from "@/app/components/ModalErro";
 import TextoLongo from "@/app/components/ui/TextoLongo";
 import Input from "@/app/components/ui/Input";
 import Card from "@/app/components/ui/Card";
@@ -24,6 +25,13 @@ export default function NovoAvisoPage() {
     const router = useRouter();
 
     const [estado, action, pending] = useActionState(actionCadastrarAviso, estadoInicial);
+    const [modalErroAberto, setModalErroAberto] = useState(false);
+
+    useEffect(() => {
+        if (!pending && estado.erro) {
+            setModalErroAberto(true);
+        }
+    }, [pending, estado.erro]);
 
     useEffect(() => {
 
@@ -89,6 +97,8 @@ export default function NovoAvisoPage() {
                 {estado.erro && (
                     <p role="alert" className="text-sm text-red-600">{estado.erro}</p>
                 )}
+
+                <ModalErro aberto={modalErroAberto} mensagem={estado.erro} onFechar={() => setModalErroAberto(false)} />
 
                 <RodapeFormulario loading={pending} textoSalvar="Publicar aviso"/>
             </form>

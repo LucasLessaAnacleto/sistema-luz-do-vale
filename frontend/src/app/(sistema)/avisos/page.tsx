@@ -15,6 +15,7 @@ import ErroCarregamento from "@/app/components/ErroCarregamento";
 import ItemsVazio from "@/app/components/ItemsVazio";
 
 import CardAviso from "./components/CardAviso";
+import { mensagemErro } from "@/app/util";
 
 export default function AvisosPage() {
     const searchParams = useSearchParams();
@@ -48,7 +49,7 @@ export default function AvisosPage() {
             setTotalAvisos(dados.totalElements);
         } catch (error) {
 
-            setErro(error instanceof Error ? error.message : "Erro ao carregar os avisos!");
+            setErro(mensagemErro(error, "Erro ao carregar os avisos!"));
         } finally {
             setCarregando(false);
         }

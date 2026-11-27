@@ -20,8 +20,11 @@ import CabecalhoPagina from "@/app/components/CabecalhoPagina";
 import Card from "@/app/components/ui/Card";
 import BotaoVoltarHistorico from "@/app/components/ui/BotaoVoltarHistorico";
 import { useAppSelector } from "@/app/redux/hook";
-import { formatarData } from "@/app/util";
+import { formatarData, mensagemErro } from "@/app/util";
 import ModalConfirmacao from "@/app/components/ModalConfirmacao";
+import ModalErro from "@/app/components/ModalErro";
+import CarregandoConteudo from "@/app/components/CarregandoConteudo";
+import ErroCarregamento from "@/app/components/ErroCarregamento";
 
 export default function DocumentoDetalhesPage() {
     const params = useParams<{id: string}>();
@@ -31,7 +34,9 @@ export default function DocumentoDetalhesPage() {
     const [paciente, setPaciente] = useState<PacienteDetalhes | null>(null);
     const [html, setHtml] = useState("");
     const [carregando, setCarregando] = useState(true);
+    const [erro, setErro] = useState("");
     const [baixando, setBaixando] = useState(false);
+    const [erroAcao, setErroAcao] = useState("");
 
     const usuario = useAppSelector(state => state.auth.usuario);
 
@@ -67,9 +72,7 @@ export default function DocumentoDetalhesPage() {
             const conteudoHtml = await buscarHtmlDocumento(Number(id));
             setHtml(conteudoHtml);
         } catch (error) {
-            if (error instanceof Error) {
-                alert(error.message);
-            }
+            setErro(mensagemErro(error, "Erro ao carregar o documento."));
         } finally {
             setCarregando(false);
         }
@@ -92,11 +95,7 @@ export default function DocumentoDetalhesPage() {
             link.remove();
             URL.revokeObjectURL(url);
         } catch (error) {
-
-            if (error instanceof Error) {
-                alert(error.message);
-            }
-
+            setErroAcao(mensagemErro(error, "Erro ao baixar o PDF."));
         } finally {
             setBaixando(false);
         }
@@ -106,7 +105,7 @@ export default function DocumentoDetalhesPage() {
         if (!arquivo) return;
 
         if (arquivo.type !== "application/pdf") {
-            alert("O documento assinado deve ser um arquivo PDF.");
+            setErroAcao("O documento assinado deve ser um arquivo PDF.");
             return;
         }
 
@@ -127,7 +126,7 @@ export default function DocumentoDetalhesPage() {
             setDocumento(atualizado);
             setArquivoAssinado(null);
         } catch (error) {
-            setErroAssinado(error instanceof Error ? error.message : "Erro ao enviar documento assinado.");
+            setErroAssinado(mensagemErro(error, "Erro ao enviar documento assinado."));
         } finally {
             setEnviandoAssinado(false);
         }
@@ -147,7 +146,7 @@ export default function DocumentoDetalhesPage() {
             setModalDesativarAberto(false);
             setMotivo("");
         } catch (error) {
-            setErroDesativar(error instanceof Error ? error.message : "Erro ao desativar documento.");
+            setErroDesativar(mensagemErro(error, "Erro ao desativar documento."));
         } finally {
             setDesativando(false);
         }
@@ -156,9 +155,13 @@ export default function DocumentoDetalhesPage() {
 
     if (!documento) {
         return (
-            <p className="mx-auto max-w-6xl px-5 py-6 text-sm text-muted-foreground sm:px-8">
-                Carregando documento...
-            </p>
+            <div className="mx-auto max-w-6xl px-5 py-6 sm:px-8">
+                {erro ? (
+                    <ErroCarregamento mensagem={erro} />
+                ) : (
+                    <CarregandoConteudo mensagem="Carregando documento..." />
+                )}
+            </div>
         );
     }
 
@@ -283,6 +286,8 @@ export default function DocumentoDetalhesPage() {
                             className="h-[750px] w-full"
                         />
                     </Card>
+                ) : erro ? (
+                    <ErroCarregamento mensagem={erro} />
                 ) : (
                     <Card>
                         <p className="text-sm text-muted-foreground">
@@ -292,6 +297,8 @@ export default function DocumentoDetalhesPage() {
                 )}
             </section>
               
+            <ModalErro aberto={erroAcao !== ""} mensagem={erroAcao} onFechar={() => setErroAcao("")} />
+
             <ModalConfirmacao
                 aberto={arquivoAssinado !== null}
                 titulo="Enviar documento assinado?"

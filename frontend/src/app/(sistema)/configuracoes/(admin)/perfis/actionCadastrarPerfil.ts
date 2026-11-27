@@ -4,6 +4,7 @@ import type { PerfilRequest } from "@/app/types/perfis";
 import { criarPerfil } from "@/app/services/perfilService";
 
 import { montarPerfilRequest } from "./montarPerfilRequest";
+import { mensagemErro } from "@/app/util";
 
 interface EstadoFormulario {
     erro: string;
@@ -21,7 +22,7 @@ export async function actionCadastrarPerfil(estadoAnterior: EstadoFormulario, fo
     } catch (error) {
 
         return {
-            erro: error instanceof Error ? error.message : "Erro ao cadastrar perfil.",
+            erro: mensagemErro(error, "Erro ao cadastrar perfil."),
             valores: dados
         };
     }

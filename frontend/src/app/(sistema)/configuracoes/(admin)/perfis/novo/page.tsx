@@ -11,6 +11,7 @@ import { actionCadastrarPerfil } from "../actionCadastrarPerfil";
 import PerfilForm from "../components/PerfilForm";
 import CabecalhoPagina from "@/app/components/CabecalhoPagina";
 import BotaoVoltar from "@/app/components/ui/BotaoVoltar";
+import { mensagemErro } from "@/app/util";
 
 const valoresIniciais: PerfilRequest = {
     nome: "",
@@ -29,27 +30,22 @@ export default function NovoPerfilPage() {
 
     const [tiposDocumento, setTiposDocumento] = useState<TipoDocumento[]>([]);
 
+    const [erroTipos, setErroTipos] = useState("");
+
     useEffect(() => {
-
-        async function carregarTiposDocumento() {
-
-            try {
-
-                const lista = await listarTiposDocumento();
-                setTiposDocumento(lista);
-
-            } catch (error) {
-
-                if (error instanceof Error) {
-                    alert(error.message);
-                }
-
-            }
-        }
-
         carregarTiposDocumento();
-
     }, []);
+
+    async function carregarTiposDocumento() {
+        try {
+            setErroTipos("");
+
+            const lista = await listarTiposDocumento();
+            setTiposDocumento(lista);
+        } catch (error) {
+            setErroTipos(mensagemErro(error, "Erro ao carregar os tipos de documento."));
+        }
+    }
 
     return (
         <>
@@ -72,6 +68,8 @@ export default function NovoPerfilPage() {
                 action={action}
                 valores={estado.valores}
                 tiposDocumento={tiposDocumento}
+                erroTipos={erroTipos}
+                onRetryTipos={carregarTiposDocumento}
                 erro={estado.erro}
                 loading={pending}
                 textoSalvar="Cadastrar perfil"

@@ -15,6 +15,7 @@ import CabecalhoPagina from "@/app/components/CabecalhoPagina";
 import BotaoVoltar from "@/app/components/ui/BotaoVoltar";
 import CarregandoConteudo from "@/app/components/CarregandoConteudo";
 import ErroCarregamento from "@/app/components/ErroCarregamento";
+import { mensagemErro } from "@/app/util";
 
 export default function EditarPerfilPage() {
     const { id } = useParams<{ id: string }>();
@@ -47,7 +48,7 @@ export default function EditarPerfilPage() {
             setTiposDocumento(tipos);
 
         } catch (error) {
-            setErro(error instanceof Error ? error.message : "Erro ao carregar perfil.");
+            setErro(mensagemErro(error, "Erro ao carregar perfil."));
         } finally {
             setCarregando(false);
         }
@@ -69,7 +70,7 @@ export default function EditarPerfilPage() {
 
             setValores(dados);
 
-            setErro(error instanceof Error ? error.message : "Erro ao salvar perfil.");
+            setErro(mensagemErro(error, "Erro ao salvar perfil."));
         } finally {
             setSalvando(false);
         }
@@ -98,7 +99,7 @@ export default function EditarPerfilPage() {
 
             ) : !valores ? (
                 <div className="mx-auto max-w-5xl px-5 py-6 sm:px-8">
-                    <ErroCarregamento mensagem={erro || "Não foi possível carregar o perfil."} onRetry={carregarPerfil} />
+                    <ErroCarregamento mensagem={erro || "Não foi possível carregar o perfil."} />
                 </div>
 
             ) : (

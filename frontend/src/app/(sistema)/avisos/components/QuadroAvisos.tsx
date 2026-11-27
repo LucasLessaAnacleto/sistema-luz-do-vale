@@ -11,6 +11,7 @@ import CardAviso from "./CardAviso";
 import CarregandoConteudo from "@/app/components/CarregandoConteudo";
 import ErroCarregamento from "@/app/components/ErroCarregamento";
 import ItemsVazio from "@/app/components/ItemsVazio";
+import { mensagemErro } from "@/app/util";
 
 export default function QuadroAvisos() {
     const [avisos, setAvisos] = useState<Aviso[]>([]);
@@ -30,7 +31,7 @@ export default function QuadroAvisos() {
 
             setAvisos(response.content);
         } catch (error) {
-            setErro(error instanceof Error ? error.message : "Erro ao carregar avisos.");
+            setErro(mensagemErro(error, "Erro ao carregar avisos."));
         } finally {
             setCarregando(false);
         }

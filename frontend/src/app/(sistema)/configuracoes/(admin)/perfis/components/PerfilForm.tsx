@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import type { PerfilRequest } from "@/app/types/perfis";
 import type { TipoDocumento } from "@/app/types/documentos";
@@ -10,11 +10,15 @@ import Input from "@/app/components/ui/Input";
 import Toggle from "@/app/components/ui/Toggle";
 import Card from "@/app/components/ui/Card";
 import RodapeFormulario from "@/app/components/RodapeFormulario";
+import ErroCarregamento from "@/app/components/ErroCarregamento";
+import ModalErro from "@/app/components/ModalErro";
 
 interface Props {
     action: (form: FormData) => void;
     valores: PerfilRequest;
     tiposDocumento: TipoDocumento[];
+    erroTipos?: string;
+    onRetryTipos?: () => void;
     erro?: string;
     loading?: boolean;
     textoSalvar: string;
@@ -24,6 +28,8 @@ export default function PerfilForm({
     action,
     valores,
     tiposDocumento,
+    erroTipos,
+    onRetryTipos,
     erro,
     loading = false,
     textoSalvar
@@ -32,6 +38,13 @@ export default function PerfilForm({
     const documentos = tiposDocumento.filter((tipo) => tipo.id !== CODIGO_TIPO_DOCUMENTO.FICHA_ACOLHIMENTO);
 
     const [marcados, setMarcados] = useState<number[]>(valores.tiposDocumento);
+    const [modalErroAberto, setModalErroAberto] = useState(false);
+
+    useEffect(() => {
+        if (!loading && erro) {
+            setModalErroAberto(true);
+        }
+    }, [loading, erro]);
 
     const todosMarcados = documentos.every((tipo) => marcados.includes(tipo.id));
 
@@ -99,7 +112,9 @@ export default function PerfilForm({
 
                 </div>
 
-                {documentos.length ? (
+                {erroTipos ? (
+                    <ErroCarregamento mensagem={erroTipos} onRetry={onRetryTipos} />
+                ) : documentos.length ? (
                     <div className="grid gap-3 sm:grid-cols-2">
 
                         {documentos.map((tipo) => (
@@ -123,6 +138,8 @@ export default function PerfilForm({
             {erro && (
                 <p role="alert" className="text-sm text-red-600">{erro}</p>
             )}
+
+            <ModalErro aberto={modalErroAberto} mensagem={erro} onFechar={() => setModalErroAberto(false)} />
 
             <RodapeFormulario cancelarHref="/configuracoes/perfis" loading={loading} textoSalvar={textoSalvar} />
         </form>
