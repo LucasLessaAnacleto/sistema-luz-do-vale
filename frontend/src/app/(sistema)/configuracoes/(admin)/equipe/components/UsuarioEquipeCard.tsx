@@ -5,57 +5,57 @@ import AvatarIniciais from "@/app/components/ui/AvatarIniciais";
 import BudgeStatus from "@/app/components/ui/BudgeStatus";
 
 interface Props {
-  usuario: Usuario;
+    usuario: Usuario;
 }
 
 export default function UsuarioEquipeCard({ usuario }: Props) {
-  const isAdmin = usuario.role === "ROLE_ADMIN";
-  const resolveNome = usuario?.nome || (isAdmin ? "Administrador" : "Minha conta");
-  return (
-    <Link
-      href={`/configuracoes/equipe/${usuario.id}`}
-      className="flex items-center gap-4 rounded-2xl border border-border
-        bg-card p-5 shadow-sm transition-colors hover:border-primary/40
-        focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
-    >
+    const isAdmin = usuario.role === "ROLE_ADMIN";
+    const resolveNome = usuario?.nome || (isAdmin ? "Administrador" : "Minha conta");
+    return (
+        <Link
+            href={`/configuracoes/equipe/${usuario.id}`}
+            className="flex items-center gap-4 rounded-2xl border border-border
+                bg-card p-5 shadow-sm transition-colors hover:border-primary/40
+                focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+        >
 
-      <AvatarIniciais nome={resolveNome} tamanho="md" />
+            <AvatarIniciais nome={resolveNome} tamanho="md" />
 
-      <div className="min-w-0 flex-1">
+            <div className="min-w-0 flex-1">
 
-        <div className="flex items-center gap-1.5">
+                <div className="flex items-center gap-1.5">
 
-          <h2 className="truncate text-sm font-medium">
-            {usuario.nome}
-          </h2>
+                    <h2 className="truncate text-sm font-medium">
+                        {usuario.nome}
+                    </h2>
 
-          {isAdmin && (
-            <ShieldCheck className="h-3.5 w-3.5 text-primary" />
-          )}
+                    {isAdmin && (
+                        <ShieldCheck className="h-3.5 w-3.5 text-primary" />
+                    )}
 
-        </div>
+                </div>
 
-        <p className="mt-0.5 text-xs text-foreground">
-          {usuario.perfil || (isAdmin ? "Administrador" : "Sem perfil")}
-        </p>
+                <p className="mt-0.5 text-xs text-foreground">
+                    {usuario.perfil || (isAdmin ? "Administrador" : "Sem perfil")}
+                </p>
 
-        <p className="mt-0.5 truncate text-xs text-muted-foreground">
-          {usuario.email}
-        </p>
+                <p className="mt-0.5 truncate text-xs text-muted-foreground">
+                    {usuario.email}
+                </p>
 
-      </div>
+            </div>
 
-      <div className="flex shrink-0 items-center gap-3">
+            <div className="flex shrink-0 items-center gap-3">
 
-        <BudgeStatus
-          texto={usuario.ativo ? "Ativo" : "Inativo"}
-          tipo={usuario.ativo ? "sucesso" : "neutro"}
-        />
+                <BudgeStatus
+                    texto={usuario.ativo ? "Ativo" : "Inativo"}
+                    tipo={usuario.ativo ? "sucesso" : "neutro"}
+                />
 
-        <ChevronRight className="h-5 w-5 text-muted-foreground" aria-hidden="true"/>
+                <ChevronRight className="h-5 w-5 text-muted-foreground" aria-hidden="true"/>
 
-      </div>
+            </div>
 
-    </Link>
-  );
+        </Link>
+    );
 }
