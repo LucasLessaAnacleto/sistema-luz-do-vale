@@ -33,4 +33,3 @@ CREATE TABLE responsavel (
 
     CONSTRAINT fk_responsavel_paciente FOREIGN KEY (paciente_id) REFERENCES paciente(id)
 );
-

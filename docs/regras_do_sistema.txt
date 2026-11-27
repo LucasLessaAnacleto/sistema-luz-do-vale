@@ -93,6 +93,7 @@ USUARIO:
     admin pode redefinir a senha
     pode possuir PERFIL ou não
     pode ser desativado
+    usuario inicial criado pela migration: admin@teste.com / pingpong2024 (trocar a senha antes de ir para produção)
 
 PERFIL:
     opcional

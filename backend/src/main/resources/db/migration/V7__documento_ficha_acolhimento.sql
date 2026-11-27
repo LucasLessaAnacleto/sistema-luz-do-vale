@@ -1,16 +1,8 @@
-INSERT INTO usuario (email, senha, role, ativo, dt_criacao)
-VALUES ('admin@teste.com','$2a$10$J69EcfOpTkhuha4sEcl36u1qkOyZc7ILRV9ATBVqDhiowU7pwyxpi','ROLE_ADMIN',true,CURRENT_TIMESTAMP);
--- admin@teste.com/123456
-
 INSERT INTO tipo_documento (id, nome, descricao, exige_assinatura, ativo)
-VALUES
-(1, 'Ficha de Acolhimento', 'Dados do acolhido, tipos de dependência e responsável', false, true),
-(2, 'Evolução de Enfermagem', 'Registro da evolução de enfermagem do paciente', true, true),
-(3, 'Controle de Saída', 'Registro de saída do paciente', false, true),
-(4, 'Relatório de Acompanhamento', 'Relatório de acompanhamento do paciente durante o tratamento', true, true);
+VALUES (1, 'Ficha de Acolhimento', 'Dados do acolhido, tipos de dependência e responsável', false, true);
 
 INSERT INTO tipo_documento_versao (tipo_documento_id, versao, campos, dt_criacao, template)
-VALUES (1,1,
+VALUES (1, 1,
     '[
         {
             "nome": "acolhido",
@@ -296,106 +288,3 @@ VALUES (1,1,
     CURRENT_TIMESTAMP,
     'ficha-acolhimento'
 );
-
-
-INSERT INTO tipo_documento_versao (
-    tipo_documento_id,
-    versao,
-    campos,
-    dt_criacao,
-    template
-)
-VALUES (
-           2,
-           1,
-           '[
-             {
-               "nome": "data",
-               "rotulo": "Data",
-               "tipo": "DATA",
-               "obrigatorio": true,
-               "largura": 6
-             },
-             {
-               "nome": "hora",
-               "rotulo": "Hora",
-               "tipo": "HORA",
-               "obrigatorio": true,
-               "largura": 6
-             },
-             {
-               "nome": "evolucao",
-               "rotulo": "Evolução de enfermagem",
-               "tipo": "TEXTO_LONGO",
-               "obrigatorio": true,
-               "largura": 12
-             }
-           ]'::jsonb,
-           CURRENT_TIMESTAMP,
-           'evolucao-enfermagem'
-       );
-
-INSERT INTO tipo_documento_versao (tipo_documento_id, versao, campos, dt_criacao)
-VALUES (3, 1,
-    '[
-        {
-            "nome": "destino",
-            "rotulo": "Destino",
-            "tipo": "TEXTO",
-            "obrigatorio": true,
-            "largura": 8
-        },
-        {
-            "nome": "dataSaida",
-            "rotulo": "Data da saída",
-            "tipo": "DATA",
-            "obrigatorio": true,
-            "largura": 4
-        },
-        {
-            "nome": "acompanhado",
-            "rotulo": "Está acompanhado?",
-            "tipo": "BOOLEANO",
-            "obrigatorio": false,
-            "largura": 4
-        },
-        {
-            "nome": "observacao",
-            "rotulo": "Observação",
-            "tipo": "TEXTO_LONGO",
-            "obrigatorio": false,
-            "largura": 12
-        }
-    ]'::jsonb,
-    CURRENT_TIMESTAMP
-);
-
-
-INSERT INTO tipo_documento_versao (tipo_documento_id, versao, campos, dt_criacao)
-VALUES (4,1,
-    '[
-        {
-            "nome": "data",
-            "rotulo": "Data",
-            "tipo": "DATA",
-            "obrigatorio": true,
-            "largura": 4
-        },
-        {
-            "nome": "resumo",
-            "rotulo": "Resumo do acompanhamento",
-            "tipo": "TEXTO_LONGO",
-            "obrigatorio": true,
-            "largura": 12
-        },
-        {
-            "nome": "observacao",
-            "rotulo": "Observações",
-            "tipo": "TEXTO_LONGO",
-            "obrigatorio": false,
-            "largura": 12
-        }
-    ]'::jsonb,
-    CURRENT_TIMESTAMP
-);
-

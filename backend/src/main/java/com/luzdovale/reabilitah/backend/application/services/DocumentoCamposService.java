@@ -229,7 +229,8 @@ public class DocumentoCamposService {
             }
 
             if (!campo.isObrigatorio() && "".equals(valor) &&
-                    (campo.getTipo() == EnumTipoCampo.HORA ||
+                    (campo.getTipo() == EnumTipoCampo.DATA ||
+                     campo.getTipo() == EnumTipoCampo.HORA ||
                      campo.getTipo() == EnumTipoCampo.BOOLEANO ||
                      campo.getTipo() == EnumTipoCampo.SELECAO)) {
                 continue;
