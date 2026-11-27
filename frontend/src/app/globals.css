@@ -1,65 +1,65 @@
 @import "tailwindcss";
 
 :root {
-  color-scheme: light;
-  --background: #f7f8f5;
-  --foreground: #4b4b4b;
-  --primary: #6e7f4f;
-  --primary-dark: #56663c;
-  --secondary: #a8b98a;
-  --accent: #dde8c8;
-  --card: #ffffff;
-  --warning: #b87508;
-  --muted-foreground: #6b7280;
-  --border: #eaeaea;
-  --input-background: #ffffff;
-  --ring: #a8b98a;
+    color-scheme: light;
+    --background: #f7f8f5;
+    --foreground: #4b4b4b;
+    --primary: #6e7f4f;
+    --primary-dark: #56663c;
+    --secondary: #a8b98a;
+    --accent: #dde8c8;
+    --card: #ffffff;
+    --warning: #b87508;
+    --muted-foreground: #6b7280;
+    --border: #eaeaea;
+    --input-background: #ffffff;
+    --ring: #a8b98a;
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --color-primary: var(--primary);
-  --color-primary-dark: var(--primary-dark);
-  --color-secondary: var(--secondary);
-  --color-accent: var(--accent);
-  --color-card: var(--card);
-  --color-warning: var(--warning);
-  --color-muted-foreground: var(--muted-foreground);
-  --color-border: var(--border);
-  --color-input-background: var(--input-background);
-  --color-ring: var(--ring);
-  --font-sans: var(--font-inter);
+    --color-background: var(--background);
+    --color-foreground: var(--foreground);
+    --color-primary: var(--primary);
+    --color-primary-dark: var(--primary-dark);
+    --color-secondary: var(--secondary);
+    --color-accent: var(--accent);
+    --color-card: var(--card);
+    --color-warning: var(--warning);
+    --color-muted-foreground: var(--muted-foreground);
+    --color-border: var(--border);
+    --color-input-background: var(--input-background);
+    --color-ring: var(--ring);
+    --font-sans: var(--font-inter);
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: var(--font-inter), Arial, Helvetica, sans-serif;
+    background: var(--background);
+    color: var(--foreground);
+    font-family: var(--font-inter), Arial, Helvetica, sans-serif;
 }
 
 @keyframes login-enter {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 @media (prefers-reduced-motion: no-preference) {
-  .login-panel {
-    animation: login-enter 0.5s ease-out;
-  }
+    .login-panel {
+        animation: login-enter 0.5s ease-out;
+    }
 }
 
 @media print {
-  body:has(.documento-impresso) :is(header, nav) {
-    display: none;
-  }
-  body:has(.documento-impresso) {
-    background: white;
-  }
+    body:has(.documento-impresso) :is(header, nav) {
+        display: none;
+    }
+    body:has(.documento-impresso) {
+        background: white;
+    }
 }

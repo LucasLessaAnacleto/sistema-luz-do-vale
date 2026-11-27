@@ -5,6 +5,7 @@ import com.luzdovale.reabilitah.backend.domain.entities.Profissional;
 import com.luzdovale.reabilitah.backend.domain.entities.Usuario;
 import com.luzdovale.reabilitah.backend.domain.repository.ProfissionalRepository;
 import com.luzdovale.reabilitah.backend.domain.valueobjects.CPF;
+import com.luzdovale.reabilitah.backend.domain.valueobjects.Endereco;
 import com.luzdovale.reabilitah.backend.domain.valueobjects.Telefone;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -76,6 +77,10 @@ public class ProfissionalService {
         if (dados.endereco() != null) {
             var endereco     = dados.endereco();
             var profEndereco = profissional.getEndereco();
+            if(profEndereco == null){
+                profEndereco = new Endereco();
+                profissional.setEndereco(profEndereco);
+            }
             if(endereco.getEstado() != null){
                 profEndereco.setEstado(endereco.getEstado());
             }

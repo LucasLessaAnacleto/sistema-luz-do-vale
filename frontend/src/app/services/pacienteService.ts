@@ -4,11 +4,11 @@ import { HistoricoDocumento } from "../types/documentos";
 
 export async function buscarListaPacientes(ativo?: boolean): Promise<Paciente[]> {
 
-  const response = await api.get<Paciente[]>("/pacientes", {
-    params: ativo !== undefined ? { ativo } : {},
-  });
+    const response = await api.get<Paciente[]>("/pacientes", {
+        params: ativo !== undefined ? { ativo } : {},
+    });
 
-  return response.data;
+    return response.data;
 }
 
 export async function buscarPaciente(id: number): Promise<PacienteDetalhes> {

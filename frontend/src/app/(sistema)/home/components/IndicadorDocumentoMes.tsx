@@ -6,20 +6,9 @@ import { ChevronLeft, ChevronRight, TrendingUp } from "lucide-react";
 import { contarDocumentosMes } from "@/app/services/dashService";
 import MiniLoader from "./MiniLoader";
 
-const monthFormat = new Intl.DateTimeFormat("pt-BR", {
-    month: "short",
-    year: "numeric"
-});
-
-const buttonClass =
-    "flex h-11 w-11 cursor-pointer items-center justify-center rounded-lg transition-colors hover:bg-primary/10 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary";
-
 export default function IndicadorDocumentosMes() {
 
-    const [mesSelecionado, setMesSelecionado] = useState(() => {
-        const agora = new Date();
-        return new Date(agora.getFullYear(), agora.getMonth(), 1);
-    });
+    const [mesSelecionado, setMesSelecionado] = useState(new Date());
 
     const [quantidade, setQuantidade] = useState<number | null>(null);
     const [carregando, setCarregando] = useState(true);
@@ -27,35 +16,35 @@ export default function IndicadorDocumentosMes() {
 
     const ano = mesSelecionado.getFullYear();
     const mes = mesSelecionado.getMonth() + 1;
-    const monthLabel = monthFormat.format(mesSelecionado);
 
     useEffect(() => {
         let cancelado = false;
+
         async function carregarQuantidade(){
             const inicio = Date.now();
             try {
                 setCarregando(true);
                 setErro("");
-                
+
                 const dados = await contarDocumentosMes(ano, mes);
-                
+
                 if(!cancelado){
                     setQuantidade(dados);
                 }
             } catch (error) {
                 if(!cancelado){
-                    setErro( error instanceof Error ? error.message : "Erro ao carregar quantidade de documentos.");
+                    setErro(error instanceof Error ? error.message : "Erro ao carregar quantidade de documentos.");
                 }
             } finally {
-                const tempoDecorrido = Date.now() - inicio;
-                let tempoRestante = 200 - tempoDecorrido;
+                // espera no minimo 200ms pro loader nao ficar piscando
+                let tempoRestante = 200 - (Date.now() - inicio);
                 if(tempoRestante < 0) tempoRestante = 0;
 
                 setTimeout(() => {
                     if(!cancelado){
                         setCarregando(false);
                     }
-                }, tempoRestante);                
+                }, tempoRestante);
             }
         }
         carregarQuantidade();
@@ -69,7 +58,7 @@ export default function IndicadorDocumentosMes() {
         setCarregando(true);
         setErro("");
 
-        setMesSelecionado(anterior => new Date( anterior.getFullYear(), anterior.getMonth() + diferenca, 1));
+        setMesSelecionado(new Date(ano, mesSelecionado.getMonth() + diferenca, 1));
     }
 
     return (
@@ -81,20 +70,24 @@ export default function IndicadorDocumentosMes() {
                 </p>
 
                 <div className="flex items-center gap-1">
-                    <button type="button" onClick={() => trocarMes(-1)} className={buttonClass}>
+                    <button type="button" onClick={() => trocarMes(-1)}
+                        className="flex h-11 w-11 cursor-pointer items-center justify-center rounded-lg transition-colors hover:bg-primary/10 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+                    >
                         <ChevronLeft className="h-4 w-4" />
                     </button>
 
                     <span className="min-w-24 text-center text-xs font-medium capitalize">
-                        {monthLabel}
+                        {mesSelecionado.toLocaleDateString("pt-BR", { month: "short", year: "numeric" })}
                     </span>
 
-                    <button type="button" onClick={() => trocarMes(1)} className={buttonClass}>
+                    <button type="button" onClick={() => trocarMes(1)}
+                        className="flex h-11 w-11 cursor-pointer items-center justify-center rounded-lg transition-colors hover:bg-primary/10 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+                    >
                         <ChevronRight className="h-4 w-4" />
                     </button>
 
                     <span className="ml-2 inline-flex h-6 min-w-6 items-center justify-end text-right text-xl font-bold tabular-nums">
-                        {carregando ? <MiniLoader /> : (erro ? "—" : quantidade ?? "—")}
+                        {carregando ? <MiniLoader /> : (erro ? "-" : quantidade ?? "-")}
                     </span>
                 </div>
             </div>
